@@ -1,4 +1,4 @@
-aidu
+Automated Indoor Delivery Unit (AIDU)
 ====
 
-Automated Indoor Delivery Unit
+This is the software for the robot AIDU, the delivery robot for offices.
