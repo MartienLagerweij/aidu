@@ -11,3 +11,11 @@
 *.lai
 *.la
 *.a
+
+# Generated folders
+build/
+bin/
+lib/
+
+# Kdevelop project file
+*.kdev4
