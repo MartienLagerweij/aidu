@@ -1,0 +1,16 @@
+<package>
+  <description brief="aidu_mobile_base">
+
+     aidu_mobile_base
+
+  </description>
+  <author>Rolf Jagerman</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/aidu_mobile_base</url>
+  <depend package="roscpp"/>
+  <depend package="aidu_core"/>
+
+</package>
+
+
