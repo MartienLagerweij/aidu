@@ -3,6 +3,8 @@
 
 #include <ros/ros.h>
 #include <aidu_core/node.h>
+#include <CDxlGeneric.h>
+#include <CDxlGroup.h>
 
 namespace aidu {
   namespace mobile_base {
@@ -14,10 +16,14 @@ namespace aidu {
       // We need stuff like CDxlGeneric *motor, config and serial_port.
       
       Motor(int id);
-      
-    //protected:
-      
-      void setVelocity(float velocity);
+      ~Motor();
+      void setVelocity(float velocity); ///< Sets the velocity of the motor
+
+    protected:
+      CDxlGeneric *motor;               ///< The motor interface
+      CDxlConfig *config;               ///< The motor configuration
+      LxSerial* serial_port;            ///< The serial port
+
       
     };
   }

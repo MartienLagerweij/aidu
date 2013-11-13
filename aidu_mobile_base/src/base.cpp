@@ -4,8 +4,8 @@
 using namespace aidu;
 
 mobile_base::Base::Base() : core::Node::Node() {
-  leftWheelMotor = new mobile_base::Motor(108);
-  rightWheelMotor = new mobile_base::Motor(109);
+  leftWheelMotor = new mobile_base::Motor(106);
+  rightWheelMotor = new mobile_base::Motor(107);
 }
 
 mobile_base::Base::~Base() {
@@ -16,9 +16,14 @@ mobile_base::Base::~Base() {
 int main(int argc, char **argv) {
   ros::init(argc, argv, "motor");
   mobile_base::Base base;
-  
-  base.leftWheelMotor->setVelocity(10.0); // Test left wheel velocity!
-  
-  base.spin();
+
+ ros::Rate loop_rate(10);
+    while(ros::ok()) {
+
+    base.leftWheelMotor->setVelocity(5); // Test left wheel velocity!
+    base.rightWheelMotor->setVelocity(-15); // Test right wheel velocity!
+    loop_rate.sleep();
+}
+
   return 0;
 }
