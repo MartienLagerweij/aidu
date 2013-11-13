@@ -17,13 +17,16 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "motor");
   mobile_base::Base base;
 
- ros::Rate loop_rate(10);
-    while(ros::ok()) {
-
-    base.leftWheelMotor->setVelocity(5); // Test left wheel velocity!
-    base.rightWheelMotor->setVelocity(-15); // Test right wheel velocity!
+  int frequency = 10;
+  ros::Rate loop_rate(frequency);
+  int count = 0;
+  int seconds = 4;
+  while(ros::ok() && count < frequency*seconds) {
+    base.leftWheelMotor->setVelocity(2); // Test left wheel velocity!
+    base.rightWheelMotor->setVelocity(2); // Test right wheel velocity!
     loop_rate.sleep();
-}
+    count++;
+  }
 
   return 0;
 }
