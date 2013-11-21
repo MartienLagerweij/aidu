@@ -16,6 +16,12 @@
 build/
 bin/
 lib/
+msg_gen/
+srv_gen/
 
-# Kdevelop project file
+# KDevelop project file/folder
 *.kdev4
+*.kdev4/
+
+# PyCharm project folder
+*.idea/
