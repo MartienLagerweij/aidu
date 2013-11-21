@@ -40,7 +40,7 @@ void ps3::TeleopBase::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "teleop_base");;
-  TeleopBase teleop_base;
+  ps3::TeleopBase teleop_base;
   teleop_base.spin();
   return 0;
 }
