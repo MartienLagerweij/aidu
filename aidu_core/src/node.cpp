@@ -3,13 +3,15 @@
 
 using namespace aidu::core;
 
-Node::Node() : nh("~") {
+Node::Node() {
+  nh = new ros::NodeHandle("~");
   printf("Node::Node()\n");
 }
 
 Node::~Node() {
   printf("Node::~Node()\n");
-  nh.shutdown();
+  nh->shutdown();
+  delete nh;
 }
 
 void Node::spin() {

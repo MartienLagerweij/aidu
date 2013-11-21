@@ -15,7 +15,7 @@ namespace aidu {
     protected:
       
       /// The node handle
-      ros::NodeHandle nh;
+      ros::NodeHandle* nh;
       
     public:
       
