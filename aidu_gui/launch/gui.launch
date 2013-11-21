@@ -1,0 +1,4 @@
+<launch>
+  <node name="main_gui" pkg="aidu_gui" type="main.py" output="screen" />
+</launch>
+
