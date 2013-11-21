@@ -1,0 +1,4 @@
+# This message describes the actual position of the wheel base in radians
+# 
+float32 left
+float32 right

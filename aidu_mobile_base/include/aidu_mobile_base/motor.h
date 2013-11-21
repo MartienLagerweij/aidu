@@ -2,25 +2,23 @@
 #define AIDU_MOBILE_BASE__MOTOR_H
 
 #include <ros/ros.h>
-#include <aidu_core/node.h>
+#include <threemxl/C3mxlROS.h>
 #include <CDxlGeneric.h>
 #include <CDxlGroup.h>
 
 namespace aidu {
   namespace mobile_base {
-    class Motor : public aidu::core::Node {
+    class Motor {
     public:
       
-      // Add proper variables for threemxl (remember: also edit motor.cpp with appropriate initialization in the constructor!)
-      // See Hand.h and Hand.cpp in gripper example, this will be very similar (ignore the subscriber/publisher in there)
-      // We need stuff like CDxlGeneric *motor, config and serial_port.
-      
-      Motor(int id);
+      Motor(char* name, std::string motor_port_name, std::string motor_config_name);
+      char* name;
       ~Motor();
       void setVelocity(float velocity); ///< Sets the velocity of the motor
-
-    protected:
+      void setPosition(float position);///< Sets the position of the motor
       CDxlGeneric *motor;               ///< The motor interface
+      bool modepos;			///< true if motor is in position mode
+    protected:
       CDxlConfig *config;               ///< The motor configuration
       LxSerial* serial_port;            ///< The serial port
 
