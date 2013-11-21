@@ -1,0 +1,5 @@
+<launch>
+  <node name="ignore_rfid_scanner_input" pkg="aidu_card_scanner" type="ignore_rfid_as_keyboard.sh" />
+  <node name="card_scanner" pkg="aidu_card_scanner" type="scanner" output="screen" />
+</launch>
+
