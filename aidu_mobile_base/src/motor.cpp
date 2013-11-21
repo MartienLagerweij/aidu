@@ -65,7 +65,7 @@ void mobile_base::Motor::setPosition(float position) {
     modepos=true;
   }
   // sending position to 3mxl
-  motor->setPos(position);
+  motor->setPos(position, 0.2, 1.0);
 }
 
 

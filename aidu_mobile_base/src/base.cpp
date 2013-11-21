@@ -34,10 +34,15 @@ void mobile_base::Base::pos(const aidu_mobile_base::Pos::ConstPtr& msg){
     // calculating postion for each motor
     float posleft, posright;
     
-    
+    //getting position of the wheels
+    leftWheelMotor->motor->getPos();
+    posleft=leftWheelMotor->motor->presentPos();
+    rightWheelMotor->motor->getPos();
+    posright=rightWheelMotor->motor->presentPos();
+
     //sending position to 3Mxl
-    leftWheelMotor->setPosition(position); // setting left wheel postion
-    rightWheelMotor->setPosition(position);//setting right wheel position
+    leftWheelMotor->motor->setPos(position+posleft, 2.0, 2.6); // setting left wheel postion
+    rightWheelMotor->motor->setPos(position+posright, 2.0, 2.6);//setting right wheel position
 
 }
 
@@ -75,10 +80,10 @@ void mobile_base::Base::spin(){
 	//getting position
 	leftWheelMotor->motor->getPosAndSpeed();
         state.leftpos=leftWheelMotor->motor->presentPos();
-	state.leftspeed=leftWheelMotor->motor->presentSpeed();
+	state.leftspeed=leftWheelMotor->motor->presentSpeed()*5;
 	rightWheelMotor->motor->getPosAndSpeed();
         state.rightpos=rightWheelMotor->motor->presentPos();
-	state.rightspeed=rightWheelMotor->motor->presentSpeed();
+	state.rightspeed=rightWheelMotor->motor->presentSpeed()*5;
 	
 	//publish state
 	if (state.rightspeed!=0 && state.leftspeed!=0){
