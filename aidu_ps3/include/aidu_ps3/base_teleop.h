@@ -5,7 +5,7 @@
 #include <ros/ros.h>
 #include <aidu_core/node.h>
 #include <sensor_msgs/Joy.h>
-#include <aidu_ps3/Teleop.h>
+
 
 namespace aidu {
   namespace ps3 {
