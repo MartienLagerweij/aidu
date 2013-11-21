@@ -1,0 +1,4 @@
+<launch>
+  <node name="user_management" pkg="aidu_user_management" type="main.py" output="screen" />
+</launch>
+

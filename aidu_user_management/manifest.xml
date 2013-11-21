@@ -1,0 +1,15 @@
+<package>
+  <description brief="aidu_user_management">
+
+     Handles user management for the delivery system
+
+  </description>
+  <author>Rolf Jagerman</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/aidu_user_management</url>
+  <depend package="rospy"/>
+
+</package>
+
+

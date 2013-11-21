@@ -1,0 +1,6 @@
+bool login
+string id
+---
+string id
+bool success
+User user
