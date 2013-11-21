@@ -28,3 +28,6 @@ srv_gen/
 
 # PyCharm project folder
 *.idea/
+
+# Temporary files
+*~
