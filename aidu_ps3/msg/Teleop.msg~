@@ -1,0 +1,6 @@
+#This message contains the input of the ps3 controller
+float32 leftx
+float32 lefty
+float32 rightx
+float32 righty
+float32 circle

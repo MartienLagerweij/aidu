@@ -1,0 +1,20 @@
+<package>
+  <description brief="aidu_ps3">
+This package handles the input from a ps3 controller, and publishes topics 
+for the mobile_base or other robot components
+     aidu_ps3
+
+  </description>
+  <author>christiaan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/aidu_ps3</url>
+  <depend package="roscpp"/>
+  <depend package="aidu_core"/>
+  <depend package="ps3joy"/>
+  <depend package="aidu_mobile_base"/>
+
+
+</package>
+
+
