@@ -1,0 +1,6 @@
+<launch>
+  <include file="$(find aidu_user_management)/launch/user_management.launch" />
+  <include file="$(find aidu_card_scanner)/launch/card_scanner.launch" />
+  <include file="$(find aidu_gui)/launch/gui.launch" />
+</launch>
+
