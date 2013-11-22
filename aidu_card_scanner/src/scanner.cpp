@@ -21,7 +21,7 @@ card_scanner::Scanner::Scanner() : core::Node::Node()
   
   // Create service client
   ros::service::waitForService("authenticate");
-  this->authenticate = nh.serviceClient<aidu_user_management::Authenticate>("/authenticate");
+  this->authenticate = nh->serviceClient<aidu_user_management::Authenticate>("/authenticate");
   
   // Start reading RFID input in a separate thread
   thread = new boost::thread(&card_scanner::Scanner::readRfidInput, this);
