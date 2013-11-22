@@ -6,7 +6,7 @@ import struct
 
 
 class State(genpy.Message):
-  _md5sum = "7d9f6213bc26e628ae8b9d8c161c722f"
+  _md5sum = "ca29340c5e5d87129ac490e1e00ab3ee"
   _type = "aidu_mobile_base/State"
   _has_header = False #flag to mark the presence of a Header object
   _full_text = """# This message describes the actual position of the wheel base in radians
@@ -14,11 +14,12 @@ float32 leftpos
 float32 rightpos
 float32 leftspeed
 float32 rightspeed
+float32 angle
 
 
 """
-  __slots__ = ['leftpos','rightpos','leftspeed','rightspeed']
-  _slot_types = ['float32','float32','float32','float32']
+  __slots__ = ['leftpos','rightpos','leftspeed','rightspeed','angle']
+  _slot_types = ['float32','float32','float32','float32','float32']
 
   def __init__(self, *args, **kwds):
     """
@@ -28,7 +29,7 @@ float32 rightspeed
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       leftpos,rightpos,leftspeed,rightspeed
+       leftpos,rightpos,leftspeed,rightspeed,angle
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -45,11 +46,14 @@ float32 rightspeed
         self.leftspeed = 0.
       if self.rightspeed is None:
         self.rightspeed = 0.
+      if self.angle is None:
+        self.angle = 0.
     else:
       self.leftpos = 0.
       self.rightpos = 0.
       self.leftspeed = 0.
       self.rightspeed = 0.
+      self.angle = 0.
 
   def _get_types(self):
     """
@@ -64,7 +68,7 @@ float32 rightspeed
     """
     try:
       _x = self
-      buff.write(_struct_4f.pack(_x.leftpos, _x.rightpos, _x.leftspeed, _x.rightspeed))
+      buff.write(_struct_5f.pack(_x.leftpos, _x.rightpos, _x.leftspeed, _x.rightspeed, _x.angle))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -77,8 +81,8 @@ float32 rightspeed
       end = 0
       _x = self
       start = end
-      end += 16
-      (_x.leftpos, _x.rightpos, _x.leftspeed, _x.rightspeed,) = _struct_4f.unpack(str[start:end])
+      end += 20
+      (_x.leftpos, _x.rightpos, _x.leftspeed, _x.rightspeed, _x.angle,) = _struct_5f.unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e) #most likely buffer underfill
@@ -92,7 +96,7 @@ float32 rightspeed
     """
     try:
       _x = self
-      buff.write(_struct_4f.pack(_x.leftpos, _x.rightpos, _x.leftspeed, _x.rightspeed))
+      buff.write(_struct_5f.pack(_x.leftpos, _x.rightpos, _x.leftspeed, _x.rightspeed, _x.angle))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -106,11 +110,11 @@ float32 rightspeed
       end = 0
       _x = self
       start = end
-      end += 16
-      (_x.leftpos, _x.rightpos, _x.leftspeed, _x.rightspeed,) = _struct_4f.unpack(str[start:end])
+      end += 20
+      (_x.leftpos, _x.rightpos, _x.leftspeed, _x.rightspeed, _x.angle,) = _struct_5f.unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e) #most likely buffer underfill
 
 _struct_I = genpy.struct_I
-_struct_4f = struct.Struct("<4f")
+_struct_5f = struct.Struct("<5f")

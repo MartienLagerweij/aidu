@@ -31,6 +31,8 @@ namespace aidu {
 
     protected:
 
+      double radiusBase;
+      double radiusWheel;
       aidu::mobile_base::Motor* leftWheelMotor;
       aidu::mobile_base::Motor* rightWheelMotor;
       ros::Subscriber possubscriber; ///< The subscriber for the position messages

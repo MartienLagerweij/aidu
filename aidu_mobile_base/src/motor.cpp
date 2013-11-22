@@ -24,9 +24,7 @@ mobile_base::Motor::Motor(char* name, std::string motor_port_name, std::string m
     motor->setConfig(config);
     motor->init();
     motor->set3MxlMode(POSITION_MODE);
-    modepos=true;
-    
-
+    motor->setAcceleration(2.8);
 
 }
 
@@ -35,37 +33,29 @@ void mobile_base::Motor::setVelocity(float velocity) {
   // Send velocity to the 3mxl board
   ROS_INFO("%s: Setting velocity to %f", name, velocity);
   
-  //checking mode of 3mxl
-  if(modepos){
-    motor->set3MxlMode(SPEED_MODE);
-    modepos=false;
-  }
-  //sending speed to 3mxl
-  motor->setSpeed(velocity);
-  
-  /*
-  // Debug information
-  ROS_INFO("error: %d", motor->getLastError());
+  // Check mode of 3mxl
   motor->get3MxlMode();
-  ROS_INFO("mode: %d", motor->present3MxlMode());
-  double p, d, i, il = -1;
-  motor->getPIDSpeed(p, d, i, il);
-  ROS_INFO("P,D,I,IL = %f, %f, %f, %f", p, d, i, il);
-  */
+  if(motor->present3MxlMode() != SPEED_MODE){
+    motor->set3MxlMode(SPEED_MODE);
+  }
+  
+  // Send speed to 3mxl
+  motor->setSpeed(velocity);
 }
 
 void mobile_base::Motor::setPosition(float position) {
 
   // Send velocity to the 3mxl board
-  ROS_INFO("Setting position to %f", position);
-
-  //Checking mode of 3mxl
-  if(!modepos){
+  ROS_INFO("%s: Setting position to %f", name, position);
+  
+  // Check mode of 3mxl
+  motor->get3MxlMode();
+  if(motor->present3MxlMode() != POSITION_MODE){
     motor->set3MxlMode(POSITION_MODE);
-    modepos=true;
   }
-  // sending position to 3mxl
-  motor->setPos(position, 0.2, 1.0);
+  
+  // Send position to 3mxl
+  motor->setPos(position);
 }
 
 
