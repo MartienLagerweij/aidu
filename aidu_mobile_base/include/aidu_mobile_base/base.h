@@ -11,13 +11,6 @@
 
 namespace aidu {
   namespace mobile_base {
-    
-    //this structure contains the speed of the left and right motors
-    struct Vel {
-      float leftspeed;
-      float rightspeed;
-    };
-    
       
     class Base : public aidu::core::Node {
     public:

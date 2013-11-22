@@ -58,26 +58,19 @@ void mobile_base::Base::pos(const aidu_mobile_base::Pos::ConstPtr& msg) {
 void mobile_base::Base::speed(const geometry_msgs::Twist::ConstPtr& msg){
     
     // Reading velocity from topic
-    float velocity=msg->linear.x;
-    float angle=msg->angular.x;
+    float velocity = msg->linear.x;
+    float angle = msg->angular.x;
     
     // Calculating velocity for each motor
-    Vel vel;
-    vel=calcVelocity(velocity,angle);
+    float linearLeftSpeed, linearRightSpeed, angularLeftSpeed, angularRightSpeed;
+    linearLeftSpeed = linearRightSpeed = velocity / radiusWheel;
+    angularLeftSpeed = angularRightSpeed = angle * (radiusBase / radiusWheel);
     
     // Sending speeds to 3mxl
-    leftWheelMotor->setVelocity(vel.leftspeed); // setting left wheel postion
-    rightWheelMotor->setVelocity(vel.rightspeed);//setting right wheel position
+    leftWheelMotor->setVelocity(linearLeftSpeed + angularLeftSpeed); // setting left wheel postion
+    rightWheelMotor->setVelocity(linearRightSpeed - angularRightSpeed);//setting right wheel position
+    
 }
-
-
-mobile_base::Vel mobile_base::Base::calcVelocity(float velocity,float angle){
-    Vel ret;
-    ret.leftspeed=velocity+angle;
-    ret.rightspeed=velocity-angle;
-    return(ret);
-}
-
 
 void mobile_base::Base::spin(){
 
@@ -88,12 +81,12 @@ void mobile_base::Base::spin(){
       
 	// Getting position
 	leftWheelMotor->motor->getPosAndSpeed();
-        state.leftpos=leftWheelMotor->motor->presentPos();
-	state.leftspeed=leftWheelMotor->motor->presentSpeed();
+        state.leftpos = leftWheelMotor->motor->presentPos();
+	state.leftspeed = leftWheelMotor->motor->presentSpeed();
 	
 	rightWheelMotor->motor->getPosAndSpeed();
-        state.rightpos=rightWheelMotor->motor->presentPos();
-	state.rightspeed=rightWheelMotor->motor->presentSpeed();
+        state.rightpos = rightWheelMotor->motor->presentPos();
+	state.rightspeed = rightWheelMotor->motor->presentSpeed();
 	
 	// Convert the wheel positions to meters
 	//state.leftpos = state.leftpos * radiusWheel;
