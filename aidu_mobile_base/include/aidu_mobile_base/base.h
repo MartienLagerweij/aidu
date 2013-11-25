@@ -18,7 +18,7 @@ namespace aidu {
       Base();
       ~Base();
       void speed(const geometry_msgs::Twist::ConstPtr& msg);///< sets the velocity of a motor
-      void pos(const aidu_mobile_base::Pos::ConstPtr& msg);///< sets the positon of a motor
+      void pos(const geometry_msgs::Twist::ConstPtr& msg);///< sets the positon of a motor
       void spin();///< reads the position of the motors
       //Vel calcVelocity(float velocity,float angle); ///< calculates the speed difference between the left and right motor
 

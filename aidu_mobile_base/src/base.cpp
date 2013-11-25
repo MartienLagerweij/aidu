@@ -21,7 +21,7 @@ mobile_base::Base::Base() : core::Node::Node() {
 
     //subscibing and pubishing position and speed topics
     possubscriber = nh->subscribe("pos", 1, &mobile_base::Base::pos, this);
-    speedsubscriber = nh->subscribe("twist", 1, &mobile_base::Base::speed, this);
+    speedsubscriber = nh->subscribe("speed", 1, &mobile_base::Base::speed, this);
     pospublisher = nh->advertise<aidu_mobile_base::State>("state",1);
     
     // Get sizes from launch parameters
@@ -32,11 +32,11 @@ mobile_base::Base::Base() : core::Node::Node() {
   
 }
 
-void mobile_base::Base::pos(const aidu_mobile_base::Pos::ConstPtr& msg) {
+void mobile_base::Base::pos(const geometry_msgs::Twist::ConstPtr& msg) {
   
     // Reading position from topic
-    float position=msg->x;
-    float angle=msg->theta;
+    float position=msg->linear.x;
+    float angle=msg->angular.z;
     
     // Getting position of the wheels
     leftWheelMotor->motor->getPos();
