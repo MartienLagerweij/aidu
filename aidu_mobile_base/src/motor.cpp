@@ -25,22 +25,25 @@ mobile_base::Motor::Motor(char* name, std::string motor_port_name, std::string m
     motor->init();
     motor->set3MxlMode(POSITION_MODE);
     motor->setAcceleration(2.8);
+    currentvel=0;
 
 }
 
 void mobile_base::Motor::setVelocity(float velocity) {
-  
-  // Send velocity to the 3mxl board
-  ROS_INFO("%s: Setting velocity to %f", name, velocity);
-  
-  // Check mode of 3mxl
-  motor->get3MxlMode();
-  if(motor->present3MxlMode() != SPEED_MODE){
-    motor->set3MxlMode(SPEED_MODE);
+  if (abs(velocity-currentvel)>0.02) {
+    currentvel=velocity;
+    // Send velocity to the 3mxl board
+    ROS_INFO("%s: Setting velocity to %f", name, velocity);
+    
+    // Check mode of 3mxl
+    motor->get3MxlMode();
+    if(motor->present3MxlMode() != SPEED_MODE){
+      motor->set3MxlMode(SPEED_MODE);
+    }
+    
+    // Send speed to 3mxl
+    motor->setSpeed(velocity);
   }
-  
-  // Send speed to 3mxl
-  motor->setSpeed(velocity);
 }
 
 void mobile_base::Motor::setPosition(float position) {

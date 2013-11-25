@@ -17,10 +17,11 @@ namespace aidu {
       void setVelocity(float velocity); ///< Sets the velocity of the motor
       void setPosition(float position);///< Sets the position of the motor
       CDxlGeneric *motor;               ///< The motor interface
+      
     protected:
       CDxlConfig *config;               ///< The motor configuration
       LxSerial* serial_port;            ///< The serial port
-
+      float currentvel;
       
     };
   }

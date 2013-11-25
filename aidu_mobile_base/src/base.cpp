@@ -59,7 +59,7 @@ void mobile_base::Base::speed(const geometry_msgs::Twist::ConstPtr& msg){
     
     // Reading velocity from topic
     float velocity = msg->linear.x;
-    float angle = msg->angular.x;
+    float angle = msg->angular.z;
     
     // Calculating velocity for each motor
     float linearLeftSpeed, linearRightSpeed, angularLeftSpeed, angularRightSpeed;
@@ -72,9 +72,14 @@ void mobile_base::Base::speed(const geometry_msgs::Twist::ConstPtr& msg){
     
 }
 
+
+//void mobile_base::Base::posspeed(const geometry_msgs::Twist::ConstPtr& msg){
+  
+//}
+
 void mobile_base::Base::spin(){
 
-    ros::Rate rate(40); // rate at which position published (hertz)
+    ros::Rate rate(2); // rate at which position published (hertz)
     aidu_mobile_base::State state;
     int countdown = 15;
     while(ros::ok()) {
