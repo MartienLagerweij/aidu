@@ -10,6 +10,7 @@ namespace aidu {
   
   class SensorHandler : public aidu::core::Node {
   public:
+    SensorHandler();
     
   protected:
     

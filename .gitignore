@@ -25,7 +25,7 @@ srv_gen/
 # KDevelop project file/folder
 *.kdev4
 *.kdev4/
-
+*.kate-swp
 # PyCharm project folder
 *.idea/
 
