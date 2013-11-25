@@ -11,8 +11,16 @@ namespace aidu {
   class SensorHandler : public aidu::core::Node {
   public:
     SensorHandler();
+    void sensorcallback(const aidu_vision::DistanceSensors::ConstPtr& sensormsg);///< handles the sensor input
+    
     
   protected:
+    ros::Subscriber sensormsg;
+    ros::Publisher speedpublisher;
+    ros::Publisher pospublisher;
+    double targetdistance,distance_between_sensors,middle_sensor_range; ///< distance from wall wanted (mm)
+    
+    
     
   };
 }
