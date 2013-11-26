@@ -11,7 +11,7 @@
     <ilposition>5.0</ilposition>
     <pspeed>0.1</pspeed>
     <ispeed>0.0</ispeed>
-    <dspeed>0.0</dspeed>
+    <dspeed>0.25</dspeed>
     <ilspeed>0.0</ilspeed>
   </left>
   <right>
@@ -26,7 +26,7 @@
     <ilposition>5.0</ilposition>
     <pspeed>0.1</pspeed>
     <ispeed>0.0</ispeed>
-    <dspeed>0.0</dspeed>
+    <dspeed>0.25</dspeed>
     <ilspeed>0.0</ilspeed>
   </right>
 </configuration>

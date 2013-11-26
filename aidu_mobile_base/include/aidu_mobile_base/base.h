@@ -30,8 +30,19 @@ namespace aidu {
       aidu::mobile_base::Motor* leftWheelMotor;
       aidu::mobile_base::Motor* rightWheelMotor;
       ros::Subscriber possubscriber; ///< The subscriber for the position messages
-      ros::Subscriber speedsubscriber; ///< The subscriber for the position messages
+      ros::Subscriber speedsubscriber; ///< The subscriber for the speed messages
+      ros::Subscriber posspeedsubscriber; ///< The subscriber for the position messages that use speed mode
       ros::Publisher pospublisher; ///< The publisher for the position of the base
+      ros::Publisher speedpublisher; ///< The publisher for the speed
+      
+      double initialLeftPos = 0.0;
+      double initialRightPos = 0.0;
+      
+      void resetPos();
+      double getRightPos(); 
+      double getLeftPos();
+      double getAngle();
+      
     };
   }
 }

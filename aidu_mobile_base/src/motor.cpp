@@ -11,7 +11,7 @@ mobile_base::Motor::Motor(char* name, std::string motor_port_name, std::string m
     // Load motor configuration
     CXMLConfiguration motor_config_xml;
     motor_config_xml.loadFile(motor_config_name);
-
+    
     // ThreeMXL initialization
     // Create configuration
     config = new CDxlConfig();
@@ -30,8 +30,9 @@ mobile_base::Motor::Motor(char* name, std::string motor_port_name, std::string m
 }
 
 void mobile_base::Motor::setVelocity(float velocity) {
-  if (abs(velocity-currentvel)>0.02) {
-    currentvel=velocity;
+  if (fabs(velocity-currentvel) > 0.01) {
+    currentvel = velocity;
+    
     // Send velocity to the 3mxl board
     ROS_INFO("%s: Setting velocity to %f", name, velocity);
     
