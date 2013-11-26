@@ -73,9 +73,18 @@ void mobile_base::Base::speed(const geometry_msgs::Twist::ConstPtr& msg){
 }
 
 
-//void mobile_base::Base::posspeed(const geometry_msgs::Twist::ConstPtr& msg){
+void mobile_base::Base::posspeed(const geometry_msgs::Twist::ConstPtr& msg) {
   
-//}
+  // Base is nonholonomic, warn if sent a command we can't execute
+  if (msg->linear.y || msg->linear.z || msg->angular.x || msg->angular.y) {
+    ROS_WARN("Cannot use given position linear: [%d, %d, %d], angular: [%d, %d, %d]", msg->linear.x, msg->linear.y, msg->linear.z, msg->angular.x, msg->angular.y, msg->angular.z);
+    return;
+  }
+  
+  leftWheelMotor->motor->reset();
+  rightWheelMotor->motor->reset();
+
+}
 
 void mobile_base::Base::spin(){
 
