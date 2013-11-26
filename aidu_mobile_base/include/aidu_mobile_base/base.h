@@ -35,8 +35,8 @@ namespace aidu {
       ros::Publisher pospublisher; ///< The publisher for the position of the base
       ros::Publisher speedpublisher; ///< The publisher for the speed
       
-      double initialLeftPos = 0.0;
-      double initialRightPos = 0.0;
+      double initialLeftPos;
+      double initialRightPos;
       
       void resetPos();
       double getRightPos(); 

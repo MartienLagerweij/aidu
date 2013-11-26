@@ -13,13 +13,14 @@ mobile_base::Base::Base() : core::Node::Node() {
   
     // Read parameters from config file
     std::string motor_port_name, motor_config_name;
-    
     nh->getParam("motor_port", motor_port_name);
     nh->getParam("motor_config", motor_config_name);
     
     //creating left and right motor
     leftWheelMotor = new mobile_base::Motor("left", motor_port_name, motor_config_name);
     rightWheelMotor = new mobile_base::Motor("right", motor_port_name, motor_config_name);
+    initialLeftPos = 0.0;
+    initialRightPos = 0.0;
 
     //subscibing and pubishing position and speed topics
     possubscriber = nh->subscribe("pos", 1, &mobile_base::Base::pos, this);
