@@ -9,7 +9,7 @@
     <iposition>0.0</iposition>
     <dposition>0.0</dposition>
     <ilposition>5.0</ilposition>
-    <pspeed>0.01</pspeed>
+    <pspeed>0.1</pspeed>
     <ispeed>0.0</ispeed>
     <dspeed>0.25</dspeed>
     <ilspeed>0.0</ilspeed>
@@ -24,7 +24,7 @@
     <iposition>0.0</iposition>
     <dposition>0.0</dposition>
     <ilposition>5.0</ilposition>
-    <pspeed>0.01</pspeed>
+    <pspeed>0.1</pspeed>
     <ispeed>0.0</ispeed>
     <dspeed>0.25</dspeed>
     <ilspeed>0.0</ilspeed>
