@@ -97,7 +97,7 @@ void mobile_base::Base::posspeed(const geometry_msgs::Twist::ConstPtr& msg) {
   double KpA = 1.8;
   double KdA = 32.0;
   double maxAngularSpeed = 1.57;
-  double maxSpeed = 0.3;
+  double maxLinearSpeed = 0.3;
   
   // The message that will be sent
   geometry_msgs::Twist twist;
@@ -119,7 +119,7 @@ void mobile_base::Base::posspeed(const geometry_msgs::Twist::ConstPtr& msg) {
     prevErrorAngle = errorAngle;
     
     // Set twist message values, bounded by maximum speeds
-    twist.linear.x = std::max(-maxSpeed, std::min(maxSpeed, errorPos * KpL));
+    twist.linear.x = std::max(-maxLinearSpeed, std::min(maxLinearSpeed, errorPos * KpL));
     twist.angular.z = std::max(-maxAngularSpeed, std::min(maxAngularSpeed, errorAngle * KpA + derivative * KdA ));
     
     // Publish twist message
