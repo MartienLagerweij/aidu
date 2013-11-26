@@ -161,7 +161,7 @@ void mobile_base::Base::resetPos() {
 
 void mobile_base::Base::spin(){
 
-    ros::Rate rate(500); // rate at which position published (hertz)
+    ros::Rate rate(120); // rate at which position published (hertz)
     aidu_mobile_base::State state;
     int countdown = 15;
     while(ros::ok()) {
@@ -174,6 +174,7 @@ void mobile_base::Base::spin(){
         state.rightpos = getRightPos();
 	state.rightspeed = rightWheelMotor->motor->presentSpeed();
 	state.angle = getAngle();
+	
 	
 	// Only publish state when the motors have been recently active
 	if(state.rightspeed == 0 && state.leftspeed == 0) {
