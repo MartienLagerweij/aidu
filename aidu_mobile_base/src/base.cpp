@@ -79,7 +79,7 @@ void mobile_base::Base::speed(const geometry_msgs::Twist::ConstPtr& msg){
 
 void mobile_base::Base::spin(){
 
-    ros::Rate rate(2); // rate at which position published (hertz)
+    ros::Rate rate(30); // rate at which position published (hertz)
     aidu_mobile_base::State state;
     int countdown = 15;
     while(ros::ok()) {
