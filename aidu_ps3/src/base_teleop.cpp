@@ -15,7 +15,7 @@ ps3::TeleopBase::TeleopBase(): core::Node::Node() {
   joy_sub_ = nh->subscribe<sensor_msgs::Joy>("/joy", 1, &TeleopBase::joyCallback, this);
   ROS_INFO("teleop_base constructed");
   maxspeed=6.8*0.5*0.295; // m/s
-  maxangle=-3.14;	// rad/s 
+  maxangle=-2;	// rad/s 
 
 }
 
