@@ -96,12 +96,13 @@ void mobile_base::Base::posspeed(const geometry_msgs::Twist::ConstPtr& msg) {
   double epsilon = 0.01;
   double KpL = 1.0;
   double KpA = 1.8;
-  double KdA = 32.0;
+  double KdA = 40.0;
   double maxAngularSpeed = 1.57;
   double maxLinearSpeed = 0.3;
   
   // The message that will be sent
   geometry_msgs::Twist twist;
+  aidu_mobile_base::State state;
   
   // PD controller loop. This will exit when the error is smaller than epsilon
   ros::Rate loop(10);
@@ -123,12 +124,27 @@ void mobile_base::Base::posspeed(const geometry_msgs::Twist::ConstPtr& msg) {
     twist.linear.x = std::max(-maxLinearSpeed, std::min(maxLinearSpeed, errorPos * KpL));
     twist.angular.z = std::max(-maxAngularSpeed, std::min(maxAngularSpeed, errorAngle * KpA + derivative * KdA ));
     
-    // Publish twist message
+    
+    // Getting position, speed and angle
+    leftWheelMotor->motor->getPosAndSpeed();
+    state.leftpos = getLeftPos();
+    state.leftspeed = leftWheelMotor->motor->presentSpeed();
+    rightWheelMotor->motor->getPosAndSpeed();
+    state.rightpos = getRightPos();
+    state.rightspeed = rightWheelMotor->motor->presentSpeed();
+    state.angle = getAngle();
+    
+    
+    
+    // Publish twist and state messages
     speedpublisher.publish(twist);
+    pospublisher.publish(state);
     
     // Loop
     ros::spinOnce();
     loop.sleep();
+    
+    
   }
   
   // Ensure 0 speed at the end
