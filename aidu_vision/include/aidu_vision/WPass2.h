@@ -18,7 +18,9 @@ namespace aidu {
     ros::Subscriber sensormsg;
     ros::Publisher speedpublisher;
     ros::Publisher pospublisher;
-    double targetdistance,distance_between_sensors,middle_sensor_range; ///< distance from wall wanted (mm)
+    double targetdistance;
+    double distance_between_sensors,middle_sensor_range;
+    double targetangle,prevErrorAngle,maxAngularSpeed,maxLinearSpeed; ///< distance from wall wanted (mm)
     
     
     
