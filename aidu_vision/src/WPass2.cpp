@@ -14,16 +14,17 @@ SensorHandler::SensorHandler(): core::Node::Node(){
   // iniatilising values
   targetdistance=1;// (m)
   distance_between_sensors=0.5; // (m)
-  middle_sensor_range=1.5; // (m)
+  middle_sensor_range=0.8; // (m)
     
 }
 
 void SensorHandler::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr& sensormsg){
   ROS_INFO("received sensor data");
-  /*
+  double maxLinearSpeed=0.3,KpL=1.0;
+  
   // Setting distance from wall 
   geometry_msgs::Twist twist;
-  double presentdist,dist,distmiddle;
+  double speed,presentdist,errorPos,distmiddle;
   distmiddle=sensormsg->Frontmiddle;
   
   //reading distance from the wall
@@ -33,16 +34,16 @@ void SensorHandler::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr&
   }
   
   //calculting distance to move
-  dist=(presentdist-targetdistance); //(m)
-  twist.linear.x=dist;
+  errorPos=(presentdist-targetdistance); //(m)
+  twist.linear.x = std::max(-maxLinearSpeed, std::min(maxLinearSpeed, errorPos * KpL));
   //publishing distance message
-  pospublisher.publish(twist);
+  speedpublisher.publish(twist);
   ROS_INFO("published linear.x :%f",dist); 
   ros::spinOnce();
-  */
   
   
   
+  /*
   //Setting distance and angle
   geometry_msgs::Twist twist;
   double distleft,distright,distmiddle, diffdist,angle,dist;
@@ -66,7 +67,7 @@ void SensorHandler::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr&
   twist.angular.z=angle;
   speedpublisher.publish(twist);
   ros::spinOnce();
-  
+  */
   
 }
 
