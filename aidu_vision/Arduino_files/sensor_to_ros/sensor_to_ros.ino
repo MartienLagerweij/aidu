@@ -65,10 +65,10 @@ void loop()
   // Range: 20 to 150 cm
   // Value: 200 to 1500 (mm)
   // Attached to analog input 2
-// double sensor_value_ir_02 = analogRead(sensorpin_ir_02);
-// int dis_ir_02 = 100356.1342 * pow(sensor_value_ir_02, -0.97711388);
-// int dir_ir_02 = dir_ir_02 + 0.11999*dir_ir_02 /*- 18.91585*/;
-// distance.Left = dis_ir_02;
+ double sensor_value_ir_02 = analogRead(sensorpin_ir_02);
+ int dis_ir_02 = 100356.1342 * pow(sensor_value_ir_02, -0.97711388);
+ int dir_ir_02 = dir_ir_02 + 0.11999*dir_ir_02 /*- 18.91585*/;
+ distance.Left = dis_ir_02;
   
   
   // HC-SR04 ultrasonic clean
@@ -76,50 +76,50 @@ void loop()
   // Value: 20 to 4000 (mm)
   // Attached to digital 7 (echo, blue) and digital 8 (Trig, red) 
   
-  float duration_clean[4], dis_us_clean;
-  for(int i = 0; i < 3; i++){
-    digitalWrite(trigPin_clean, LOW);
-    delayMicroseconds(2);
-  
-    digitalWrite(trigPin_clean, HIGH);
-    delayMicroseconds(10);
-  
-    digitalWrite(trigPin_clean, LOW);
-    duration_clean[i] = pulseIn(echoPin_clean, HIGH);
-    //delayMicroseconds(60000);
-  } 
-  duration_clean[3] = (((duration_clean[0] + duration_clean[1] + duration_clean[2])/3));
-  dis_us_clean = (duration_clean[3] / 5.82 ) - 0.2979052982*(duration_clean[3] / 5.82 ) + 4.0456059645;
-  dis_us_clean = dis_us_clean + 0.1*dis_us_clean - 10;
-  distance.Frontright = dis_us_clean;
+//  float duration_clean[4], dis_us_clean;
+//  for(int i = 0; i < 3; i++){
+//    digitalWrite(trigPin_clean, LOW);
+//    delayMicroseconds(2);
+//  
+//    digitalWrite(trigPin_clean, HIGH);
+//    delayMicroseconds(10);
+//  
+//    digitalWrite(trigPin_clean, LOW);
+//    duration_clean[i] = pulseIn(echoPin_clean, HIGH);
+//    //delayMicroseconds(60000);
+//  } 
+//  duration_clean[3] = (((duration_clean[0] + duration_clean[1] + duration_clean[2])/3));
+//  dis_us_clean = (duration_clean[3] / 5.82 ) - 0.2979052982*(duration_clean[3] / 5.82 ) + 4.0456059645;
+//  dis_us_clean = dis_us_clean + 0.1*dis_us_clean - 10;
+//  distance.Frontright = dis_us_clean;
     //delayMicroseconds(60000);
   
   // HC-SR04 ultrasonic duct
   // Range: 2 to 400 cm
   // Value: 20 to 4000 (mm)
   // Attached to digital 12 (Echo, blue) and digital 13 (Trigger, red)
-  float duration_duct[4], dis_us_duct;
-  for(int i = 0; i < 3; i++){
-    digitalWrite(trigPin_duct, LOW);
-    delayMicroseconds(2);
-  
-    digitalWrite(trigPin_duct, HIGH);
-    delayMicroseconds(10);
-  
-    digitalWrite(trigPin_duct, LOW);
-    duration_duct[i] = pulseIn(echoPin_duct, HIGH);
-    //delayMicroseconds(60000);
-  } 
-  duration_duct[3] = (((duration_duct[0] + duration_duct[1] + duration_duct[2])/3));
-  dis_us_duct = (duration_duct[3] / 5.82 ) - 0.2979052982*(duration_duct[3] / 5.82 ) + 4.0456059645;
-  dis_us_duct = dis_us_duct + 0.1*dis_us_duct - 10; 
-  distance.Frontleft = dis_us_duct;
-  
-  
+//  float duration_duct[4], dis_us_duct;
+//  for(int i = 0; i < 3; i++){
+//    digitalWrite(trigPin_duct, LOW);
+//    delayMicroseconds(2);
+//  
+//    digitalWrite(trigPin_duct, HIGH);
+//    delayMicroseconds(10);
+//  
+//    digitalWrite(trigPin_duct, LOW);
+//    duration_duct[i] = pulseIn(echoPin_duct, HIGH);
+//    //delayMicroseconds(60000);
+//  } 
+//  duration_duct[3] = (((duration_duct[0] + duration_duct[1] + duration_duct[2])/3));
+//  dis_us_duct = (duration_duct[3] / 5.82 ) - 0.2979052982*(duration_duct[3] / 5.82 ) + 4.0456059645;
+//  dis_us_duct = dis_us_duct + 0.1*dis_us_duct - 10; 
+//  distance.Frontleft = dis_us_duct;
+//  
+//  
   
   // Publisher
   sensor_publisher.publish( &distance );
   nh.spinOnce();
-  delay(500);
+  delay(50);
 }
 

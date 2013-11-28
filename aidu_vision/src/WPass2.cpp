@@ -54,8 +54,9 @@ void SensorHandler::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr&
   
   // initialising
   double KpL = 1.5;
-  double KpA =2.0;
+  double KpA =0.5;
   double KdA = 30.0;
+  double epsilon=0.01;
   double distleft,distright,distmiddle, diffdist,angle,dist;
   
   //getting sensor data
@@ -85,9 +86,13 @@ void SensorHandler::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr&
   prevErrorAngle = errA;
     
   // Set twist message values, bounded by maximum speeds
+  if (errP>epsilon)
   twist.linear.x = std::max(-maxLinearSpeed, std::min(maxLinearSpeed, errP * KpL));
-  twist.angular.z = std::max(-maxAngularSpeed, std::min(maxAngularSpeed, errA * KpA + derivative * KdA ));
-  
+  if (dist<=1.5*targetdistance && errA>epsilon){
+    twist.angular.z = std::max(-maxAngularSpeed, std::min(maxAngularSpeed, errA * KpA + derivative * KdA ));
+  } else{
+    twist.angular.z=0.0;
+  }
   
   //publishing distances
   twist.linear.x=dist-targetdistance;
