@@ -16,6 +16,7 @@ SensorHandler::SensorHandler(): core::Node::Node(){
   distance_between_sensors=0.5; // (m)
   middle_sensor_range=0.8; // (m)
     
+  ROS_INFO("created sensor handler");  
 }
 
 void SensorHandler::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr& sensormsg){
@@ -38,7 +39,7 @@ void SensorHandler::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr&
   twist.linear.x = std::max(-maxLinearSpeed, std::min(maxLinearSpeed, errorPos * KpL));
   //publishing distance message
   speedpublisher.publish(twist);
-  ROS_INFO("published linear.x :%f",dist); 
+  ROS_INFO("published linear.x :%f",twist.linear.x); 
   ros::spinOnce();
   
   
