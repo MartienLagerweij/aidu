@@ -6,16 +6,16 @@
 
 using namespace aidu;
 
-mobile_base::Motor::Motor(char* name, std::string motor_port_name, std::string motor_config_name) {
+mobile_base::Motor::Motor(std::string name, std::string motor_port_name, std::string motor_config_name) {
     
     // Load motor configuration
     CXMLConfiguration motor_config_xml;
     motor_config_xml.loadFile(motor_config_name);
-
+    
     // ThreeMXL initialization
     // Create configuration
     config = new CDxlConfig();
-    config->readConfig(motor_config_xml.root().section(name));
+    config->readConfig(motor_config_xml.root().section(name.c_str()));
     
     this->name = name;
 
@@ -24,16 +24,16 @@ mobile_base::Motor::Motor(char* name, std::string motor_port_name, std::string m
     motor->setConfig(config);
     motor->init();
     motor->set3MxlMode(POSITION_MODE);
-    motor->setAcceleration(2.8);
     currentvel=0;
 
 }
 
 void mobile_base::Motor::setVelocity(float velocity) {
-  if (abs(velocity-currentvel)>0.02) {
-    currentvel=velocity;
+  if (fabs(velocity-currentvel) > 0.03) {
+    currentvel = velocity;
+    
     // Send velocity to the 3mxl board
-    ROS_INFO("%s: Setting velocity to %f", name, velocity);
+    ROS_INFO("%s: Setting velocity to %f", name.c_str(), velocity);
     
     // Check mode of 3mxl
     motor->get3MxlMode();
@@ -49,7 +49,7 @@ void mobile_base::Motor::setVelocity(float velocity) {
 void mobile_base::Motor::setPosition(float position) {
 
   // Send velocity to the 3mxl board
-  ROS_INFO("%s: Setting position to %f", name, position);
+  ROS_INFO("%s: Setting position to %f", name.c_str(), position);
   
   // Check mode of 3mxl
   motor->get3MxlMode();
