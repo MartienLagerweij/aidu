@@ -12,6 +12,7 @@
   <depend package="rosserial_arduino"/>
   <depend package="rosserial_python"/>
   <depend package="aidu_core"/>
+  <depend package="aidu_mobile_base"/>
 
 </package>
 

@@ -12,7 +12,6 @@
   <depend package="aidu_core"/>
   <depend package="threemxl"/>
   <depend package="std_msgs"/>
-
 </package>
 
 
