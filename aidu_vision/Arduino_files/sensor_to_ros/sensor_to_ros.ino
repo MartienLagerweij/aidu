@@ -10,7 +10,7 @@
  * Call the topic with: rostopic echo sensors
  */
  
- 
+
 #include <ros.h>
 #include <aidu_vision/DistanceSensors.h>
 #include <math.h>
@@ -42,23 +42,79 @@ void setup()
   pinMode(echoPin_clean, INPUT);
   pinMode(trigPin_duct, OUTPUT);
   pinMode(echoPin_duct, INPUT);
-  
 }
 
 void loop()
 {
-  // Sharp 041SK
-  // Range: 3 to 30 cm
-  // Value: 30 to 300 (mm)
-  // Attached to analog input 0
-  //double sensor_value_ir_41 = analogRead(sensorpin_ir_41);
-  //int dis_ir_41 = 27205.2633 * pow(sensor_value_ir_41, -1.0183);
-  //distance.Back = dis_ir_41;
   
-  // Sharp GP2D12
-  // Range: 10 to 80 cm
-  // Value: 100 to 800 (mm)
-  // Attached to analog input 1
+  // HC-SR04 ultrasonic clean
+  // Range: 2 to 400 cm
+  // Value: 20 to 4000 (mm)
+  // Attached to digital 7 (echo, blue) and digital 8 (Trig, red) 
+  distance.Frontright = ultrasonic(trigPin_clean, echoPin_clean);
+  
+  
+  // HC-SR04 ultrasonic duct
+  // Range: 2 to 400 cm
+  // Value: 20 to 4000 (mm)
+  // Attached to digital 12 (Echo, blue) and digital 13 (Trigger, red)
+  distance.Frontleft = ultrasonic(trigPin_duct, echoPin_duct);
+  
+  
+  
+  // Publisher
+  sensor_publisher.publish( &distance );
+  nh.spinOnce();
+  delay(50);
+}
+
+/**
+ * Measures distance from an ultrasonic sensor
+ */
+float ultrasonic(int triggerPin, int echoPin) {
+  float duration[5], distance;
+  for(int i = 0; i < 4; i++){
+    digitalWrite(triggerPin, LOW);
+    delayMicroseconds(2);
+  
+    digitalWrite(triggerPin, HIGH);
+    delayMicroseconds(10);
+  
+    digitalWrite(triggerPin, LOW);
+    duration[i] = pulseIn(echoPin, HIGH);
+    delayMicroseconds(60000);
+  } 
+  duration[4] = (((duration[0] + duration[1] + duration[2] + duration[3])/4));
+  distance = (duration[4] / 5.82 ) - 0.2979052982*(duration[4] / 5.82 ) + 4.0456059645;
+  distance = distance + 0.1*distance - 10; 
+  return distance;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Sharp 041SK
+// Range: 3 to 30 cm
+// Value: 30 to 300 (mm)
+// Attached to analog input 0
+//double sensor_value_ir_41 = analogRead(sensorpin_ir_41);
+//int dis_ir_41 = 27205.2633 * pow(sensor_value_ir_41, -1.0183);
+//distance.Back = dis_ir_41;
+
+// Sharp GP2D12
+// Range: 10 to 80 cm
+// Value: 100 to 800 (mm)
+// Attached to analog input 1
 //  double sensor_value_ir_12 = analogRead(sensorpin_ir_12);
 //  int dis_ir_12 = 38161.1739 * pow(sensor_value_ir_12, -0.9298) - 2936752.6632 * pow(sensor_value_ir_12,-2.2758995196);
 //  distance.Frontmiddle = dis_ir_12;
@@ -92,56 +148,3 @@ void loop()
 // int dir_ir_022 = dir_ir_022 + 0.11999*dir_ir_022 /*- 18.91585*/;
 // distance.Right = dis_ir_022;
 //  
-  
-  
-  // HC-SR04 ultrasonic clean
-  // Range: 2 to 400 cm
-  // Value: 20 to 4000 (mm)
-  // Attached to digital 7 (echo, blue) and digital 8 (Trig, red) 
-  
-  float duration_clean[5], dis_us_clean;
-  for(int i = 0; i < 4; i++){
-    digitalWrite(trigPin_clean, LOW);
-    delayMicroseconds(2);
-  
-    digitalWrite(trigPin_clean, HIGH);
-    delayMicroseconds(10);
-  
-    digitalWrite(trigPin_clean, LOW);
-    duration_clean[i] = pulseIn(echoPin_clean, HIGH);
-    delayMicroseconds(60000);
-  } 
-  duration_clean[4] = (((duration_clean[0] + duration_clean[1] + duration_clean[2]+duration_clean[3])/4));
-  dis_us_clean = (duration_clean[4] / 5.82 ) - 0.2979052982*(duration_clean[4] / 5.82 ) + 4.0456059645;
-  dis_us_clean = dis_us_clean + 0.1*dis_us_clean - 10;
-  distance.Frontright = dis_us_clean;
-  
-  // HC-SR04 ultrasonic duct
-  // Range: 2 to 400 cm
-  // Value: 20 to 4000 (mm)
-  // Attached to digital 12 (Echo, blue) and digital 13 (Trigger, red)
-  float duration_duct[5], dis_us_duct;
-  for(int i = 0; i < 4; i++){
-    digitalWrite(trigPin_duct, LOW);
-    delayMicroseconds(2);
-  
-    digitalWrite(trigPin_duct, HIGH);
-    delayMicroseconds(10);
-  
-    digitalWrite(trigPin_duct, LOW);
-    duration_duct[i] = pulseIn(echoPin_duct, HIGH);
-    delayMicroseconds(60000);
-  } 
-  duration_duct[4] = (((duration_duct[0] + duration_duct[1] + duration_duct[2]+duration_clean[3])/4));
-  dis_us_duct = (duration_duct[4] / 5.82 ) - 0.2979052982*(duration_duct[4] / 5.82 ) + 4.0456059645;
-  dis_us_duct = dis_us_duct + 0.1*dis_us_duct - 10; 
-  distance.Frontleft = dis_us_duct;
-  
-  
-  
-  // Publisher
-  sensor_publisher.publish( &distance );
-  nh.spinOnce();
-  delay(50);
-}
-
