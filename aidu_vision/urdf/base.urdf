@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<robot name="aidu">
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.46 0.57 0.09"/>
+      </geometry>
+    </visual>
+  </link>
+</robot>
