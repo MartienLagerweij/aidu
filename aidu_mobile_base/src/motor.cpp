@@ -16,7 +16,6 @@ mobile_base::Motor::Motor(std::string name, std::string motor_port_name, std::st
     // Create configuration
     config = new CDxlConfig();
     config->readConfig(motor_config_xml.root().section(name.c_str()));
-    
     this->name = name;
 
     // Create and configure 3mxl motor
@@ -24,41 +23,41 @@ mobile_base::Motor::Motor(std::string name, std::string motor_port_name, std::st
     motor->setConfig(config);
     motor->init();
     motor->set3MxlMode(POSITION_MODE);
-    currentvel=0;
+    currentVelocity = 0;
 
 }
 
 void mobile_base::Motor::setVelocity(float velocity) {
-  if (fabs(velocity-currentvel) > 0.01) {
-    currentvel = velocity;
-    
-    // Send velocity to the 3mxl board
-    ROS_INFO("%s: Setting velocity to %f", name.c_str(), velocity);
-    
-    // Check mode of 3mxl
-    motor->get3MxlMode();
-    if(motor->present3MxlMode() != SPEED_MODE){
-      motor->set3MxlMode(SPEED_MODE);
+    if (fabs(velocity-currentVelocity) > 0.01) {
+        currentVelocity = velocity;
+        
+        // Send velocity to the 3mxl board
+        ROS_INFO("%s: Setting velocity to %f", name.c_str(), velocity);
+        
+        // Check mode of 3mxl
+        motor->get3MxlMode();
+        if(motor->present3MxlMode() != SPEED_MODE){
+        motor->set3MxlMode(SPEED_MODE);
+        }
+        
+        // Send speed to 3mxl
+        motor->setSpeed(velocity);
     }
-    
-    // Send speed to 3mxl
-    motor->setSpeed(velocity);
-  }
 }
 
 void mobile_base::Motor::setPosition(float position) {
 
-  // Send velocity to the 3mxl board
-  ROS_INFO("%s: Setting position to %f", name.c_str(), position);
-  
-  // Check mode of 3mxl
-  motor->get3MxlMode();
-  if(motor->present3MxlMode() != POSITION_MODE){
-    motor->set3MxlMode(POSITION_MODE);
-  }
-  
-  // Send position to 3mxl
-  motor->setPos(position);
+    // Send velocity to the 3mxl board
+    ROS_INFO("%s: Setting position to %f", name.c_str(), position);
+    
+    // Check mode of 3mxl
+    motor->get3MxlMode();
+    if(motor->present3MxlMode() != POSITION_MODE){
+        motor->set3MxlMode(POSITION_MODE);
+    }
+    
+    // Send position to 3mxl
+    motor->setPos(position);
 }
 
 
