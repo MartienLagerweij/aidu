@@ -6,6 +6,14 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /RobotModel1/Links1
+        - /RobotModel1/Links1/base_link1
+        - /RobotModel1/Links1/camera_link1
+        - /RobotModel1/Links1/left_back_wheel_link1
+        - /RobotModel1/Links1/left_wheel_link1
+        - /RobotModel1/Links1/main_link1
+        - /RobotModel1/Links1/right_back_wheel_link1
+        - /RobotModel1/Links1/right_wheel_link1
       Splitter Ratio: 0.5
     Tree Height: 303
   - Class: rviz/Selection
@@ -26,7 +34,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -55,7 +63,7 @@ Visualization Manager:
       Links:
         All Links Enabled: true
         Expand Joint Details: false
-        Expand Link Details: false
+        Expand Link Details: true
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
         base_link:
@@ -66,7 +74,27 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        left_back_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        left_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         main_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_back_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_wheel_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -108,7 +136,7 @@ Visualization Manager:
       Value: true
   Enabled: true
   Global Options:
-    Background Color: 48; 48; 48
+    Background Color: 200; 200; 200
     Fixed Frame: base_link
     Frame Rate: 30
   Name: root
@@ -130,17 +158,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.05372
+      Distance: 3.2
       Focal Point:
         X: 0
         Y: 0
         Z: 0
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.510399
+      Pitch: 0.4
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.9654
+      Yaw: 3.5
     Saved: ~
 Window Geometry:
   Displays:

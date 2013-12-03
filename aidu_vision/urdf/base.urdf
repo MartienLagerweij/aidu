@@ -1,5 +1,35 @@
 <?xml version="1.0"?>
 <robot name="aidu" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="material_black">
+    <material name="black">
+      <color rgba="0.15 0.15 0.15 1" />
+    </material>
+  </xacro:macro>
+
+  <xacro:macro name="material_darkgrey">
+    <material name="darkgrey">
+      <color rgba="0.4 0.4 0.4 1" />
+    </material>
+  </xacro:macro>
+
+  <xacro:macro name="wheel" params="name offset radius">
+    <link name="${name}_link">
+      <visual>
+        <geometry>
+          <cylinder length="0.03" radius="${radius/2}" />
+        </geometry>
+        <origin xyz="0 0 0" rpy="1.5708 0 0" />
+        <xacro:material_black />
+      </visual>
+    </link>
+    <joint name="${name}_joint" type="continuous">
+      <parent link="base_link" />
+      <child link="${name}_link" />
+      <origin xyz="${offset} ${radius/2}" />
+    </joint>
+  </xacro:macro>
+
   <link name="base_link" />
   
   <link name="main_link">
@@ -7,11 +37,17 @@
       <geometry>
         <box size="0.57 0.46 0.08"/>
       </geometry>
+      <xacro:material_darkgrey />
     </visual>
   </link>
 
-  <link name="camera_link">
-  </link>
+  <xacro:wheel name="left_wheel" offset="0 -0.258" radius="0.297" />
+  <xacro:wheel name="right_wheel" offset="0 0.258" radius="0.297" />
+
+  <xacro:wheel name="left_back_wheel" offset="-0.44 -0.21" radius="0.10" />
+  <xacro:wheel name="right_back_wheel" offset="-0.44 0.21" radius="0.10" />
+
+  <link name="camera_link" />
   
   <joint name="base_main" type="fixed">
     <parent link="base_link" />
