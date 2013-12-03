@@ -20,11 +20,11 @@ SensorHandler::SensorHandler(): core::Node::Node(){
     i=0;
     correctionFactor=2.5;
     //control values
-    targetdistance=0.30;// (m)
+    targetdistance=0.40;// (m)
     targetangle=0;
     distance_between_sensors=0.37; // (m)
     maxAngularSpeed =5.0;
-    maxLinearSpeed=2.0;
+    maxLinearSpeed=1.5;
     
   //ROS_INFO("created sensor handler");  
 }
@@ -74,7 +74,7 @@ void SensorHandler::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr&
   geometry_msgs::Twist twist;
   
   // initialising
-  double KpL = 1.2;
+  double KpL = 1.5;
   double KdL=1.0;
   double KpA =1.7;
   double KdA = 10.0;
@@ -95,18 +95,23 @@ void SensorHandler::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr&
   double avgDistLeft=(prevDistLeft[0]+prevDistLeft[1]+prevDistLeft[2]+prevDistLeft[3])/4.0;
   double avgDistRight=(prevDistRight[0]+prevDistRight[1]+prevDistRight[2]+prevDistRight[3])/4.0;
   
+
+  double anglecorrection=0;
+  if (distleft>(correctionFactor*avgDistLeft)){
+    distleft=avgDistLeft;
+    anglecorrection=0.7;
+  }
+    if (distright>(correctionFactor*avgDistRight)){
+    distright=avgDistRight;
+    anglecorrection=-0.7;
+    }
+    
   //Remembering sensor data
   prevDistLeft[i]=distleft;
   prevDistRight[i]=distright;
   i++;
   if (i>=4)i=0;
   
-  if (distleft>(correctionFactor*avgDistLeft)){
-    distleft=avgDistLeft-avgDistLeft*0.2;
-  }
-    if (distright>(correctionFactor*avgDistRight)){
-    distright=avgDistRight-avgDistRight*0.2;
-    }
   ROS_INFO(" avg left:%f  avg right:%f",avgDistLeft,avgDistRight);
 
   
@@ -136,8 +141,8 @@ void SensorHandler::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr&
   if (fabs(errP)>epsilon){
     twist.linear.x = std::max(-maxLinearSpeed, std::min(maxLinearSpeed, errP * KpL));
   }
-  if (dist<=2.5*targetdistance && fabs(errA)>epsilon){
-    twist.angular.z = std::max(-maxAngularSpeed, std::min(maxAngularSpeed, errA * KpA + derivative * KdA ));
+  if (dist<=3.0*targetdistance && fabs(errA)>epsilon){
+    twist.angular.z = std::max(-maxAngularSpeed, std::min(maxAngularSpeed, errA * KpA + derivative * KdA +anglecorrection));
   } else{
     twist.angular.z=0.0;
   }
