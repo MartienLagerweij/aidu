@@ -14,7 +14,7 @@ namespace aidu {
   class LaserScanHandler : public aidu::core::Node {
   public:
     LaserScanHandler();
-    void LaserScanCallback(const aidu_vision::DistanceSensors::ConstPtr& scanmsg);///< handles the sensor input
+    void LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr& scanmsg);///< handles the sensor input
     
   protected:
     ros::Subscriber scanmsg,statesubscriber;
