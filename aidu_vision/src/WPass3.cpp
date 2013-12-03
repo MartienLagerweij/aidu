@@ -13,7 +13,7 @@ LaserScanHandler::LaserScanHandler(): core::Node::Node(){
   // iniatilising values
   
     //control values
-    targetdistance=0.90;// (m)
+    targetdistance=0.50;// (m)
     targetangle=0;
     
   //ROS_INFO("created sensor handler");  
@@ -27,20 +27,33 @@ void LaserScanHandler::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr&
   geometry_msgs::Twist twist;
   double range_min=scanmsg->range_min;
   double range_max=scanmsg->range_max;
+  double angle_increment=scanmsg->angle_increment;
   int size =(scanmsg->angle_max-scanmsg->angle_min)/(scanmsg->angle_increment);
   int number=0;
   double total=0,avg_dist=0;;
   
-  //calculating distance from wall
+  //transforming to x and y coordinates
+  double angle=scanmsg->angle_min;
+  double x[size],y[size];
   for (int i=0;i<=size;i++){
-    if(scanmsg->ranges[i]>=range_min && scanmsg->ranges[i]<=range_max){
-      total+=scanmsg->ranges[i];
-      number++;
-    }
+    y[i]=cos(angle)*scanmsg->ranges[i];
+    x[i]=sin(angle)*scanmsg->ranges[i];
+    angle+=angle_increment;
   }
-  if(number!=0)
-  avg_dist=total/number;
-  ROS_INFO("avg dist: %f  number:%d",avg_dist,number);
+  
+  //calculating distance from wall
+  avg_dist=average(y,size);
+  ROS_INFO("dist %f",avg_dist);
+  
+  //calculating angle of the wall
+  double diffdist[size-1];
+  for (int i=0;i<=size-1;i++){
+    diffdist[i]=(y[i]-y[i+1])/(x[i]-x[i+1]);
+  }
+  double avg_diffdist=average(diffdist,size-1);
+  double theta=atan(avg_diffdist);
+  ROS_INFO("theta:%f",theta);
+  
   // initialising control values
   double KpL = 1.5;
   double KdL=1.0;
@@ -49,14 +62,13 @@ void LaserScanHandler::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr&
   //calculating angle with wall
   
   //calculating errors
-  double errP;
+  double errP,errA;
   errP=avg_dist-targetdistance;
-  
+  errA=theta-targetangle;
   
   //sending speed to Base
   twist.linear.x=errP*KpL;
-  
-  
+  twist.angular.z=errA*KpA;
   
 
   ROS_INFO("speed:%f  angle:%f",twist.linear.x,twist.angular.z);
@@ -69,6 +81,22 @@ void LaserScanHandler::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr&
 
 
 
+double LaserScanHandler::average(double array[], int size){
+  double total=0;
+  int number=0;
+  for (int i=0;i<=size;i++){
+    if(isnan(array[i])==0){
+      total+=array[i];
+      number++;
+    }
+  }
+  if(number!=0){
+    return total/(double)number;}
+  else{
+      return(0);
+  }
+ 
+}
 
 
 

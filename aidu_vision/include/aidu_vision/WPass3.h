@@ -15,7 +15,7 @@ namespace aidu {
   public:
     LaserScanHandler();
     void LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr& scanmsg);///< handles the sensor input
-    
+    double average(double array[],int size);
   protected:
     ros::Subscriber scanmsg,statesubscriber;
     ros::Publisher speedpublisher;;
