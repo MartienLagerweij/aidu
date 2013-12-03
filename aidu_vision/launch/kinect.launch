@@ -1,4 +1,5 @@
 <launch>
+  <!-- Activate Kinect -->
   <include file="$(find freenect_launch)/launch/freenect.launch">
     <arg name="rgb_processing"                  value="false" />
     <arg name="ir_processing"                   value="false" />
@@ -7,14 +8,16 @@
     <arg name="disparity_processing"            value="false" />
     <arg name="disparity_registered_processing" value="false" />
   </include>
+
+  <!-- Activate Laser scanning -->
   <node name="depthimage_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" args="image:=/camera/depth/image_raw" output="screen">
     <param name="range_min" type="double" value="0.2" />
     <param name="range_max" type="double" value="10.0" />
     <param name="scan_height" type="int" value="3" />
   </node>
+
+  <!-- Create URDF tf -->
   <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-  </node>
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
-  </node>
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 </launch>
