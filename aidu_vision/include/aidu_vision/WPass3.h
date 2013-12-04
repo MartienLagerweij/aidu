@@ -18,7 +18,9 @@ namespace aidu {
     double average(double array[],int size);
   protected:
     ros::Subscriber scanmsg,statesubscriber;
-    ros::Publisher speedpublisher;;
+    ros::Publisher speedpublisher;
+    
+    ros::Time angularTime;
     double targetdistance,targetangle; ///< target position of the robot
     double maxAngularSpeed,maxLinearSpeed;///< maximum speed of the robot
   };

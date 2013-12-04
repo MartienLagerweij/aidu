@@ -32,7 +32,7 @@ void LaserScanHandler::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr&
   //transforming to x and y coordinates
   double angle=scanmsg->angle_min;
   double x[size],y[size];
-  for (int i=0;i<=size;i++){
+  for (int i=0;i<size;i++){
     y[i]=cos(angle)*scanmsg->ranges[i];
     x[i]=sin(angle)*scanmsg->ranges[i];
     angle+=angle_increment;
@@ -86,23 +86,46 @@ void LaserScanHandler::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr&
   */
   
   // Door de deur reiden
-  double baseWidth=0.8; // breedte van basis + marge 
-  double treshhold=1.0; // (m)
-  double kp=1.7;
+  double baseWidth=0.65; // breedte van basis + marge 
+  double treshhold = 1.2; // (m)
+  double speedThreshold = 0.6;
+  double minimumSpeed = 0.4;
+  double maximumSpeed = 1.0;
+  double kp= minimumSpeed * 4.25;
+  double kps = 1.0;
+  double mindist = 100000;
   double angleCorrectionleft=0.0,angleCorrectionright=0.0;
-  for (int i=0; i<=size; i++){
-    //ROS_INFO("x[%d]=%f  y[%d]=%f",i,x[i],i,y[i]);
+  twist.linear.x=0.8;
+  
+  
+  for (int i=0; i<size; i++){
+    //if(!isnan(y[i])) ROS_INFO("x[%d]=%f  y[%d]=%f",i,x[i],i,y[i]);
     if (x[i]>-baseWidth/2.0 && x[i]<-0.1 && y[i]<treshhold){
       angleCorrectionleft=std::min((y[i]-treshhold)*kp,angleCorrectionleft);
+      twist.linear.x=0.4;
     }
     if (x[i]<baseWidth/2.0 && x[i]>0.1 && y[i]<treshhold){
       angleCorrectionright=std::max((y[i]-treshhold)*-kp,angleCorrectionright);
+      twist.linear.x=0.4;
     }
+    if(!isnan(y[i])) {
+      mindist = std::min(y[i], mindist);
+    } 
+  }
+  if (mindist==100000){
+    mindist=0;
   }
   
-  
+  //ROS_INFO("mindist:%f", mindist);
+  if(angularTime.toSec() >  ros::Time::now().toSec() - 2.0) {
+    maximumSpeed = 0.4;
+    ROS_INFO("Restricting speed...");
+  }
+  twist.linear.x = std::max(minimumSpeed, std::min(maximumSpeed, (mindist-speedThreshold) * kps));
   twist.angular.z=angleCorrectionleft+angleCorrectionright;
-  twist.linear.x=0.4;
+  if(twist.angular.z != 0.0) {
+    angularTime = ros::Time::now();
+  }
   ROS_INFO("speed:%f  angle:%f",twist.linear.x,twist.angular.z);
   speedpublisher.publish(twist);
   ros::spinOnce();
