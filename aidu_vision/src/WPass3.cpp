@@ -23,14 +23,11 @@ LaserScanHandler::LaserScanHandler(): core::Node::Node(){
   
 void LaserScanHandler::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr& scanmsg){
   
-  //Position and angle control with Laserscan data
-  geometry_msgs::Twist twist;
+  //receiving Kinect data
   double range_min=scanmsg->range_min;
   double range_max=scanmsg->range_max;
   double angle_increment=scanmsg->angle_increment;
   int size =(scanmsg->angle_max-scanmsg->angle_min)/(scanmsg->angle_increment);
-  int number=0;
-  double total=0,avg_dist=0;;
   
   //transforming to x and y coordinates
   double angle=scanmsg->angle_min;
@@ -40,7 +37,14 @@ void LaserScanHandler::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr&
     x[i]=sin(angle)*scanmsg->ranges[i];
     angle+=angle_increment;
   }
+  geometry_msgs::Twist twist;
   
+  /*
+  //Position and angle control with Laserscan data
+  
+  int number=0;
+  double total=0,avg_dist=0;;
+ 
   //calculating distance from wall
   avg_dist=average(y,size);
   ROS_INFO("dist %f",avg_dist);
@@ -56,9 +60,9 @@ void LaserScanHandler::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr&
   
   // initialising control values
   double KpL = 1.5;
-  double KdL=1.0;
+  //double KdL=1.0;
   double KpA =1.7;
-  double KdA = 10.0;
+  //double KdA = 10.0;
   //calculating angle with wall
   
   //calculating errors
@@ -69,8 +73,36 @@ void LaserScanHandler::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr&
   //sending speed to Base
   twist.linear.x=errP*KpL;
   twist.angular.z=errA*KpA;
+   
+  // Basis laten stoppen als muur te dichtbij
+  double treshhold=0.1;
+  for (int i=0;i<=size;i++){
+    if(y[i]<treshhold){
+      twist.linear.x=0.0;
+      twist.angular.z=0.0;
+    }
+  }
   
-
+  */
+  
+  // Door de deur reiden
+  double baseWidth=0.8; // breedte van basis + marge 
+  double treshhold=1.0; // (m)
+  double kp=1.7;
+  double angleCorrectionleft=0.0,angleCorrectionright=0.0;
+  for (int i=0; i<=size; i++){
+    //ROS_INFO("x[%d]=%f  y[%d]=%f",i,x[i],i,y[i]);
+    if (x[i]>-baseWidth/2.0 && x[i]<-0.1 && y[i]<treshhold){
+      angleCorrectionleft=std::min((y[i]-treshhold)*kp,angleCorrectionleft);
+    }
+    if (x[i]<baseWidth/2.0 && x[i]>0.1 && y[i]<treshhold){
+      angleCorrectionright=std::max((y[i]-treshhold)*-kp,angleCorrectionright);
+    }
+  }
+  
+  
+  twist.angular.z=angleCorrectionleft+angleCorrectionright;
+  twist.linear.x=0.4;
   ROS_INFO("speed:%f  angle:%f",twist.linear.x,twist.angular.z);
   speedpublisher.publish(twist);
   ros::spinOnce();
