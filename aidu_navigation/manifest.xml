@@ -1,0 +1,15 @@
+<package>
+  <description brief="aidu_navigation">
+
+     Aidu navigation package
+
+  </description>
+  <author>Rolf Jagerman</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/aidu_navigation</url>
+  <depend package="roscpp"/>
+
+</package>
+
+
