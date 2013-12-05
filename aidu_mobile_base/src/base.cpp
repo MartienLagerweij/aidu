@@ -29,6 +29,8 @@ mobile_base::Base::Base() : core::Node::Node() {
     speedSubscriber = nh->subscribe("speed", 1, &mobile_base::Base::speed, this);
     positionSpeedSubscriber = nh->subscribe("posspeed", 1, &mobile_base::Base::positionSpeed, this);
     configSubscriber = nh->subscribe("config", 1, &mobile_base::Base::setConfig, this);
+    leftWheelSubscriber = nh->subscribe("/lwheel_vtarget", 1, &mobile_base::Base::leftWheelSpeed, this);
+    rightWheelSubscriber = nh->subscribe("/rwheel_vtarget", 1, &mobile_base::Base::rightWheelSpeed, this);
     
     // Publishing 
     speedPublisher = nh->advertise<geometry_msgs::Twist>("speed", 1);
@@ -36,12 +38,25 @@ mobile_base::Base::Base() : core::Node::Node() {
     maximumLinearVelocity = 1;
     maximumAngularVelocity = 2;
     
+    // Odometry information
+    currentX = 0.0;
+    currentY = 0.0;
+    currentTheta = 0.0;
+    
     // Get sizes from launch parameters
     nh->getParam("wheel_base", radiusBase);
     radiusBase *= 0.5;
     nh->getParam("wheel_diameter", radiusWheel);
     radiusWheel *= 0.5;
   
+}
+
+void mobile_base::Base::leftWheelSpeed(const std_msgs::Float32::ConstPtr& msg) {
+    leftWheelMotor->setVelocity(msg->data / radiusWheel);
+}
+
+void mobile_base::Base::rightWheelSpeed(const std_msgs::Float32::ConstPtr& msg) {
+    rightWheelMotor->setVelocity(msg->data / radiusWheel);
 }
 
 void mobile_base::Base::position(const geometry_msgs::Twist::ConstPtr& msg) {
@@ -198,35 +213,44 @@ void mobile_base::Base::resetPos() {
     initialRightPos = rightWheelMotor->motor->presentLinearPos();
 }
 
-void mobile_base::Base::spin(){
-
-    ros::Rate rate(120); // rate at which position published (hertz)
+void mobile_base::Base::publishState() {
+    
+    // Initialize
     aidu_mobile_base::State state;
     int countdown = 15;
+    
+    // Getting position, speed and angle
+    leftWheelMotor->motor->getPosAndSpeed();
+    state.leftpos = getLeftPos();
+    state.leftspeed = leftWheelMotor->motor->presentSpeed();
+    rightWheelMotor->motor->getPosAndSpeed();
+    state.rightpos = getRightPos();
+    state.rightspeed = rightWheelMotor->motor->presentSpeed();
+    state.angle = getAngle();
+    
+    // Only publish state when the motors have been recently active
+    if(state.rightspeed == 0 && state.leftspeed == 0) {
+        if(countdown > 0) {
+        countdown--;
+        }
+    } else {
+        countdown = 15;
+    }
+    if(countdown > 0) {
+        statePublisher.publish(state);
+    }
+    
+}
+
+void mobile_base::Base::spin(){
+
+    ros::Rate rate(30); // rate at which position published (hertz)
+    resetPos(); // Reset the position initially
+    
     while(ros::ok()) {
       
-        // Getting position, speed and angle
-        leftWheelMotor->motor->getPosAndSpeed();
-        state.leftpos = getLeftPos();
-        state.leftspeed = leftWheelMotor->motor->presentSpeed();
-        rightWheelMotor->motor->getPosAndSpeed();
-        state.rightpos = getRightPos();
-        state.rightspeed = rightWheelMotor->motor->presentSpeed();
-        state.angle = getAngle();
-        
-        // Only publish state when the motors have been recently active
-        if(state.rightspeed == 0 && state.leftspeed == 0) {
-            if(countdown > 0) {
-            countdown--;
-            }
-        } else {
-            countdown = 15;
-        }
-        if(countdown > 0) {
-            statePublisher.publish(state);
-        } else {
-            resetPos();
-        }
+        // Publish information
+        publishState();
         
         // Spin ros
         ros::spinOnce();

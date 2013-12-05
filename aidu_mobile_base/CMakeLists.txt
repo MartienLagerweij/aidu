@@ -30,3 +30,4 @@ rosbuild_genmsg()
 #target_link_libraries(example ${PROJECT_NAME})
 
 rosbuild_add_executable(base src/base.cpp src/motor.cpp)
+rosbuild_add_executable(odom src/odometry.cpp)
