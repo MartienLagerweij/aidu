@@ -1,0 +1,16 @@
+<package>
+  <description brief="aidu_transforms">
+
+     TF transformations for aidu
+
+  </description>
+  <author>Rolf Jagerman</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/aidu_transforms</url>
+  <depend package="joint_state_publisher"/>
+  <depend package="robot_state_publisher"/>
+
+</package>
+
+

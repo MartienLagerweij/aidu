@@ -4,9 +4,16 @@
   <include file="$(find aidu_card_scanner)/launch/card_scanner.launch" />
   <include file="$(find aidu_gui)/launch/gui.launch" />
   -->
-  <!-- Navigation
+
+  <!-- Robot transforms -->
+  <include file="$(find aidu_transforms)/launch/transforms.launch" />
+
+  <!-- Vision -->
+  <include file="$(find aidu_vision)/launch/kinect.launch" />
+
+  <!-- Navigation -->
   <include file="$(find aidu_mobile_base)/launch/base.launch" />
   <include file="$(find aidu_navigation)/launch/navigation.launch" />
-  -->
+  
 </launch>
 
