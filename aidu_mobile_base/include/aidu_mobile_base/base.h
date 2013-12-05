@@ -7,6 +7,7 @@
 #include <aidu_mobile_base/Pos.h>
 #include <aidu_mobile_base/Config.h>
 #include <geometry_msgs/Twist.h>
+#include <std_msgs/Float32.h>
 
 namespace aidu {
     namespace mobile_base {
