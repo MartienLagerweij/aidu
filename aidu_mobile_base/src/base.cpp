@@ -185,7 +185,7 @@ void mobile_base::Base::setConfig(const aidu_mobile_base::Config::ConstPtr& msg)
 }
 
 double mobile_base::Base::getAngle() {
-    return ((getLeftPos() / radiusBase)-(getRightPos() / radiusBase)) / 2.0;
+    return ((getRightPos() / radiusBase) - (getLeftPos() / radiusBase)) / 2.0;
 }
 
 double mobile_base::Base::getLeftPos() {
