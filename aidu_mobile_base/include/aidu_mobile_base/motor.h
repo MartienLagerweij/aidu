@@ -12,7 +12,7 @@ namespace aidu {
     class Motor {
     public:
       
-      Motor(std::string name, std::string motor_port_name, std::string motor_config_name);
+      Motor(std::string name, std::string motor_port_name, std::string motor_config_name, double radiusWheel);
       std::string name;
       ~Motor();
       void setVelocity(float velocity); ///< Sets the velocity of the motor

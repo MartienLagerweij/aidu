@@ -18,9 +18,15 @@ mobile_base::Base::Base() : core::Node::Node() {
     nh->getParam("motor_port", motor_port_name);
     nh->getParam("motor_config", motor_config_name);
     
+    // Get sizes from launch parameters
+    nh->getParam("wheel_base", radiusBase);
+    radiusBase *= 0.5;
+    nh->getParam("wheel_diameter", radiusWheel);
+    radiusWheel *= 0.5;
+    
     //creating left and right motor
-    leftWheelMotor = new mobile_base::Motor("left", motor_port_name, motor_config_name);
-    rightWheelMotor = new mobile_base::Motor("right", motor_port_name, motor_config_name);
+    leftWheelMotor = new mobile_base::Motor("left", motor_port_name, motor_config_name, radiusWheel);
+    rightWheelMotor = new mobile_base::Motor("right", motor_port_name, motor_config_name, radiusWheel);
     initialLeftPos = 0.0;
     initialRightPos = 0.0;
 
@@ -42,12 +48,6 @@ mobile_base::Base::Base() : core::Node::Node() {
     currentX = 0.0;
     currentY = 0.0;
     currentTheta = 0.0;
-    
-    // Get sizes from launch parameters
-    nh->getParam("wheel_base", radiusBase);
-    radiusBase *= 0.5;
-    nh->getParam("wheel_diameter", radiusWheel);
-    radiusWheel *= 0.5;
   
 }
 
