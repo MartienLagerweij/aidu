@@ -1,0 +1,9 @@
+1. Run aidu.launch
+
+2. Run rqt (open rviz configuration)
+
+3. Run the following commands in a separate terminal
+rosparam set use_sim_time true                          
+rosbag play mylaserscandata.bag --clock
+
+
