@@ -20,8 +20,8 @@ LaserScanCombination::LaserScanCombination(): core::Node::Node(){
   
   void LaserScanCombination::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr& scanmsg){
     // Distance sensor position
-    const double xSensor=0.3; 	// x distance from kinect
-    const double ySensor=0.3;	// y distance from kinect
+    const double xSensor=0.23; 	// x distance from kinect
+    const double ySensor=0.38;	// y distance from kinect
     const double rMin=sqrt(pow(xSensor,2)+pow(ySensor,2));
     const double thetaMax=asin(ySensor/rMin)+1.5705;
     ROS_INFO("thetamax:%f",thetaMax);
@@ -59,8 +59,8 @@ LaserScanCombination::LaserScanCombination(): core::Node::Node(){
     ROS_INFO("thetaleft:%f    thetaright:%f",thetaLeft,thetaRight);
     
     // Adding ultrasonic sensor data in the laserscan array
-    int posLeft=floor((thetaMax-thetaLeft)/angle_increment);
-    int posRight=totalsize-ceil((thetaMax-thetaRight)/angle_increment);
+    int posLeft=totalsize-ceil((thetaMax-thetaLeft)/angle_increment);
+    int posRight=floor((thetaMax-thetaRight)/angle_increment);
     ROS_INFO("posleft=%d    posright:%d",posLeft,posRight);
     ranges[posLeft]=distLeft;
     ranges[posRight]=distRight;
