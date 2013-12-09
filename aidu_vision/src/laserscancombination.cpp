@@ -31,6 +31,7 @@ LaserScanCombination::LaserScanCombination(): core::Node::Node(){
     double angle_max=scanmsg->angle_max;
     double angle_increment=scanmsg->angle_increment;
     int size =(scanmsg->angle_max-scanmsg->angle_min)/(scanmsg->angle_increment);
+    ROS_INFO("size:%d", size);
   
     //adding left and right sensor data to laserscan
     int negaddionalPoints=floor((thetaMax+angle_min)/angle_increment);
@@ -64,9 +65,8 @@ LaserScanCombination::LaserScanCombination(): core::Node::Node(){
     ranges[posLeft]=distLeft;
     ranges[posRight]=distRight;
     
-    
-    std::vector<float> ranges2 (ranges, ranges + sizeof(ranges) / sizeof(float));
-    delete[] ranges;
+    ROS_INFO("sizeof:%d", sizeof(ranges));
+    std::vector<float> ranges2 (ranges, ranges + totalsize);
   
     //setting new laserscan msg
     scanmsg2.angle_min=-thetaMax;
@@ -81,6 +81,9 @@ LaserScanCombination::LaserScanCombination(): core::Node::Node(){
     scanmsg2.header.stamp=scanmsg2.header.stamp;
     scanmsg2.intensities=scanmsg->intensities;
     laserscanpublisher.publish(scanmsg2);
+    
+    
+    delete[] ranges;
   }
   
   int main(int argc, char** argv) {

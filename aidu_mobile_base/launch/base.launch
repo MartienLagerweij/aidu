@@ -1,5 +1,12 @@
 <launch>
 
+    <!-- Shared serial communication with threemxl -->
+    <node name="motor_comm" pkg="shared_serial" type="server" output="screen">
+        <param name="port_name" value="/dev/ttyUSB0"/>
+        <param name="port_type" value="RS485_FTDI"/>
+        <param name="baud_rate" value="921600"/>
+    </node>
+
     <!-- Mobile base node -->
     <node name="base" pkg="aidu_mobile_base" type="base" output="screen" respawn="false">
         <!-- launch-prefix="gdb -ex run - -args" -->
@@ -7,13 +14,6 @@
         <param name="motor_config" value="$(find aidu_mobile_base)/config/mobile_base.xml"/>
         <param name="wheel_diameter" value="0.289"/>
         <param name="wheel_base" value="0.554"/>
-    </node>
-
-    <!-- Shared serial communication with threemxl -->
-    <node name="motor_comm" pkg="shared_serial" type="server" output="screen">
-        <param name="port_name" value="/dev/ttyUSB0"/>
-        <param name="port_type" value="RS485_FTDI"/>
-        <param name="baud_rate" value="921600"/>
     </node>
     
     <!-- Odometry node -->
