@@ -51,14 +51,14 @@ void loop()
   // Range: 2 to 400 cm
   // Value: 20 to 4000 (mm)
   // Attached to digital 7 (echo, blue) and digital 8 (Trig, red) 
-  distance.Frontright = ultrasonic(trigPin_clean, echoPin_clean);
+  distance.Right = ultrasonic(trigPin_clean, echoPin_clean);
   
   
   // HC-SR04 ultrasonic duct
   // Range: 2 to 400 cm
   // Value: 20 to 4000 (mm)
   // Attached to digital 12 (Echo, blue) and digital 13 (Trigger, red)
-  distance.Frontleft = ultrasonic(trigPin_duct, echoPin_duct);
+  distance.Left = ultrasonic(trigPin_duct, echoPin_duct);
   
   
   

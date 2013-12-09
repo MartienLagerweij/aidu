@@ -14,12 +14,17 @@ LaserScanCombination::LaserScanCombination(): core::Node::Node(){
 }
 
   void LaserScanCombination::DistCallback(const aidu_vision::DistanceSensors::ConstPtr& distmsg){
-    distLeft=distmsg->Left;
-    distRight=distmsg->Right;
+    distLeft=distmsg->Left/1000.0;
+    distRight=distmsg->Right/1000.0;
   }
   
   void LaserScanCombination::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr& scanmsg){
-    
+    // Distance sensor position
+    const double xSensor=0.3; 	// x distance from kinect
+    const double ySensor=0.3;	// y distance from kinect
+    const double rMin=sqrt(pow(xSensor,2)+pow(ySensor,2));
+    const double thetaMax=asin(ySensor/rMin)+1.5705;
+    ROS_INFO("thetamax:%f",thetaMax);
     //getting lasercan data
     sensor_msgs::LaserScan scanmsg2;
     double angle_min=scanmsg->angle_min;
@@ -28,34 +33,44 @@ LaserScanCombination::LaserScanCombination(): core::Node::Node(){
     int size =(scanmsg->angle_max-scanmsg->angle_min)/(scanmsg->angle_increment);
   
     //adding left and right sensor data to laserscan
-    int negaddionalPoints=ceil((1.5705+angle_min)/angle_increment);
-    int posaddionalPoints=ceil((1.5705-angle_max)/angle_increment);
-    ROS_INFO("negaddi:%d    posaddi:%d  total:%d",negaddionalPoints,posaddionalPoints,(negaddionalPoints+posaddionalPoints+size));
-    float ranges[1985];
+    int negaddionalPoints=floor((thetaMax+angle_min)/angle_increment);
+    int posaddionalPoints=ceil((thetaMax-angle_max)/angle_increment);
+    int totalsize=negaddionalPoints+size+posaddionalPoints;
+    ROS_INFO("totalsize:%d",totalsize);
+    //Copying laser scan data to new array filled with NaNs
+    float* ranges = new float[totalsize];
     
-    //std::vector<float> ranges3;
-    
-    ranges[0]=distRight;
-    for (int i=1;i<negaddionalPoints;i++){
-      //ranges3.assign(i, std::numeric_limits<float>::quiet_NaN());
+    for (int i=0;i<negaddionalPoints;i++){
       ranges[i]=std::numeric_limits<double>::quiet_NaN();
     }
     for (int i=negaddionalPoints;i<(negaddionalPoints+size);i++){
-      //ranges3.assign(i, scanmsg->ranges[i]);
       ranges[i]=scanmsg->ranges[i-negaddionalPoints];
     }
-    for (int i=(negaddionalPoints+size);i<(negaddionalPoints+size+posaddionalPoints-1);i++){
+    for (int i=(negaddionalPoints+size);i<(totalsize);i++){
       ranges[i]=std::numeric_limits<double>::quiet_NaN();
     }
-    ranges[(negaddionalPoints+size+posaddionalPoints-1)]=distLeft;
+    
+    //transforming coordinate frame of the ultrasonic sensor data to lasercan frame
+    double rLeft=sqrt(pow((xSensor+distLeft),2)+pow(ySensor,2));
+    double rRight=sqrt(pow((xSensor+distRight),2)+pow(ySensor,2));
+    double thetaLeft=asin(ySensor/rLeft)+1.5705;
+    double thetaRight=asin(ySensor/rRight)+1.5705;
+    ROS_INFO("thetaleft:%f    thetaright:%f",thetaLeft,thetaRight);
+    
+    // Adding ultrasonic sensor data in the laserscan array
+    int posLeft=floor((thetaMax-thetaLeft)/angle_increment);
+    int posRight=totalsize-ceil((thetaMax-thetaRight)/angle_increment);
+    ROS_INFO("posleft=%d    posright:%d",posLeft,posRight);
+    ranges[posLeft]=distLeft;
+    ranges[posRight]=distRight;
     
     
     std::vector<float> ranges2 (ranges, ranges + sizeof(ranges) / sizeof(float));
-  
+    delete[] ranges;
   
     //setting new laserscan msg
-    scanmsg2.angle_min=-1.5705;
-    scanmsg2.angle_max=-1.5705+1985*angle_increment;
+    scanmsg2.angle_min=-thetaMax;
+    scanmsg2.angle_max=-thetaMax+totalsize*angle_increment;
     scanmsg2.ranges=ranges2;
     scanmsg2.angle_increment=scanmsg->angle_increment;
     scanmsg2.range_max=scanmsg->range_max;
