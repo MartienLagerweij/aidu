@@ -12,8 +12,8 @@
         <!-- launch-prefix="gdb -ex run - -args" -->
         <param name="motor_port" value="motor_comm"/>
         <param name="motor_config" value="$(find aidu_mobile_base)/config/mobile_base.xml"/>
-        <param name="wheel_diameter" value="0.01"/>
-        <param name="wheel_base" value="0.554"/>
+        <param name="wheel_diameter" value="0.286"/>
+        <param name="wheel_base" value="0.528"/>
     </node>
     
     <!-- Odometry node -->
