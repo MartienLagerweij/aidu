@@ -21,7 +21,8 @@
     
     <!-- Start twist to motors to execute differential drive on robot -->
     <node name="twist_to_motors" pkg="differential_drive" type="twist_to_motors.py">
-            <rosparam param="base_width">0.54</rosparam>
+            <rosparam param="base_width">0.528</rosparam>
+            <remap from="twist" to="cmd_vel"/>
     </node>
 
 </launch>
