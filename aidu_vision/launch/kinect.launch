@@ -14,7 +14,7 @@
   <!-- Activate Laser scanning -->
   <node name="depthimage_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" args="image:=/camera/depth/image_raw" output="screen">
     <param name="range_min" type="double" value="0.2" />
-    <param name="range_max" type="double" value="10.0" />
+    <param name="range_max" type="double" value="6.0" />
     <param name="scan_height" type="int" value="3" />
   </node>
   <node name="arduino_serial" pkg="rosserial_python" type="serial_node2.py" args="/dev/ttyACM0" output="screen">
