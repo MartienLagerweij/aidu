@@ -20,9 +20,9 @@ mobile_base::Motor::Motor(std::string name, std::string motor_port_name, std::st
 
     // Create and configure 3mxl motor
     motor = new C3mxlROS(motor_port_name.c_str());
-    motor->setWheelDiameter(radiusWheel * 2.0);
     motor->setConfig(config);
     motor->init();
+    motor->setWheelDiameter(radiusWheel * 2.0);
     motor->set3MxlMode(POSITION_MODE);
     currentVelocity = 0;
 
