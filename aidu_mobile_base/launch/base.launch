@@ -20,9 +20,9 @@
     <node name="odometry" pkg="aidu_mobile_base" type="odom" output="screen" />
     
     <!-- Start twist to motors to execute differential drive on robot -->
-    <node name="twist_to_motors" pkg="differential_drive" type="twist_to_motors.py">
+    <!-- <node name="twist_to_motors" pkg="differential_drive" type="twist_to_motors.py">
             <rosparam param="base_width">0.528</rosparam>
             <remap from="twist" to="cmd_vel"/>
-    </node>
+    </node> -->
 
 </launch>

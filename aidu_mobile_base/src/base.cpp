@@ -32,7 +32,7 @@ mobile_base::Base::Base() : core::Node::Node() {
 
     // Subscribing
     positionSubscriber = nh->subscribe("pos", 1, &mobile_base::Base::position, this);
-    speedSubscriber = nh->subscribe("speed", 1, &mobile_base::Base::speed, this);
+    speedSubscriber = nh->subscribe("/cmd_vel", 1, &mobile_base::Base::speed, this);
     positionSpeedSubscriber = nh->subscribe("posspeed", 1, &mobile_base::Base::positionSpeed, this);
     configSubscriber = nh->subscribe("config", 1, &mobile_base::Base::setConfig, this);
     leftWheelSubscriber = nh->subscribe("/lwheel_vtarget", 1, &mobile_base::Base::leftWheelSpeed, this);
