@@ -25,6 +25,7 @@ LaserScanCombination::LaserScanCombination(): core::Node::Node(){
     const double rMin=sqrt(pow(xSensor,2)+pow(ySensor,2));
     const double thetaMax=asin(ySensor/rMin)+1.5705;
     ROS_INFO("thetamax:%f",thetaMax);
+    
     //getting lasercan data
     sensor_msgs::LaserScan scanmsg2;
     double angle_min=scanmsg->angle_min;
@@ -62,8 +63,8 @@ LaserScanCombination::LaserScanCombination(): core::Node::Node(){
     int posLeft=totalsize-ceil((thetaMax-thetaLeft)/angle_increment);
     int posRight=floor((thetaMax-thetaRight)/angle_increment);
     ROS_INFO("posleft=%d    posright:%d",posLeft,posRight);
-    ranges[posLeft]=distLeft;
-    ranges[posRight]=distRight;
+    ranges[posLeft]=rLeft;
+    ranges[posRight]=rRight;
     
     ROS_INFO("sizeof:%d", sizeof(ranges));
     std::vector<float> ranges2 (ranges, ranges + totalsize);
