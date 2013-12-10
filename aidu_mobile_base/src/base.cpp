@@ -217,7 +217,6 @@ void mobile_base::Base::publishState() {
     
     // Initialize
     aidu_mobile_base::State state;
-    int countdown = 15;
     
     // Getting position, speed and angle
     leftWheelMotor->motor->getPosAndSpeed();
