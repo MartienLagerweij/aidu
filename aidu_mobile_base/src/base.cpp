@@ -228,17 +228,7 @@ void mobile_base::Base::publishState() {
     state.rightspeed = rightWheelMotor->motor->presentSpeed();
     state.angle = getAngle();
     
-    // Only publish state when the motors have been recently active
-    if(state.rightspeed == 0 && state.leftspeed == 0) {
-        if(countdown > 0) {
-        countdown--;
-        }
-    } else {
-        countdown = 15;
-    }
-    if(countdown > 0) {
-        statePublisher.publish(state);
-    }
+    statePublisher.publish(state);
     
 }
 
