@@ -24,7 +24,7 @@ LaserScanCombination::LaserScanCombination(): core::Node::Node(){
     const double ySensor=0.38;	// y distance from kinect
     const double rMin=sqrt(pow(xSensor,2)+pow(ySensor,2));
     const double thetaMax=asin(ySensor/rMin)+1.5705;
-    ROS_INFO("thetamax:%f",thetaMax);
+    //ROS_INFO("thetamax:%f",thetaMax);
     
     //getting lasercan data
     sensor_msgs::LaserScan scanmsg2;
@@ -38,7 +38,8 @@ LaserScanCombination::LaserScanCombination(): core::Node::Node(){
     int negaddionalPoints=floor((thetaMax+angle_min)/angle_increment);
     int posaddionalPoints=ceil((thetaMax-angle_max)/angle_increment);
     int totalsize=negaddionalPoints+size+posaddionalPoints;
-    ROS_INFO("totalsize:%d",totalsize);
+    //ROS_INFO("totalsize:%d",totalsize);
+    
     //Copying laser scan data to new array filled with NaNs
     float* ranges = new float[totalsize];
     
@@ -57,16 +58,20 @@ LaserScanCombination::LaserScanCombination(): core::Node::Node(){
     double rRight=sqrt(pow((xSensor+distRight),2)+pow(ySensor,2));
     double thetaLeft=asin(ySensor/rLeft)+1.5705;
     double thetaRight=asin(ySensor/rRight)+1.5705;
-    ROS_INFO("thetaleft:%f    thetaright:%f",thetaLeft,thetaRight);
+    //ROS_INFO("thetaleft:%f    thetaright:%f",thetaLeft,thetaRight);
     
     // Adding ultrasonic sensor data in the laserscan array
     int posLeft=totalsize-ceil((thetaMax-thetaLeft)/angle_increment);
     int posRight=floor((thetaMax-thetaRight)/angle_increment);
-    ROS_INFO("posleft=%d    posright:%d",posLeft,posRight);
-    ranges[posLeft]=rLeft;
-    ranges[posRight]=rRight;
+    //ROS_INFO("posleft=%d    posright:%d",posLeft,posRight);
     
-    ROS_INFO("sizeof:%d", sizeof(ranges));
+    if (distLeft<4.0){
+      ranges[posLeft]=rLeft;
+    }
+    if (distRight<4.0){
+      ranges[posRight]=rRight;
+    }
+    
     std::vector<float> ranges2 (ranges, ranges + totalsize);
   
     //setting new laserscan msg
