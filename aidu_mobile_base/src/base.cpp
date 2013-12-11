@@ -2,7 +2,8 @@
 #include <aidu_mobile_base/base.h>
 #include <aidu_mobile_base/Pos.h>
 #include <geometry_msgs/Twist.h>
-#include <aidu_mobile_base/State.h>
+#include <geometry_msgs/Transform.h>
+#include <aidu_mobile_base/BaseState.h>
 #include <threemxl/dxlassert.h>
 #include <math.h>
 #include <algorithm>
@@ -27,27 +28,18 @@ mobile_base::Base::Base() : core::Node::Node() {
     //creating left and right motor
     leftWheelMotor = new mobile_base::Motor("left", motor_port_name, motor_config_name, radiusWheel);
     rightWheelMotor = new mobile_base::Motor("right", motor_port_name, motor_config_name, radiusWheel);
-    initialLeftPos = 0.0;
-    initialRightPos = 0.0;
 
     // Subscribing
     positionSubscriber = nh->subscribe("pos", 1, &mobile_base::Base::position, this);
     speedSubscriber = nh->subscribe("/cmd_vel", 1, &mobile_base::Base::speed, this);
-    positionSpeedSubscriber = nh->subscribe("posspeed", 1, &mobile_base::Base::positionSpeed, this);
-    configSubscriber = nh->subscribe("config", 1, &mobile_base::Base::setConfig, this);
+    //configSubscriber = nh->subscribe("config", 1, &mobile_base::Base::setConfig, this);
     leftWheelSubscriber = nh->subscribe("/lwheel_vtarget", 1, &mobile_base::Base::leftWheelSpeed, this);
     rightWheelSubscriber = nh->subscribe("/rwheel_vtarget", 1, &mobile_base::Base::rightWheelSpeed, this);
     
     // Publishing 
-    speedPublisher = nh->advertise<geometry_msgs::Twist>("speed", 1);
     statePublisher = nh->advertise<aidu_mobile_base::State>("state",1);
-    maximumLinearVelocity = 1;
-    maximumAngularVelocity = 2;
-    
-    // Odometry information
-    currentX = 0.0;
-    currentY = 0.0;
-    currentTheta = 0.0;
+    maximumLinearVelocity = 10;
+    maximumAngularVelocity = 10;
   
 }
 
@@ -93,87 +85,7 @@ void mobile_base::Base::speed(const geometry_msgs::Twist::ConstPtr& msg){
     
 }
 
-
-void mobile_base::Base::positionSpeed(const geometry_msgs::Twist::ConstPtr& msg) {
-  
-    // Base is nonholonomic, warn if sent a command we can't execute
-    if (msg->linear.y || msg->linear.z || msg->angular.x || msg->angular.y) {
-        ROS_WARN("Cannot use given position: linear:[%f, %f, %f], angular:[%f, %f, %f]", msg->linear.x, msg->linear.y, msg->linear.z, msg->angular.x, msg->angular.y, msg->angular.z);
-        return;
-    }
-    
-    // Resets the positions so we count from 0
-    this->resetPos();
-    
-    // Get positions, targets and errors as polar coordinates from base origin
-    double actualPos = (getLeftPos() + getRightPos()) / 2.0;
-    double actualAngle = getAngle();
-    double targetPos = msg->linear.x;
-    double targetAngle = msg->angular.z;
-    double errorPos = targetPos - actualPos;
-    double errorAngle = targetAngle - actualAngle;
-    double prevErrorAngle = errorAngle;
-    
-    // Initialize values for our custom PD controller
-    double epsilon = 0.01;
-    double KpL = 1.0;
-    double KpA = 1.8;
-    double KdA = 40.0;
-    double maxAngularSpeed = 1.57;
-    double maxLinearSpeed = 0.3;
-    
-    // The message that will be sent
-    geometry_msgs::Twist twist;
-    aidu_mobile_base::State state;
-    
-    // PD controller loop. This will exit when the error is smaller than epsilon
-    ros::Rate loop(10);
-    while(ros::ok() && (fabs(errorPos) > epsilon || fabs(errorAngle) > epsilon)) {
-
-        // Get current positions
-        actualPos = (getLeftPos() + getRightPos()) / 2.0;
-        actualAngle = getAngle();
-
-        // Calculate errors
-        errorPos = targetPos - actualPos;
-        errorAngle = targetAngle - actualAngle;
-
-        // Compute derivative of angle error
-        double derivative = (errorAngle - prevErrorAngle) / 10;
-        prevErrorAngle = errorAngle;
-
-        // Set twist message values, bounded by maximum speeds
-        twist.linear.x = std::max(-maxLinearSpeed, std::min(maxLinearSpeed, errorPos * KpL));
-        twist.angular.z = std::max(-maxAngularSpeed, std::min(maxAngularSpeed, errorAngle * KpA + derivative * KdA ));
-
-        // Getting position, speed and angle
-        leftWheelMotor->motor->getPosAndSpeed();
-        state.leftpos = getLeftPos();
-        state.leftspeed = leftWheelMotor->motor->presentSpeed();
-        rightWheelMotor->motor->getPosAndSpeed();
-        state.rightpos = getRightPos();
-        state.rightspeed = rightWheelMotor->motor->presentSpeed();
-        state.angle = getAngle();
-
-        // Publish twist and state messages
-        speedPublisher.publish(twist);
-        statePublisher.publish(state);
-
-        // Loop
-        ros::spinOnce();
-        loop.sleep();
-
-    }
-    
-    // Ensure 0 speed at the end
-    twist.linear.x = 0;
-    twist.angular.z = 0;
-    speedPublisher.publish(twist);
-    ros::spinOnce();
-  
-}
-
-void mobile_base::Base::setConfig(const aidu_mobile_base::Config::ConstPtr& msg) {
+/*void mobile_base::Base::setConfig(const aidu_mobile_base::Config::ConstPtr& msg) {
     this->maximumLinearVelocity = msg->maximumLinearSpeed;
     this->maximumAngularVelocity = msg->maximumAngularSpeed;
     if (this->getLinearVelocity() > maximumLinearVelocity || this->getAngularVelocity() > maximumAngularVelocity) {
@@ -182,51 +94,39 @@ void mobile_base::Base::setConfig(const aidu_mobile_base::Config::ConstPtr& msg)
         twist.angular.z = BOUND(getAngularVelocity(), maximumAngularVelocity);
         speedPublisher.publish(twist);
     }
-}
+}*/
 
 double mobile_base::Base::getAngle() {
-    return ((getRightPos() / radiusBase) - (getLeftPos() / radiusBase)) / 2.0;
-}
-
-double mobile_base::Base::getLeftPos() {
-    leftWheelMotor->motor->getLinearPos();
-    return leftWheelMotor->motor->presentLinearPos() - initialLeftPos;
-}
-
-double mobile_base::Base::getRightPos() {
-    rightWheelMotor->motor->getLinearPos();
-    return rightWheelMotor->motor->presentLinearPos() - initialRightPos;
+    return ((rightWheelMotor->getLinearPosition() - leftWheelMotor->getLinearPosition()) / 2.0) / radiusBase;
 }
 
 double mobile_base::Base::getLinearVelocity() {
-    return ((leftWheelMotor->currentVelocity + rightWheelMotor->currentVelocity) / 2) * radiusWheel;
+    return ((leftWheelMotor->getLinearVelocity() + rightWheelMotor->getLinearVelocity()) / 2.0);
 }
 
 double mobile_base::Base::getAngularVelocity() {
-    return ((rightWheelMotor->currentVelocity - leftWheelMotor->currentVelocity) / 2) * (radiusWheel / radiusBase);
+    return ((rightWheelMotor->getLinearVelocity() - leftWheelMotor->getLinearVelocity()) / 2.0) / radiusBase;
 }
 
 void mobile_base::Base::resetPos() {
-    leftWheelMotor->motor->getLinearPos();
-    initialLeftPos = leftWheelMotor->motor->presentLinearPos();
-    rightWheelMotor->motor->getLinearPos();
-    initialRightPos = rightWheelMotor->motor->presentLinearPos();
+    leftWheelMotor->reset();
+    rightWheelMotor->reset();
 }
 
 void mobile_base::Base::publishState() {
     
     // Initialize
-    aidu_mobile_base::State state;
+    aidu_mobile_base::BaseState state;
     
-    // Getting position, speed and angle
-    leftWheelMotor->motor->getPosAndSpeed();
-    state.leftpos = getLeftPos();
-    state.leftspeed = leftWheelMotor->motor->presentSpeed();
-    rightWheelMotor->motor->getPosAndSpeed();
-    state.rightpos = getRightPos();
-    state.rightspeed = rightWheelMotor->motor->presentSpeed();
-    state.angle = getAngle();
+    // Set positions and speeds
+    state.left.position = leftWheelMotor->getLinearPosition();
+    state.left.speed = leftWheelMotor->getLinearVelocity();
+    state.right.position = rightWheelMotor->getLinearPosition();
+    state.right.speed = rightWheelMotor->getLinearVelocity();
+    state.angle.position = getAngularVelocity();
+    state.angle.speed = getAngle();
     
+    // Publish the base state
     statePublisher.publish(state);
     
 }
@@ -237,6 +137,10 @@ void mobile_base::Base::spin(){
     resetPos(); // Reset the position initially
     
     while(ros::ok()) {
+        
+        // Update motor information
+        leftWheelMotor->update();
+        rightWheelMotor->update();
       
         // Publish information
         publishState();

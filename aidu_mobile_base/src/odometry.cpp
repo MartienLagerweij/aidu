@@ -1,6 +1,6 @@
 
 #include <aidu_mobile_base/odometry.h>
-#include <aidu_mobile_base/State.h>
+#include <aidu_mobile_base/BaseState.h>
 #include <nav_msgs/Odometry.h>
 #include <math.h>
 #include <algorithm>
@@ -18,27 +18,26 @@ mobile_base::Odometry::~Odometry() {
     
 }
 
-void mobile_base::Odometry::processState(const aidu_mobile_base::State::ConstPtr& msg) {
+void mobile_base::Odometry::processState(const aidu_mobile_base::BaseState::ConstPtr& msg) {
     
     ros::Time currentTime = ros::Time::now();
     
-    double dLeftWheel = msg->leftpos - previousLeftWheelPosition;
-    double dRightWheel = msg->rightpos - previousRightWheelPosition;
+    double dLeftWheel = msg->left.position - previousLeftWheelPosition;
+    double dRightWheel = msg->right.position - previousRightWheelPosition;
     
     double r = (dLeftWheel + dRightWheel) / 2.0;
-    double th = msg->angle;
+    double theta = msg->angle.position;
     
-    double dx = cos(th) * r;
-    double dy = sin(th) * r;
+    double dx = cos(theta) * r;
+    double dy = sin(theta) * r;
     
-    double v = (msg->leftspeed + msg->rightspeed) / 2.0;
-    double vx = cos(th) * v;
-    double vy = sin(th) * v;
-    double vtheta = (th - theta) / (currentTime - previousTime).toSec();
+    double v = (msg->left.speed + msg->right.speed) / 2.0;
+    double vx = cos(theta) * v;
+    double vy = sin(theta) * v;
+    double vtheta = msg->angle.speed;
     
     x += dx;
     y += dy;
-    theta = th;
     
     //since all odometry is 6DOF we'll need a quaternion created from yaw
     geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(theta);
@@ -78,9 +77,8 @@ void mobile_base::Odometry::processState(const aidu_mobile_base::State::ConstPtr
     odometryPublisher.publish(odom);
     
     // Store values for next iteration
-    previousTime = ros::Time::now();
-    previousLeftWheelPosition = msg->leftpos;
-    previousRightWheelPosition = msg->rightpos;
+    previousLeftWheelPosition = msg->left.position;
+    previousRightWheelPosition = msg->right.position;
 }
 
 int main(int argc, char **argv) {

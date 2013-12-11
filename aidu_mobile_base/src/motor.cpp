@@ -17,6 +17,7 @@ mobile_base::Motor::Motor(std::string name, std::string motor_port_name, std::st
     config = new CDxlConfig();
     config->readConfig(motor_config_xml.root().section(name.c_str()));
     this->name = name;
+    this->radiusWheel = radiusWheel;
 
     // Create and configure 3mxl motor
     motor = new C3mxlROS(motor_port_name.c_str());
@@ -61,6 +62,23 @@ void mobile_base::Motor::setPosition(float position) {
     motor->setPos(position);
 }
 
+void mobile_base::Motor::reset() {
+    update();
+    initialPos = motor->presentLinearPos();
+}
+
+void mobile_base::Motor::update() {
+    motor->getPosAndSpeed();
+    motor->getLinearPos();
+}
+
+double mobile_base::Motor::getLinearVelocity() {
+    return motor->presentSpeed() * radiusWheel;
+}
+
+double mobile_base::Motor::getLinearPosition() {
+    return motor->presentLinearPos() - initialPos;
+}
 
 mobile_base::Motor::~Motor(){
     motor->setSpeed(0);

@@ -20,6 +20,14 @@ namespace aidu {
       CDxlGeneric *motor;               ///< The motor interface
       float currentVelocity;
       
+      double radiusWheel;
+      double initialPos;
+      
+      void reset();
+      void update();
+      double getLinearPosition();
+      double getLinearVelocity();
+      
     protected:
       CDxlConfig *config;               ///< The motor configuration
       LxSerial* serial_port;            ///< The serial port

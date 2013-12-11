@@ -3,7 +3,7 @@
 
 #include <ros/ros.h>
 #include <aidu_core/node.h>
-#include <aidu_mobile_base/State.h>
+#include <aidu_mobile_base/BaseState.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 #include <tf/transform_broadcaster.h>
@@ -16,7 +16,7 @@ namespace aidu {
         
             Odometry();
             ~Odometry();
-            void processState(const aidu_mobile_base::State::ConstPtr& state); ///< Converts state to odometry
+            void processState(const aidu_mobile_base::BaseState::ConstPtr& state); ///< Converts state to odometry
             
         protected:
             
@@ -26,12 +26,9 @@ namespace aidu {
             
             double x; ///< The current x position
             double y; ///< The current y position
-            double theta; ///< The current theta
             
             double previousLeftWheelPosition;
             double previousRightWheelPosition;
-            
-            ros::Time previousTime; ///< The previous time
         
         };
     }
