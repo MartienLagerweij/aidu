@@ -5,8 +5,6 @@
 #include <math.h>
 #include <algorithm>
 
-#define BOUND(x,y) std::max(std::min(x, y), -y)
-
 using namespace aidu;
 
 mobile_base::Odometry::Odometry(){
