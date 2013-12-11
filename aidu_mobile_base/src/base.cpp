@@ -123,8 +123,8 @@ void mobile_base::Base::publishState() {
     state.left.speed = leftWheelMotor->getLinearVelocity();
     state.right.position = rightWheelMotor->getLinearPosition();
     state.right.speed = rightWheelMotor->getLinearVelocity();
-    state.angle.position = getAngularVelocity();
-    state.angle.speed = getAngle();
+    state.angle.position = getAngle();
+    state.angle.speed = getAngularVelocity();
     
     // Publish the base state
     statePublisher.publish(state);
