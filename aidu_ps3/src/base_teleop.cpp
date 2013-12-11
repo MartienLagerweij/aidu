@@ -11,11 +11,11 @@ ps3::TeleopBase::TeleopBase(): core::Node::Node() {
 
   
   //Subscribers and Publishers 
-  basepublisher = nh->advertise<geometry_msgs::Twist>("/base/speed",1);
+  basepublisher = nh->advertise<geometry_msgs::Twist>("/cmd_vel",1);
   joy_sub_ = nh->subscribe<sensor_msgs::Joy>("/joy", 1, &TeleopBase::joyCallback, this);
   ROS_INFO("teleop_base constructed");
-  maxspeed=0.5*0.5*0.295; // m/s
-  maxangle=-0.05;	// rad/s 
+  maxspeed=2.0*0.5*0.295; // m/s
+  maxangle=0.4;	// rad/s 
 
 }
 

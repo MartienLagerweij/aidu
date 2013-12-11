@@ -88,8 +88,8 @@ void mobile_base::Base::speed(const geometry_msgs::Twist::ConstPtr& msg){
     angularLeftSpeed = angularRightSpeed = angle * (radiusBase / radiusWheel);
     
     // Sending speeds to 3mxl
-    leftWheelMotor->setVelocity(linearLeftSpeed + angularLeftSpeed); // setting left wheel postion
-    rightWheelMotor->setVelocity(linearRightSpeed - angularRightSpeed);//setting right wheel position
+    leftWheelMotor->setVelocity(linearLeftSpeed - angularLeftSpeed); // setting left wheel postion
+    rightWheelMotor->setVelocity(linearRightSpeed + angularRightSpeed);//setting right wheel position
     
 }
 
@@ -203,13 +203,13 @@ double mobile_base::Base::getLinearVelocity() {
 }
 
 double mobile_base::Base::getAngularVelocity() {
-    return ((leftWheelMotor->currentVelocity - rightWheelMotor->currentVelocity) / 2) * (radiusWheel / radiusBase);
+    return ((rightWheelMotor->currentVelocity - leftWheelMotor->currentVelocity) / 2) * (radiusWheel / radiusBase);
 }
 
 void mobile_base::Base::resetPos() {
     leftWheelMotor->motor->getLinearPos();
-    rightWheelMotor->motor->getLinearPos();
     initialLeftPos = leftWheelMotor->motor->presentLinearPos();
+    rightWheelMotor->motor->getLinearPos();
     initialRightPos = rightWheelMotor->motor->presentLinearPos();
 }
 
