@@ -14,15 +14,16 @@
         <param name="motor_config" value="$(find aidu_mobile_base)/config/mobile_base.xml"/>
         <param name="wheel_diameter" value="0.286"/>
         <param name="wheel_base" value="0.528"/>
+        <remap from="/cmd_vel" to="notused" />
     </node>
     
     <!-- Odometry node -->
     <node name="odometry" pkg="aidu_mobile_base" type="odom" output="screen" />
     
     <!-- Start twist to motors to execute differential drive on robot -->
-    <!-- <node name="twist_to_motors" pkg="differential_drive" type="twist_to_motors.py">
+    <node name="twist_to_motors" pkg="differential_drive" type="twist_to_motors.py">
             <rosparam param="base_width">0.528</rosparam>
-            <remap from="twist" to="cmd_vel"/>
-    </node> -->
+            <remap from="twist" to="cmd_vel" />
+    </node>
 
 </launch>

@@ -37,7 +37,7 @@ mobile_base::Base::Base() : core::Node::Node() {
     rightWheelSubscriber = nh->subscribe("/rwheel_vtarget", 1, &mobile_base::Base::rightWheelSpeed, this);
     
     // Publishing 
-    statePublisher = nh->advertise<aidu_mobile_base::State>("state",1);
+    statePublisher = nh->advertise<aidu_mobile_base::BaseState>("state",1);
     maximumLinearVelocity = 10;
     maximumAngularVelocity = 10;
   
