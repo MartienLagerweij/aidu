@@ -4,6 +4,7 @@
 #include <nav_msgs/Odometry.h>
 #include <math.h>
 #include <algorithm>
+#include <deque>
 
 using namespace aidu;
 
@@ -16,10 +17,40 @@ mobile_base::Odometry::~Odometry() {
     
 }
 
+/*template <typename T>
+double mean(T begin, T end)
+{
+    double sum=0, count=0;
+    while(begin!=end)
+    {
+        sum+=*begin++;
+        count++;
+    }
+
+    return sum/count;
+}
+std::deque<double> errors;
+
+    double speed = dth / dt;
+    if(speeds.size() >= 30) {
+        speeds.pop_front();
+    }
+    speeds.push_back(speed);
+    double calculated = mean(speeds.begin(), speeds.end());
+
+    double error = calculated - vtheta;
+    errors.push_back(error);
+    if(errors.size() >= 30*3) {
+        errors.pop_front();
+    }
+    error = mean(errors.begin(), errors.end());
+    ROS_INFO("Calculated: %f --- Reported: %f --- Error: %f", calculated, vtheta, error);
+    
+*/
+
 void mobile_base::Odometry::processState(const aidu_mobile_base::BaseState::ConstPtr& msg) {
     
     ros::Time currentTime = ros::Time::now();
-    double dt = currentTime.toSec() - previousTime.toSec();
     previousTime = currentTime;
     
     double dLeftWheel = msg->left.position - previousLeftWheelPosition;
@@ -27,15 +58,12 @@ void mobile_base::Odometry::processState(const aidu_mobile_base::BaseState::Cons
     
     double r = (dLeftWheel + dRightWheel) / 2.0;
     
-    double dth = theta - msg->angle.position;
     theta = msg->angle.position;
-    
-    ROS_INFO("Measured: %.3f r/s  ---  Reported: %.3f r/s", (dth / dt), (msg->angle.speed)); 
-    
     double dx = cos(theta) * r;
     double dy = sin(theta) * r;
     
     double v = (msg->left.speed + msg->right.speed) / 2.0;
+    v = (1.0 + 0.071409) * v;
     double vx = cos(theta) * v;
     double vy = sin(theta) * v;
     double vtheta = msg->angle.speed;

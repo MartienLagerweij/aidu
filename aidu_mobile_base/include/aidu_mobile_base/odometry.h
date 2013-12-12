@@ -6,6 +6,7 @@
 #include <aidu_mobile_base/BaseState.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
+#include <deque>
 #include <tf/transform_broadcaster.h>
 
 namespace aidu {
@@ -24,6 +25,8 @@ namespace aidu {
             ros::Publisher odometryPublisher; ///< The publisher for the odometry
             tf::TransformBroadcaster odometryBroadcaster; ///< The odometry tf broadcaster
             ros::Time previousTime;
+            
+            std::deque<double> speeds;
             
             
             double x; ///< The current x position

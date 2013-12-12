@@ -74,6 +74,8 @@ void mobile_base::Base::speed(const geometry_msgs::Twist::ConstPtr& msg){
     float velocity = BOUND(msg->linear.x, maximumLinearVelocity);
     float angle = BOUND(msg->angular.z, maximumAngularVelocity);
     
+    velocity = (1.0 - 0.071409) * velocity;
+    
     // Calculating velocity for each motor
     float linearLeftSpeed, linearRightSpeed, angularLeftSpeed, angularRightSpeed;
     linearLeftSpeed = linearRightSpeed = velocity / radiusWheel;
