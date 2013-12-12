@@ -15,7 +15,5 @@
   <include file="$(find aidu_mobile_base)/launch/base.launch" />
   <include file="$(find aidu_navigation)/launch/navigation.launch" />
 
-  <!-- navigation rviz -->
-  <include file="$(find turtlebot_rviz_launchers)/launch/view_navigation.launch" />		  
 </launch>
 
