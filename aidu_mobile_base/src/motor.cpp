@@ -30,7 +30,7 @@ mobile_base::Motor::Motor(std::string name, std::string motor_port_name, std::st
 }
 
 void mobile_base::Motor::setVelocity(float velocity) {
-    if (fabs(velocity-currentVelocity) > 0.01) {
+    if (fabs(velocity-currentVelocity) > 0.005) {
         currentVelocity = velocity;
         
         // Send velocity to the 3mxl board
