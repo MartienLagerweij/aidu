@@ -23,9 +23,12 @@ namespace aidu {
             ros::Subscriber stateSubscriber; ///< The subscriber for the states
             ros::Publisher odometryPublisher; ///< The publisher for the odometry
             tf::TransformBroadcaster odometryBroadcaster; ///< The odometry tf broadcaster
+            ros::Time previousTime;
+            
             
             double x; ///< The current x position
             double y; ///< The current y position
+            double theta; ///< The current theta angle
             
             double previousLeftWheelPosition;
             double previousRightWheelPosition;

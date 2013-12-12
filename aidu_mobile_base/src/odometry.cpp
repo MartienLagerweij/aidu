@@ -19,12 +19,18 @@ mobile_base::Odometry::~Odometry() {
 void mobile_base::Odometry::processState(const aidu_mobile_base::BaseState::ConstPtr& msg) {
     
     ros::Time currentTime = ros::Time::now();
+    double dt = currentTime.toSec() - previousTime.toSec();
+    previousTime = currentTime;
     
     double dLeftWheel = msg->left.position - previousLeftWheelPosition;
     double dRightWheel = msg->right.position - previousRightWheelPosition;
     
     double r = (dLeftWheel + dRightWheel) / 2.0;
-    double theta = msg->angle.position;
+    
+    double dth = theta - msg->angle.position;
+    theta = msg->angle.position;
+    
+    ROS_INFO("Measured: %.3f r/s  ---  Reported: %.3f r/s", (dth / dt), (msg->angle.speed)); 
     
     double dx = cos(theta) * r;
     double dy = sin(theta) * r;
