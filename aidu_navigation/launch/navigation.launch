@@ -10,10 +10,10 @@
     <param name="odom_model_type" value="diff"/>
     <param name="odom_alpha5" value="0.1"/>
     <param name="transform_tolerance" value="0.2" />
-    <param name="gui_publish_rate" value="10.0"/>
+    <param name="gui_publish_rate" value="2.0"/>
     <param name="laser_max_beams" value="30"/>
-    <param name="min_particles" value="500"/>
-    <param name="max_particles" value="5000"/>
+    <param name="min_particles" value="50"/>
+    <param name="max_particles" value="500"/>
     <param name="kld_err" value="0.05"/>
     <param name="kld_z" value="0.99"/>
     <param name="odom_alpha1" value="0.2"/>
@@ -46,6 +46,7 @@
     <rosparam file="$(find aidu_navigation)/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find aidu_navigation)/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find aidu_navigation)/base_local_planner_params.yaml" command="load" />
+    <param name="controller_frequency" type="double" value="10.0" /> 
   </node>
 
   <!-- Rviz visualization -->
