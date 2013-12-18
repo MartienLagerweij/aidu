@@ -8,8 +8,8 @@ TrajectoryPlannerROS:
   acc_lim_x: 0.5
   acc_lim_y: 1.0
   
-  escape_vel: -10.0
-  backup_vel: -10.0
+  escape_vel: -0.2
+  backup_vel: -0.2
   
   path_distance_bias: 0.7
   goal_distance_bias: 0.8
