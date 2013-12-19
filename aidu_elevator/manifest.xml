@@ -1,0 +1,18 @@
+<package>
+  <description brief="aidu_elevator">
+
+     AIDU's actions for controlling an elevator
+
+  </description>
+  <author>Rolf Jagerman</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/aidu_elevator</url>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="aidu_core"/>
+  <depend package="aidu_vision"/>
+
+</package>
+
+
