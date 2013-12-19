@@ -37,7 +37,7 @@
     <param name="update_min_a" value="0.5"/>
     <param name="odom_frame_id" value="odom"/>
     <param name="resample_interval" value="1"/>
-    <param name="transform_tolerance" value="0.1"/>
+    <param name="transform_tolerance" value="0.5"/>
     <param name="recovery_alpha_slow" value="0.0"/>
     <param name="recovery_alpha_fast" value="0.0"/>
   </node>
@@ -48,7 +48,7 @@
     <rosparam file="$(find aidu_navigation)/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find aidu_navigation)/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find aidu_navigation)/base_local_planner_params.yaml" command="load" />
-    <param name="controller_frequency" type="double" value="10.0" /> 
+    <param name="controller_frequency" type="double" value="20.0" /> 
   </node>
 
   <!-- Rviz visualization -->
