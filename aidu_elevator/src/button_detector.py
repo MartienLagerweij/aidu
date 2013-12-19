@@ -49,10 +49,10 @@ def process_all_images():
     processed_images = [process_image(image) for image in images]
 
 
-def switch_image(id):
+def switch_image(image_index):
     try:
-        img1 = cv2.resize(images[id], (360,640))
-        img2 = cv2.resize(processed_images[id], (360,640))
+        img1 = cv2.resize(images[image_index], (360,640))
+        img2 = cv2.resize(processed_images[image_index], (360,640))
         h1, w1 = img1.shape[:2]
         h2, w2 = img2.shape[:2]
         view = sp.zeros((max(h1, h2), w1 + w2, 3), sp.uint8)
