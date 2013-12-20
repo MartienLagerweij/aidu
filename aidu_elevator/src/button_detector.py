@@ -54,6 +54,7 @@ def detect_buttons(image):
                     button.image.header.frame_id = "camera"
                     button.image.format = 'jpeg'
                     cropped_image = image[min_location[1]:max_location[1], min_location[0]:max_location[0], :]
+                    cropped_image = cv2.resize(cropped_image, (100, 100))
                     some_image = cv2.imencode('.jpg', cropped_image)[1]
                     button.image.data = np.array(some_image).tostring()
                     image_publisher.publish(button.image)
