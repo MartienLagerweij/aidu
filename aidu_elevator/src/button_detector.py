@@ -49,32 +49,35 @@ def detect_buttons(image):
                 button.w = max_location[0]-min_location[0]
                 button.h = max_location[1]-min_location[1]
                 if button.w > 0 and button.h > 0:
-                    print '[%d:%d, %d:%d]' % (min_location[0], max_location[0], min_location[1], max_location[1])
-                #    print image[min_location[0]:max_location[0], min_location[1]:max_location[1]]
                     button.image = CompressedImage()
                     button.image.header.stamp = rospy.Time.now()
                     button.image.header.frame_id = "camera"
-                    button.image.format = 'rgb8; jpeg compressed bgr8'
-                    subregion = image[min_location[1]:max_location[1], min_location[0]:max_location[0], :]
-                    print subregion
-                    some_image = cv2.imencode('.jpg', subregion[0])[1]
+                    button.image.format = 'jpeg'
+                    cropped_image = image[min_location[1]:max_location[1], min_location[0]:max_location[0], :]
+                    some_image = cv2.imencode('.jpg', cropped_image)[1]
                     button.image.data = np.array(some_image).tostring()
                     image_publisher.publish(button.image)
-                    #buttons.append(button)
+                    buttons.append(button)
 
-                points = [[min_location[0], min_location[1]], [max_location[0], min_location[1]], [max_location[0], max_location[1]], [min_location[0], max_location[1]]]
-                points = np.array(points,np.int0)
-                cv2.polylines(image, [points], True, (255, 0, 0), 2)
-                cv2.drawContours(image, [hull], 0, (0, 255, 0), 1)
+                #points = [[min_location[0], min_location[1]], [max_location[0], min_location[1]], [max_location[0], max_location[1]], [min_location[0], max_location[1]]]
+                #points = np.array(points,np.int0)
+                #cv2.polylines(image, [points], True, (255, 0, 0), 2)
+                #cv2.drawContours(image, [hull], 0, (0, 255, 0), 1)
+            #img = CompressedImage()
+            #img.header.stamp = rospy.Time.now()
+            #img.header.frame_id = "button"
+            #img.format = 'jpeg'
+            #img.data = np.array(cv2.imencode('.jpg', image)[1]).tostring()
+            #image_publisher.publish(img)
     return buttons
 
 
 def callback(image):
-    image_publisher.publish(image)
-    #np_arr = np.fromstring(image.data, np.uint8)
-    #image_np = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_COLOR)
-    #for button in detect_buttons(image_np):
-    #    button_publisher.publish(button)
+    #image_publisher.publish(image)
+    np_arr = np.fromstring(image.data, np.uint8)
+    image_np = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_COLOR)
+    for button in detect_buttons(image_np):
+        button_publisher.publish(button)
 
 
 def main():
