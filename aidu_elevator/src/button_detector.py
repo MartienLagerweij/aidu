@@ -3,8 +3,13 @@
 import rospy
 import cv2
 import numpy as np
+import os
 from sensor_msgs.msg import CompressedImage
 from aidu_elevator.msg import Button
+
+image_n = 0
+data_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../data/'))
+detection_directory = os.path.abspath(os.path.join(data_path, 'detection'))
 
 
 def process_image(image):
@@ -20,12 +25,13 @@ def process_image(image):
 
 
 def detect_buttons(image):
+    global image_n
     processed_image = process_image(image)
     height, width, depth = image.shape
     contours, hierarchy = cv2.findContours(processed_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     buttons = []
     for cnt in contours:
-        if 850 < cv2.contourArea(cnt) < 3000:  # remove small and large areas like noise etc
+        if 400 < cv2.contourArea(cnt) < 5000:  # remove small and large areas like noise etc
             hull = cv2.convexHull(cnt)    # find the convex hull of contour
             hull = cv2.approxPolyDP(hull, 0.1 * cv2.arcLength(hull, True), True)
             min_location = [width, height]
@@ -56,6 +62,10 @@ def detect_buttons(image):
                     cropped_image = image[min_location[1]:max_location[1], min_location[0]:max_location[0], :]
                     cropped_image = cv2.resize(cropped_image, (100, 100))
                     some_image = cv2.imencode('.jpg', cropped_image)[1]
+                    image_n += 1
+                    file = os.path.join(detection_directory, "%d.jpg" % image_n)
+                    rospy.loginfo('saving image to: %s' % file)
+                    cv2.imwrite(file, cropped_image)
                     button.image.data = np.array(some_image).tostring()
                     image_publisher.publish(button.image)
                     buttons.append(button)

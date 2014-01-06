@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="aidu_elevator" type="button_detector.py" name="" output="screen" />
+</launch>
