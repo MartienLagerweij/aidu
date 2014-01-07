@@ -61,4 +61,53 @@
     <origin xyz="0 0 0.23" />
   </joint>
 
+  <link name="spindlecaddy_link">
+    <visual>
+      <geometry>
+        <box size="0.08 0.065 0.0467"/>
+      </geometry>
+      <xacro:material_darkgrey />
+    </visual>
+  </link>
+
+  <joint name="base_spindlecaddy" type="prismatic">
+    <parent link="base_link" />
+    <child link="spindlecaddy_link" />
+    <origin xyz="0.1 -0.2 0.7" />
+    <axis xyz="0 0 1" />
+    <limit lower="0" upper="0.5" effort="1000.0" velocity="0.7" />
+  </joint>
+
+  <link name="rotationalarm_link">
+    <visual>
+      <geometry>
+        <box size="0.135 0.015 0.015"/>
+      </geometry>
+      <xacro:material_darkgrey />
+    </visual>
+  </link>
+
+  <joint name="spindlecaddy_rotationalarm" type="revolute">
+    <parent link="spindlecaddy_link" />
+    <child link="rotationalarm_link" />
+    <origin xyz="0.0925 0.0 0.0413" />
+    <axis xyz="0 0 1" />
+    <limit lower="0" upper="0.5" effort="1000.0" velocity="0.7" />
+  </joint>
+
+  <link name="webcam_link">
+    <visual>
+      <geometry>
+        <box size="0.02 0.045 0.037"/>
+      </geometry>
+      <xacro:material_darkgrey />
+    </visual>
+  </link>
+
+  <joint name="rotationalarm_webcam" type="fixed">
+    <parent link="rotationalarm_link" />
+    <child link="webcam_link" />
+    <origin xyz="0.03 0 0.026" />
+  </joint>
+
 </robot>
