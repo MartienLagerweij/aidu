@@ -8,14 +8,25 @@ import std_msgs.msg
 import sensor_msgs.msg
 
 class Button(genpy.Message):
-  _md5sum = "60809617dea1d35747fb9936b8f27ef6"
+  _md5sum = "6a5e3b8c953aa7f0ce9c28b73950172d"
   _type = "aidu_elevator/Button"
   _has_header = False #flag to mark the presence of a Header object
   _full_text = """int32 x
 int32 y
 int32 w
 int32 h
+bool on
+int8 button_type
 sensor_msgs/CompressedImage image
+int8 BUTTON_NONE=0
+int8 BUTTON_1=1
+int8 BUTTON_2=2
+int8 BUTTON_3=3
+int8 BUTTON_4=4
+int8 BUTTON_B=5
+int8 BUTTON_K=6
+int8 BUTTON_UP=7
+int8 BUTTON_DOWN=8
 ================================================================================
 MSG: sensor_msgs/CompressedImage
 # This message contains a compressed image
@@ -51,8 +62,19 @@ time stamp
 string frame_id
 
 """
-  __slots__ = ['x','y','w','h','image']
-  _slot_types = ['int32','int32','int32','int32','sensor_msgs/CompressedImage']
+  # Pseudo-constants
+  BUTTON_NONE = 0
+  BUTTON_1 = 1
+  BUTTON_2 = 2
+  BUTTON_3 = 3
+  BUTTON_4 = 4
+  BUTTON_B = 5
+  BUTTON_K = 6
+  BUTTON_UP = 7
+  BUTTON_DOWN = 8
+
+  __slots__ = ['x','y','w','h','on','button_type','image']
+  _slot_types = ['int32','int32','int32','int32','bool','int8','sensor_msgs/CompressedImage']
 
   def __init__(self, *args, **kwds):
     """
@@ -62,7 +84,7 @@ string frame_id
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       x,y,w,h,image
+       x,y,w,h,on,button_type,image
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -79,6 +101,10 @@ string frame_id
         self.w = 0
       if self.h is None:
         self.h = 0
+      if self.on is None:
+        self.on = False
+      if self.button_type is None:
+        self.button_type = 0
       if self.image is None:
         self.image = sensor_msgs.msg.CompressedImage()
     else:
@@ -86,6 +112,8 @@ string frame_id
       self.y = 0
       self.w = 0
       self.h = 0
+      self.on = False
+      self.button_type = 0
       self.image = sensor_msgs.msg.CompressedImage()
 
   def _get_types(self):
@@ -101,7 +129,7 @@ string frame_id
     """
     try:
       _x = self
-      buff.write(_struct_4i3I.pack(_x.x, _x.y, _x.w, _x.h, _x.image.header.seq, _x.image.header.stamp.secs, _x.image.header.stamp.nsecs))
+      buff.write(_struct_4iBb3I.pack(_x.x, _x.y, _x.w, _x.h, _x.on, _x.button_type, _x.image.header.seq, _x.image.header.stamp.secs, _x.image.header.stamp.nsecs))
       _x = self.image.header.frame_id
       length = len(_x)
       if python3 or type(_x) == unicode:
@@ -135,8 +163,9 @@ string frame_id
       end = 0
       _x = self
       start = end
-      end += 28
-      (_x.x, _x.y, _x.w, _x.h, _x.image.header.seq, _x.image.header.stamp.secs, _x.image.header.stamp.nsecs,) = _struct_4i3I.unpack(str[start:end])
+      end += 30
+      (_x.x, _x.y, _x.w, _x.h, _x.on, _x.button_type, _x.image.header.seq, _x.image.header.stamp.secs, _x.image.header.stamp.nsecs,) = _struct_4iBb3I.unpack(str[start:end])
+      self.on = bool(self.on)
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -174,7 +203,7 @@ string frame_id
     """
     try:
       _x = self
-      buff.write(_struct_4i3I.pack(_x.x, _x.y, _x.w, _x.h, _x.image.header.seq, _x.image.header.stamp.secs, _x.image.header.stamp.nsecs))
+      buff.write(_struct_4iBb3I.pack(_x.x, _x.y, _x.w, _x.h, _x.on, _x.button_type, _x.image.header.seq, _x.image.header.stamp.secs, _x.image.header.stamp.nsecs))
       _x = self.image.header.frame_id
       length = len(_x)
       if python3 or type(_x) == unicode:
@@ -209,8 +238,9 @@ string frame_id
       end = 0
       _x = self
       start = end
-      end += 28
-      (_x.x, _x.y, _x.w, _x.h, _x.image.header.seq, _x.image.header.stamp.secs, _x.image.header.stamp.nsecs,) = _struct_4i3I.unpack(str[start:end])
+      end += 30
+      (_x.x, _x.y, _x.w, _x.h, _x.on, _x.button_type, _x.image.header.seq, _x.image.header.stamp.secs, _x.image.header.stamp.nsecs,) = _struct_4iBb3I.unpack(str[start:end])
+      self.on = bool(self.on)
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -240,4 +270,4 @@ string frame_id
       raise genpy.DeserializationError(e) #most likely buffer underfill
 
 _struct_I = genpy.struct_I
-_struct_4i3I = struct.Struct("<4i3I")
+_struct_4iBb3I = struct.Struct("<4iBb3I")

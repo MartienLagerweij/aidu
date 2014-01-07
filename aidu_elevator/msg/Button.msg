@@ -2,4 +2,15 @@ int32 x
 int32 y
 int32 w
 int32 h
+bool on
+int8 button_type
 sensor_msgs/CompressedImage image
+int8 BUTTON_NONE=0
+int8 BUTTON_1=1
+int8 BUTTON_2=2
+int8 BUTTON_3=3
+int8 BUTTON_4=4
+int8 BUTTON_B=5
+int8 BUTTON_K=6
+int8 BUTTON_UP=7
+int8 BUTTON_DOWN=8
