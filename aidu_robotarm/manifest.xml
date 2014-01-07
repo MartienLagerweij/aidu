@@ -1,0 +1,17 @@
+<package>
+  <description brief="aidu_robotarm">
+
+     aidu_robotarm
+
+  </description>
+  <author>christiaan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/aidu_robotarm</url>
+  <depend package="aidu_core"/>
+  <depend package="rospy"/>
+  <depend package="roscpp"/>
+
+</package>
+
+
