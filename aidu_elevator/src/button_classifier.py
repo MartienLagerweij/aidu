@@ -9,7 +9,7 @@ import sys
 from sensor_msgs.msg import CompressedImage
 from aidu_elevator.msg import Button
 from pymongo import MongoClient
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.cross_validation import train_test_split
@@ -36,6 +36,7 @@ label_map = {'1': Button.BUTTON_1,
              'down': Button.BUTTON_DOWN,
              'none': Button.BUTTON_NONE}
 inverse_label_map = {v: k for k, v in label_map.items()}
+
 
 def progressor(generator):
     for idx, item in enumerate(generator):
@@ -100,7 +101,50 @@ def get_feature_vector(image):
     return image.flatten().astype(np.float)
 
 
+def get_onoff_feature_vector(image):
+    image = np.array(image)
+    image[20:80, 20:80] = [0, 0, 0]
+
+    ORANGE_MIN = np.array([12, 80, 100],np.uint8)
+    ORANGE_MAX = np.array([26, 255, 215],np.uint8)
+
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    image = cv2.inRange(image, ORANGE_MIN, ORANGE_MAX)
+
+    #cv2.imshow('t', image)
+    #cv2.waitKey()
+
+    return image.flatten().astype(np.float)
+
+
+def train_save_test(clf, X, y, filename, lbl):
+    print 'Training'
+    clf.fit(X,y)
+
+    print 'Saving to file'
+    joblib.dump(clf, os.path.join(model_directory, filename), compress=9)
+
+    print 'Testing'
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
+    clf.fit(X_train,y_train)
+    pred = clf.predict(X_test)
+    cm = confusion_matrix(y_test, pred, labels=lbl)
+    cm = cm / cm.astype(np.float).sum(axis=1)
+    print classification_report(y_test, pred, labels=lbl)
+
+    # Show confusion matrix in a separate window
+    pl.matshow(cm)
+    pl.title('Confusion matrix')
+    pl.colorbar()
+    pl.ylabel('True label')
+    pl.xlabel('Predicted label')
+    pl.show()
+
+
 def train():
+
+    print 'Button identifier classifier'
     clf = Pipeline([
         ('normalizer', MinMaxScaler()),
         ('classifier', OneVsRestClassifier(LogisticRegression(penalty='l2', C=1e-1)))] # LogisticRegression(penalty='l2', C=1e-4)
@@ -116,35 +160,39 @@ def train():
         X.append(vector)
         y.append(process_label(button['label']))
 
-    print 'Training'
-    clf.fit(X,y)
+    train_save_test(clf, X, y, 'ovr_lr.pkl', labels)
 
-    print 'Saving to file'
-    joblib.dump(clf, os.path.join(model_directory, 'ovr_lr.pkl'), compress=9)
+    print 'Button on/off classifier'
 
-    print 'Testing'
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
-    clf.fit(X_train,y_train)
-    pred = clf.predict(X_test)
-    cm = confusion_matrix(y_test, pred, labels=labels)
-    cm = cm / cm.astype(np.float).sum(axis=1)
-    print classification_report(y_test, pred, labels=labels)
+    X = []
+    y = []
+    print 'Getting data'
+    for button in progressor(db_buttons.find()):
+        x = np.array( button['img'], dtype=np.uint8 )
+        img = cv2.imdecode(x, 1)
+        #print button.get('on')
+        vector = get_onoff_feature_vector(img)
+        #print sum(vector)
+        #print len(vector)
+        X.append(vector)
+        y.append(1 if button.get('on') == True else 0)
 
-    # Show confusion matrix in a separate window
-    pl.matshow(cm)
-    pl.title('Confusion matrix')
-    pl.colorbar()
-    pl.ylabel('True label')
-    pl.xlabel('Predicted label')
-    pl.show()
+    clf = Pipeline([
+        ('normalizer', MinMaxScaler()),
+        ('classifier', LogisticRegression(penalty='l2', C=1e1, class_weight='auto'))]#LogisticRegression(penalty='l2', C=1e0))]
+    )
+
+    train_save_test(clf, X, y, 'onoff_lr.pkl', [0,1])
+
 
 def assign_message_label(button_message, label):
     button_message.button_type = label_map.get(label)
 
 
-def display_button(button, label_str):
+def display_button(button, label_str, onoff_str=''):
     img = get_image(button.image)
-    cv2.putText(img,label_str, (2,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
+    cv2.putText(img, label_str, (2,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
+    cv2.putText(img, onoff_str, (2,94), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
     cv2.imshow('Button', img)
     cv2.waitKey(10)
 
@@ -161,9 +209,11 @@ def callback(button):
         rospy.loginfo('%s - %.3f' % (label, p))
         assign_message_label(button, label)
         if button.button_type != button.BUTTON_NONE and p > 0.7:
+            on = onoff_clf.predict(get_onoff_feature_vector(img))
             label_str = '%s (%.0f%%)' % (label, 100.0*p)
+            onoff_str = 'on' if on else 'off'
             button.on = False
-            display_button(button, label_str)
+            display_button(button, label_str, onoff_str)
             button_publisher.publish(button)
             #db_untested.insert({'img': get_mongo_image(img), 'label': label})
     except Exception as e:
@@ -171,10 +221,11 @@ def callback(button):
 
 
 def run_node():
-    global clf, button_publisher
+    global clf, onoff_clf, button_publisher
     try:
         cv2.namedWindow('Button', cv2.WINDOW_NORMAL)
         clf = joblib.load(os.path.join(model_directory, 'ovr_lr.pkl'))
+        onoff_clf = joblib.load(os.path.join(model_directory, 'onoff_lr.pkl'))
         rospy.init_node('button_classifier', anonymous=True)
         rospy.Subscriber("/elevator/button", Button, callback, queue_size=6)
         button_publisher = rospy.Publisher("/elevator/button/classified", Button)

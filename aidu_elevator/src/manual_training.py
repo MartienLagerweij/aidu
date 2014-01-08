@@ -36,7 +36,7 @@ try:
 except:
     start = 0
 
-for idx, button in enumerate(untested.find({}).sort("_id", 1)):
+for idx, button in enumerate(buttons.find({'label': {'$ne': None}}).sort("_id", 1)):
     if idx < int(start):
         continue
     elif idx == int(start) and int(start) is not 0:
@@ -50,6 +50,10 @@ for idx, button in enumerate(untested.find({}).sort("_id", 1)):
     if key == 27:
         print 'bye!'
         break
+    elif key == ord(' '):
+        print '%d - setting button to on' % idx
+        button['on'] = True
+        buttons.save(button)
     elif label is not None:
         if label is 'none':
             label = None
