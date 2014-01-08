@@ -13,6 +13,12 @@
     </material>
   </xacro:macro>
 
+  <xacro:macro name="material_white">
+    <material name="white">
+      <color rgba="1.0 1.0 1.0 1" />
+    </material>
+  </xacro:macro>
+
   <xacro:macro name="wheel" params="name offset radius">
     <link name="${name}_link">
       <visual>
@@ -61,4 +67,69 @@
     <origin xyz="0 0 0.23" />
   </joint>
 
+  <link name="spindlecaddy_link">
+    <visual>
+      <geometry>
+        <box size="0.08 0.065 0.0467"/>
+      </geometry>
+      <xacro:material_darkgrey />
+    </visual>
+  </link>
+
+  <joint name="base_spindlecaddy" type="prismatic">
+    <parent link="base_link" />
+    <child link="spindlecaddy_link" />
+    <origin xyz="0.1 -0.2 0.7" />
+    <axis xyz="0 0 1" />
+    <limit lower="0" upper="0.5" effort="1000.0" velocity="0.7" />
+  </joint>
+
+  <link name="rotationalarm_link">
+    <visual>
+      <geometry>
+        <box size="0.135 0.015 0.015"/>
+      </geometry>
+      <xacro:material_darkgrey />
+    </visual>
+  </link>
+
+  <joint name="spindlecaddy_rotationalarm" type="revolute">
+    <parent link="spindlecaddy_link" />
+    <child link="rotationalarm_link" />
+    <origin xyz="0.0925 0.0 0.0413" />
+    <axis xyz="0 0 1" />
+    <limit lower="0" upper="3.1415" effort="1000.0" velocity="3.1415" />
+  </joint>
+
+  <link name="webcam_link">
+    <visual>
+      <geometry>
+        <box size="0.02 0.045 0.037"/>
+      </geometry>
+      <xacro:material_black />
+    </visual>
+  </link>
+
+  <joint name="rotationalarm_webcam" type="fixed">
+    <parent link="rotationalarm_link" />
+    <child link="webcam_link" />
+    <origin xyz="0.03 0 0.026" />
+  </joint>
+
+  <link name="extension_link">
+    <visual>
+      <geometry>
+        <box size="0.10 0.009 0.009"/>
+      </geometry>
+      <xacro:material_white />
+    </visual>
+  </link>
+
+  <joint name="rotationalarm_extension" type="prismatic">
+    <parent link="rotationalarm_link" />
+    <child link="extension_link" />
+    <origin xyz="0.04 -0.001 0.0" />
+    <axis xyz="1 0 0" />
+    <limit lower="0" upper="0.10" effort="1000.0" velocity="0.3" />
+  </joint>
 </robot>
