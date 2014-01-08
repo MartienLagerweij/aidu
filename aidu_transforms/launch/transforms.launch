@@ -2,7 +2,7 @@
   <!-- Create URDF tf -->
   <param name="robot_description" command="$(find xacro)/xacro.py $(find aidu_transforms)/urdf/base.urdf" />
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="use_gui" value="true"/>
+    <param name="use_gui" value="false"/>
     <rosparam param="source_list">[arm_state]</rosparam>
   </node>
 
