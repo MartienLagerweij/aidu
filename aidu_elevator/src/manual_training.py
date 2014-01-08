@@ -7,6 +7,7 @@ import sys
 
 db = MongoClient()
 buttons = db['aidu']['elevator_buttons']
+untested = db['aidu']['elevator_buttons_untested']
 
 def get_label(key):
     if key == ord('b'):
@@ -25,6 +26,8 @@ def get_label(key):
         return 'up'
     elif key == ord('d'):
         return 'down'
+    elif key == ord('n'):
+        return 'none'
     else:
         return None
 
@@ -33,13 +36,14 @@ try:
 except:
     start = 0
 
-for idx, button in enumerate(buttons.find({}).sort("_id", 1)):
+for idx, button in enumerate(untested.find({}).sort("_id", 1)):
     if idx < int(start):
         continue
     elif idx == int(start) and int(start) is not 0:
         print 'starting from %d' % idx
     x = np.array( button['img'], dtype=np.uint8 )
     img = cv2.imdecode(x, 1)
+    cv2.putText(img, str('%s' % button['label']), (2,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
     cv2.imshow('test', img)
     key = cv2.waitKey() & 255
     label = get_label(key)
@@ -47,8 +51,11 @@ for idx, button in enumerate(buttons.find({}).sort("_id", 1)):
         print 'bye!'
         break
     elif label is not None:
-        print '%d - assigned label %s to image %s' % (idx, label, button['file'])
-        button['label'] = label
-        buttons.save(button)
+        if label is 'none':
+            label = None
+        print '%d - assigned label %s to image %s' % (idx, label, button.get('file'))
+        #button['label'] = label
+        #buttons.save(button)
+        buttons.save({'img': button['img'], 'label': label})
     else:
-        print '%d - assigned no label to image %s' % (idx, button['file'])
+        print '%d - assigned no label change to image %s' % (idx, button.get('file'))

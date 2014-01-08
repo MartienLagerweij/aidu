@@ -31,7 +31,7 @@ def detect_buttons(image):
     contours, hierarchy = cv2.findContours(processed_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     buttons = []
     for cnt in contours:
-        if 400 < cv2.contourArea(cnt) < 10000:  # remove small and large areas like noise etc
+        if 450 < cv2.contourArea(cnt) < 50000:  # remove small and large areas like noise etc
             hull = cv2.convexHull(cnt)    # find the convex hull of contour
             hull = cv2.approxPolyDP(hull, 0.1 * cv2.arcLength(hull, True), True)
             min_location = [width, height]
