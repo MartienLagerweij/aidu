@@ -11,6 +11,7 @@
   <depend package="aidu_core"/>
   <depend package="rospy"/>
   <depend package="roscpp"/>
+  <depend package="threemxl"/>
 
 </package>
 

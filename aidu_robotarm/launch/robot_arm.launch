@@ -1,0 +1,18 @@
+<launch>
+
+    <!-- Shared serial communication with threemxl -->
+    <node name="motor_comm" pkg="shared_serial" type="server" output="screen">
+        <param name="port_name" value="/dev/ttyUSB0"/>
+        <param name="port_type" value="RS485_FTDI"/>
+        <param name="baud_rate" value="921600"/>
+    </node>
+
+    <!-- Mobile robotarm node -->
+    <node name="robot_arm" pkg="aidu_robotarm" type="robot_arm" output="screen" respawn="false">
+        <!-- launch-prefix="gdb -ex run - -args" -->
+        <param name="motor_port" value="motor_comm"/>
+        <param name="motor_config" value="$(find aidu_robotarm)/config/mobile_robot_arm.xml"/>
+        
+    </node>
+
+</launch>
