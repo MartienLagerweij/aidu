@@ -37,7 +37,6 @@ void mobile_robot_arm::Robot_arm::testcallback(const aidu_robotarm::test::ConstP
   translation=msg->translation;
   rotation=msg->rotation;
   extention=msg->extention;
-  ROS_INFO("trans: %f   rot: %f  ext: %f",translation,rotation,extention);
 }
 
 void mobile_robot_arm::Robot_arm::jointStatePublisher() {

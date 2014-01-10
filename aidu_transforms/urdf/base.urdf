@@ -19,6 +19,18 @@
     </material>
   </xacro:macro>
 
+  <xacro:macro name="material_darkwhite">
+    <material name="darkwhite">
+      <color rgba="0.98 1.0 0.843 1" />
+    </material>
+  </xacro:macro>
+
+  <xacro:macro name="material_orange">
+    <material name="orange">
+      <color rgba="1.0 0.635 0.0 1" />
+    </material>
+  </xacro:macro>
+
   <xacro:macro name="wheel" params="name offset radius">
     <link name="${name}_link">
       <visual>
@@ -135,4 +147,101 @@
     <axis xyz="1 0 0" />
     <limit lower="0" upper="0.075" effort="1000.0" velocity="0.3" />
   </joint>
+
+  <link name="kast_link">
+    <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="3.1415 0.0 3.1415" />
+      <geometry>
+        <mesh filename="package://aidu_transforms/urdf/kast2.STL"  scale="0.001 0.001 0.001" />
+      </geometry>
+      <xacro:material_darkwhite />
+    </visual>
+  </link>
+
+  <joint name="main_kast" type="fixed">
+    <parent link="main_link" />
+    <child link="kast_link" />
+    <origin xyz="0.285 -0.23 1.2" />
+  </joint>
+
+  <link name="kinect_link">
+    <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 1.57" />
+      <geometry>
+        <mesh filename="package://aidu_transforms/urdf/Kinect.STL"  scale="0.001 0.001 0.001" />
+      </geometry>
+      <xacro:material_black />
+    </visual>
+  </link>
+
+  <joint name="main_kinect" type="fixed">
+    <parent link="main_link" />
+    <child link="kinect_link" />
+    <origin xyz="0.235 -0.14 0.05" />
+  </joint>
+
+  <link name="macbook_link">
+    <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="1.97 0.0 -1.57" />
+      <geometry>
+        <mesh filename="package://aidu_transforms/urdf/MacBook.STL"  scale="0.001 0.001 0.001" />
+      </geometry>
+      <xacro:material_black />
+    </visual>
+  </link>
+
+  <joint name="main_macbook" type="fixed">
+    <parent link="main_link" />
+    <child link="macbook_link" />
+    <origin xyz="0.1 0.21 1.18" />
+  </joint>
+
+  <link name="lade1_link">
+    <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="1.57 0.0 0.0" />
+      <geometry>
+        <mesh filename="package://aidu_transforms/urdf/lade1.STL"  scale="0.001 0.001 0.001" />
+      </geometry>
+      <xacro:material_orange />
+    </visual>
+  </link>
+
+  <joint name="main_lade1" type="fixed">
+    <parent link="main_link" />
+    <child link="lade1_link" />
+    <origin xyz="-0.225 0.185 0.0" />
+  </joint>
+
+  <link name="lade2_link">
+    <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="1.57 0.0 0.0" />
+      <geometry>
+        <mesh filename="package://aidu_transforms/urdf/lade2.STL"  scale="0.001 0.001 0.001" />
+      </geometry>
+      <xacro:material_orange />
+    </visual>
+  </link>
+
+  <joint name="main_lade2" type="fixed">
+    <parent link="main_link" />
+    <child link="lade2_link" />
+    <origin xyz="-0.225 0.185 0.445" />
+  </joint>
+
+  <link name="lade3_link">
+    <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="1.57 0.0 0.0" />
+      <geometry>
+        <mesh filename="package://aidu_transforms/urdf/lade3.STL"  scale="0.001 0.001 0.001" />
+      </geometry>
+      <xacro:material_orange />
+    </visual>
+  </link>
+
+  <joint name="main_lade3" type="fixed">
+    <parent link="main_link" />
+    <child link="lade3_link" />
+    <origin xyz="-0.225 0.185 0.75" />
+  </joint>
+
 </robot>
