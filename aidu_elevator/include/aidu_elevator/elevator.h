@@ -3,6 +3,7 @@
 
 #include <ros/ros.h>
 #include <aidu_core/node.h>
+#include <aidu_elevator/actions/action.h>
 #include <aidu_elevator/OutsideButton.h>
 #include <aidu_elevator/ElevatorNav.h>
 
@@ -11,11 +12,12 @@ namespace aidu {
         public:
         
             Elevator();
+            void spin();
 	    
 	protected:
-	    ros::Subscriber elevatorSubscriber; ///< The main subscriber starting the elevator proces
-            ros::Publisher pushoutsidebuttonPubliher; ///< The subscriber for the speed messages
-            void initiateCallback(const aidu_elevator::ElevatorNav::ConstPtr& elevator_initiate);
+            void setupActions();
+            aidu::elevator::Action* currentAction;
+            
    };
 }
 

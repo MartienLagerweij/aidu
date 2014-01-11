@@ -1,33 +1,47 @@
 #include <ros/ros.h>
 #include <aidu_core/node.h>
 #include <aidu_elevator/elevator.h>
+#include <aidu_elevator/actions/locatebutton.h>
 #include <aidu_elevator/OutsideButton.h>
 #include <aidu_elevator/ElevatorNav.h>
 
 using namespace aidu;
 
 Elevator::Elevator(): core::Node::Node() {
-  //Subscribers and Publishers 
-  pushoutsidebuttonPubliher = nh->advertise<aidu_elevator::OutsideButton>("/outside",1);
-  elevatorSubscriber= nh->subscribe<aidu_elevator::ElevatorNav>("/elevator_initiate", 1, &Elevator::initiateCallback, this);
+    
 }
 
+void Elevator::setupActions() {
+    
+    // Construct actions
+    elevator::LocateButton* locateButton = new elevator::LocateButton(this->nh);
+    //elevator::MoveToFront* moveToFront = new elevator::MoveToFront(this->nh);
+    //...
+    
+    // Chain actions together
+    //locateButton.setNextAction(moveToFront);
+    //...
+    
+    // Set the first action as current action
+    this->currentAction = locateButton;
+    
+}
 
-
-void Elevator::initiateCallback(const aidu_elevator::ElevatorNav::ConstPtr& elevator_initiate){
-  aidu_elevator::OutsideButton outside;
-  if (elevator_initiate->current_floor > elevator_initiate->target_floor){
-    outside.up=false;
-  }
-  else if(elevator_initiate->current_floor < elevator_initiate->target_floor){
-    outside.up=true;
-  }
-  if (elevator_initiate->current_floor == elevator_initiate->target_floor){
-    ROS_INFO("already at correct floor");
-  }
-  else {
-    pushoutsidebuttonPubliher.publish(outside);
-  }
+void Elevator::spin() {
+    ros::Rate loopRate(20);
+    while(ros::ok()) {
+        
+        if(this->currentAction != 0) {
+            this->currentAction->execute();
+            if(this->currentAction->finished()) {
+                aidu::elevator::Action* next = this->currentAction->getNextAction();
+                delete this->currentAction;
+                this->currentAction = next;
+            }
+        }
+        
+        loopRate.sleep();
+    }
 }
 
 int main(int argc, char **argv)
