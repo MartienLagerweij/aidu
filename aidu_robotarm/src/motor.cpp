@@ -40,7 +40,7 @@ void mobile_robot_arm::Motor::setPosition(float position) {
     }
     
     // Send position to 3mxl
-    motor->setPos(position);
+    motor->setLinearPos(position);
 }
 
 void mobile_robot_arm::Motor::reset() {
