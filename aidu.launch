@@ -21,7 +21,7 @@
   <!-- <include file="$(find aidu_elevator)/launch/elevator.launch" /> -->
 
   <!-- Robot arm -->
-  <include file="$(find aidu_robotarm)/launch/robot_arm.launch" />
+  <!-- <include file="$(find aidu_robotarm)/launch/robot_arm.launch" /> -->
 
 </launch>
 
