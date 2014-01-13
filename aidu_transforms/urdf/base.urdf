@@ -79,7 +79,7 @@
     <origin xyz="0 0 0.23" />
   </joint>
 
-  <link name="spindlecaddy_link">
+  <!-- <link name="spindlecaddy_link">
     <visual>
       <origin xyz="-0.035 0.0 -0.0225" />
       <geometry>
@@ -242,6 +242,6 @@
     <parent link="main_link" />
     <child link="lade3_link" />
     <origin xyz="-0.225 0.185 0.75" />
-  </joint>
+  </joint> -->
 
 </robot>

@@ -2,7 +2,7 @@
   <master auto="start"/>
 
   <!-- Run the map server -->
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find aidu_navigation)/map/gangmap2.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="/home/christiaan/obstacle3.yaml"/>
 
   <!--- Run AMCL -->
   <node pkg="amcl" type="amcl" name="amcl">
@@ -48,7 +48,7 @@
     <rosparam file="$(find aidu_navigation)/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find aidu_navigation)/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find aidu_navigation)/base_local_planner_params.yaml" command="load" />
-    <param name="controller_frequency" type="double" value="20.0" /> 
+    <param name="controller_frequency" type="double" value="10.0" /> 
   </node>
 
   <!-- Rviz visualization -->

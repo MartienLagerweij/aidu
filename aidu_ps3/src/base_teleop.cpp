@@ -19,8 +19,8 @@ ps3::TeleopBase::TeleopBase(): core::Node::Node() {
 
 }
 
-void ps3::TeleopBase::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
-{ // publishing relevant joystick input on teleop topic
+void ps3::TeleopBase::joyCallback(const sensor_msgs::Joy::ConstPtr& joy){ 
+  // publishing relevant joystick input on teleop topic
   geometry_msgs::Twist twist;
   float leftx,lefty ,r2,l2;
   //int circle=0,triangle=0,cross=0,square=0,l1=0,r1=0;
@@ -30,6 +30,10 @@ void ps3::TeleopBase::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   l2=joy->axes[8];
   
   //other buttons
+  int up=joy->buttons[4];
+  int down=joy->buttons[6];
+  int left=joy->buttons[7];
+  int right=joy->buttons[5];
   //circle=joy->buttons[13];
   //cross=joy->buttons[14];
   //triangle=joy->buttons[12];
@@ -37,6 +41,14 @@ void ps3::TeleopBase::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   //r1=joy->buttons[11];
   //l1=joy->buttons[10];
   
+  //adjustable maxspeed
+  if (up==1 || down==1){
+    maxspeed+=(up-down)*0.04;
+  }
+  //adjustable angular maxspeed
+  if (left==1 || right==1){
+    maxspeed+=(left-right)*0.05;
+  }
   
   //exponential speeds with joystick and bottons
   twist.linear.x=(pow(r2,2)-pow(l2,2))*maxspeed;
