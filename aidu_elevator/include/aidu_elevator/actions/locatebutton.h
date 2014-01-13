@@ -20,6 +20,7 @@ namespace aidu {
             protected:
                 bool buttonFound;
                 ros::Subscriber buttonSubscriber;
+		ros::Publisher robot_arm_positions_pub;
         
         };
     }

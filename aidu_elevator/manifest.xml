@@ -12,7 +12,8 @@
   <depend package="rospy"/>
   <depend package="aidu_core"/>
   <depend package="aidu_vision"/>
-
+  <depend package="aidu_robotarm"/>
+  
 </package>
 
 
