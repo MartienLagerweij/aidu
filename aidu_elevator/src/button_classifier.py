@@ -8,6 +8,7 @@ import pylab as pl
 import sys
 from sensor_msgs.msg import CompressedImage
 from aidu_elevator.msg import Button
+from images import convert
 from pymongo import MongoClient
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.multiclass import OneVsRestClassifier
@@ -38,36 +39,25 @@ label_map = {'1': Button.BUTTON_1,
 inverse_label_map = {v: k for k, v in label_map.items()}
 
 
+def threshold(image):
+
+    # Pre process image
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    image = cv2.medianBlur(image, 3)
+
+    # Apply adapative gaussian threshold
+    image = cv2.adaptiveThreshold(image, 225, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 3)
+
+    # Return output
+    return 255 - image
+
+
 def progressor(generator):
     for idx, item in enumerate(generator):
         sys.stdout.write('\r[%d samples loaded]' % idx)
         sys.stdout.flush()
         yield item
     sys.stdout.write('\n')
-
-
-def get_mongo_image(image):
-    img = cv2.imencode('.jpg', image)[1]
-    return np.array(img).tolist()
-
-
-def get_image(image_message):
-    np_arr = np.fromstring(image_message.data, np.uint8)
-    image_np = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_COLOR)
-    return image_np
-
-
-def process_image(image):
-    image = image[20:80,20:80]
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    #image = cv2.medianBlur(image, 5)
-
-    # Canny edge detection
-    #output = cv2.Canny(image,100,200)
-
-    # Adapative gaussian threshold
-    output = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
-    return 255 - output
 
 
 def process_label(label):
@@ -80,41 +70,18 @@ def process_label(label):
 
 
 def get_feature_vector(image):
-    image = process_image(image)
+    image = threshold(image)
     image = cv2.medianBlur(image, 5)
-
-    #size = (60, 60, 0, 0)
-    #for y, row in enumerate(image):
-    #    for x, px in enumerate(row):
-    #        if px > 0:
-    #            size = (min(size[0], max(x-1,0)), min(size[1], max(y-1,0)),
-    #                    max(size[2], min(x+1,60)), max(size[3], min(y+1,60)))
-    #if size == (60, 60, 0, 0):
-    #    size = (0, 0, 60, 60)
-    #image = image[size[1]:size[3], size[0]:size[2]]
-    #image = cv2.resize(image, (50, 50))
-    #image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
-
-    #cv2.imshow('t', image)
-    #cv2.waitKey()
-
     return image.flatten().astype(np.float)
 
 
 def get_onoff_feature_vector(image):
     image = np.array(image)
     image[20:80, 20:80] = [0, 0, 0]
-
     ORANGE_MIN = np.array([12, 80, 100],np.uint8)
     ORANGE_MAX = np.array([26, 255, 215],np.uint8)
-
     image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
     image = cv2.inRange(image, ORANGE_MIN, ORANGE_MAX)
-
-    #cv2.imshow('t', image)
-    #cv2.waitKey()
-
     return image.flatten().astype(np.float)
 
 
@@ -190,7 +157,7 @@ def assign_message_label(button_message, label):
 
 
 def display_button(button, label_str, onoff_str=''):
-    img = get_image(button.image)
+    img = convert(button.image.data, input_type='ros', output_type='cv2')
     cv2.putText(img, label_str, (2,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
     cv2.putText(img, onoff_str, (2,94), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
     cv2.imshow('Button', img)
@@ -199,23 +166,27 @@ def display_button(button, label_str, onoff_str=''):
 
 def callback(button):
     try:
-        img = get_image(button.image)
+        img = convert(button.image.data, input_type='ros', output_type='cv2')
         vector = get_feature_vector(img)
         label = clf.predict([vector])[0]
         try:
             p = np.max(clf.predict_proba([vector])[0])
         except:
             p = 1.0
+
         rospy.loginfo('%s - %.3f' % (label, p))
         assign_message_label(button, label)
+
         if button.button_type != button.BUTTON_NONE and p > 0.7:
             on = onoff_clf.predict(get_onoff_feature_vector(img))
+            button.on = True if on else False
+
             label_str = '%s (%.0f%%)' % (label, 100.0*p)
             onoff_str = 'on' if on else 'off'
-            button.on = False
-            display_button(button, label_str, onoff_str)
+            #display_button(button, label_str, onoff_str)
+
             button_publisher.publish(button)
-            #db_untested.insert({'img': get_mongo_image(img), 'label': label})
+
     except Exception as e:
         rospy.logwarn(e)
 
@@ -223,7 +194,6 @@ def callback(button):
 def run_node():
     global clf, onoff_clf, button_publisher
     try:
-        cv2.namedWindow('Button', cv2.WINDOW_NORMAL)
         clf = joblib.load(os.path.join(model_directory, 'ovr_lr.pkl'))
         onoff_clf = joblib.load(os.path.join(model_directory, 'onoff_lr.pkl'))
         rospy.init_node('button_classifier', anonymous=True)
