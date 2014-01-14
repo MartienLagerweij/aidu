@@ -9,8 +9,8 @@
   <!-- Activate Laser scanning -->
   <node name="depthimage_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" args="image:=/camera/depth/image_raw" output="screen">
     <remap from="scan" to="laserscan"/>
-    <param name="range_min" type="double" value="0.2" />
-    <param name="range_max" type="double" value="6.0" />
+    <param name="range_min" type="double" value="0.45" />
+    <param name="range_max" type="double" value="9.0" />
     <param name="scan_height" type="int" value="3" />
     <param name="scan_time" type="double" value="0.2" />
   </node>
