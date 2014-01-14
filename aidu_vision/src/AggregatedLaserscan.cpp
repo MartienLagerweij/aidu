@@ -41,14 +41,16 @@ void vision::AggregatedLaserscan::laserscanCallback(const sensor_msgs::LaserScan
             startIndex = i - 1;
             startAverage = scanmsg->ranges[i-1];
         } else if(!isnan(scanmsg->ranges[i]) && startIndex != 0) {
-            double endAverage = scanmsg->ranges[i];
-            unsigned int endIndex = i;
-            //ROS_INFO("%d - %f  =>  %d - %f", startIndex, startAverage, endIndex, endAverage);
-            //double step = (endAverage - startAverage) / (endIndex - startIndex);
-            double maxAverage = std::max(startAverage, endAverage);
-            for(unsigned int j=startIndex + 1; j<endIndex; j++) {
-                newLaserScan.ranges[j] = maxAverage; // startAverage + step * (j-startIndex);
-                //ROS_INFO("  %d = %f", j, newLaserScan.ranges[j]);
+            if(i - startIndex <= 6) {
+                double endAverage = scanmsg->ranges[i];
+                unsigned int endIndex = i;
+                //ROS_INFO("%d - %f  =>  %d - %f", startIndex, startAverage, endIndex, endAverage);
+                //double step = (endAverage - startAverage) / (endIndex - startIndex);
+                double maxAverage = std::max(startAverage, endAverage);
+                for(unsigned int j=startIndex + 1; j<endIndex; j++) {
+                    newLaserScan.ranges[j] = maxAverage; // startAverage + step * (j-startIndex);
+                    //ROS_INFO("  %d = %f", j, newLaserScan.ranges[j]);
+                }
             }
             startIndex = 0;
         } else {
@@ -59,7 +61,7 @@ void vision::AggregatedLaserscan::laserscanCallback(const sensor_msgs::LaserScan
     // See very far for any missed ranges
     for (unsigned int i=0; i<scanmsg->ranges.size(); i++) {
         if (isnan(newLaserScan.ranges[i]) || newLaserScan.ranges[i] == 0.0) {
-            newLaserScan.ranges[i] = newLaserScan.range_max - 0.001;
+            newLaserScan.ranges[i] = newLaserScan.range_max*2;
         }
     }
     
