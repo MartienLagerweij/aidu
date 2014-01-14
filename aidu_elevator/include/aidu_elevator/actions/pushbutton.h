@@ -1,5 +1,5 @@
-#ifndef AIDU_ELEVATOR__ACTIONS__LOCATEBUTTON_H
-#define AIDU_ELEVATOR__ACTIONS__LOCATEBUTTON_H
+#ifndef AIDU_ELEVATOR__ACTIONS__PUSHBUTTON_H
+#define AIDU_ELEVATOR__ACTIONS__PUSHBUTTON_H
 
 #include <ros/ros.h>
 #include <aidu_elevator/actions/action.h>
@@ -7,18 +7,18 @@
 
 namespace aidu {
     namespace elevator {
-        class LocateButton : public aidu::elevator::Action {
+        class PushButton : public aidu::elevator::Action {
             public:
             
-                LocateButton(ros::NodeHandle* nh);
-                ~LocateButton();
+                PushButton(ros::NodeHandle* nh);
+                ~PushButton();
                 void execute();
                 bool finished();
                 
                 void visibleButton(const aidu_elevator::Button::ConstPtr& message);
                 
             protected:
-                bool buttonFound;
+                bool buttonPushed;
                 ros::Subscriber buttonSubscriber;
 		ros::Publisher robot_arm_positions_pub;
         
