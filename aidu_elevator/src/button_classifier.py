@@ -174,10 +174,10 @@ def callback(button):
         except:
             p = 1.0
 
-        rospy.loginfo('%s - %.3f' % (label, p))
         assign_message_label(button, label)
 
         if button.button_type != button.BUTTON_NONE and p > 0.7:
+            rospy.loginfo('%s - %.3f' % (label, p))
             on = onoff_clf.predict(get_onoff_feature_vector(img))
             button.on = True if on else False
 

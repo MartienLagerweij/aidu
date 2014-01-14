@@ -133,7 +133,6 @@ def test():
             break
 
 
-
 def callback(image):
     global benchmarking, benchmark_convert, benchmark_detect, benchmark_threshold
 
@@ -149,9 +148,12 @@ def callback(image):
     buttons = detect_buttons(image)
 
     for button in buttons:
-        x0, y0 = (int(button.x - button.w/2), int(button.y - button.h/2))
-        x1, y1 = (int(button.x + button.w/2), int(button.y + button.h/2))
+        x0 = int(button.x - button.w/2)
+        y0 = int(button.y - button.h/2)
+        x1 = int(button.x + button.w/2)
+        y1 = int(button.y + button.h/2)
         button.image.data = convert(cv2.resize(image[y0:y1,x0:x1], (100, 100)), input_type='cv2', output_type='ros')
+        image_publisher.publish(button.image)
         button_publisher.publish(button)
 
     rospy.loginfo('Detected %d buttons' % len(buttons))
