@@ -27,26 +27,27 @@ void GoToDoor::execute() {
   position.linear.x=-0.2;
   position_pub.publish(position);
   ros::spinOnce();
+  sleep(2);
+  position.angular.z=-1.57075;
+  position.linear.x=0.0;
+  position_pub.publish(position);
+  ros::spinOnce();
+  sleep(2);
+  position.angular.z=0.0;
+  position.linear.x=0.8;
+  position_pub.publish(position);
+  ros::spinOnce();
   sleep(3);
   position.angular.z=1.57075;
   position.linear.x=0.0;
   position_pub.publish(position);
   ros::spinOnce();
-  sleep(3);
-  position.angular.z=0.0;
-  position.linear.x=0.7;
-  position_pub.publish(position);
-  ros::spinOnce();
-  sleep(4);
-  position.angular.z=-1.57075;
-  position.linear.x=0.0;
-  position_pub.publish(position);
-  ros::spinOnce();
-  sleep(3);
+  sleep(2);
   ros::Rate loopRate(10);
   while (distance<1.5 && ros::ok()){
         ros::spinOnce();
 	loopRate.sleep();
+  }
   this->door_open=true;
   ROS_INFO("door open");
 }
