@@ -79,7 +79,7 @@
     <origin xyz="0 0 0.23" />
   </joint>
 
-  <!-- <link name="spindlecaddy_link">
+  <link name="spindlecaddy_link">
     <visual>
       <origin xyz="-0.035 0.0 -0.0225" />
       <geometry>
@@ -92,7 +92,7 @@
   <joint name="base_spindlecaddy" type="prismatic">
     <parent link="base_link" />
     <child link="spindlecaddy_link" />
-    <origin xyz="0.1 -0.2 0.7" />
+    <origin xyz="0.108 -0.1525 0.905" />
     <axis xyz="0 0 1" />
     <limit lower="0" upper="0.5" effort="1000.0" velocity="0.7" />
   </joint>
@@ -148,7 +148,7 @@
     <limit lower="0" upper="0.075" effort="1000.0" velocity="0.3" />
   </joint>
 
-  <link name="kast_link">
+  <!-- <link name="kast_link">
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="3.1415 0.0 3.1415" />
       <geometry>

@@ -29,6 +29,6 @@ TrajectoryPlannerROS:
   vtheta_samples: 20
   sim_granularity: 0.025
   
-  dwa: false
+  dwa: true
   holonomic_robot: false
 
