@@ -25,6 +25,7 @@ mobile_base::Motor::Motor(std::string name, std::string motor_port_name, std::st
     motor->init();
     motor->setWheelDiameter(radiusWheel * 2.0);
     motor->set3MxlMode(POSITION_MODE);
+    motor->setLinearAcceleration(1.0);
     currentVelocity = 0;
 
 }
@@ -34,7 +35,7 @@ void mobile_base::Motor::setVelocity(float velocity) {
         currentVelocity = velocity;
         
         // Send velocity to the 3mxl board
-        ROS_INFO("%s: Setting velocity to %f", name.c_str(), velocity);
+        //ROS_INFO("%s: Setting velocity to %f", name.c_str(), velocity);
         
         // Check mode of 3mxl
         motor->get3MxlMode();
@@ -50,16 +51,16 @@ void mobile_base::Motor::setVelocity(float velocity) {
 void mobile_base::Motor::setPosition(float position) {
 
     // Send velocity to the 3mxl board
-    ROS_INFO("%s: Setting position to %f", name.c_str(), position);
+    //ROS_INFO("%s: Setting position to %f", name.c_str(), position);
     
     // Check mode of 3mxl
     motor->get3MxlMode();
     if(motor->present3MxlMode() != POSITION_MODE){
         motor->set3MxlMode(POSITION_MODE);
+	
     }
-    
     // Send position to 3mxl
-    motor->setPos(position);
+    motor->setLinearPos(position+initialPos);
 }
 
 void mobile_base::Motor::reset() {

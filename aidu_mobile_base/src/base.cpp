@@ -30,7 +30,7 @@ mobile_base::Base::Base() : core::Node::Node() {
     rightWheelMotor = new mobile_base::Motor("right", motor_port_name, motor_config_name, radiusWheel);
 
     // Subscribing
-    positionSubscriber = nh->subscribe("pos", 1, &mobile_base::Base::position, this);
+    positionSubscriber = nh->subscribe("/pos", 1, &mobile_base::Base::position, this);
     speedSubscriber = nh->subscribe("/cmd_vel", 1, &mobile_base::Base::speed, this);
     //configSubscriber = nh->subscribe("config", 1, &mobile_base::Base::setConfig, this);
     leftWheelSubscriber = nh->subscribe("/lwheel_vtarget", 1, &mobile_base::Base::leftWheelSpeed, this);
@@ -58,14 +58,19 @@ void mobile_base::Base::position(const geometry_msgs::Twist::ConstPtr& msg) {
     float angle=msg->angular.z;
     
     // Compute position-based wheel position
-    position = position / radiusWheel;
     
     // Compute angle-based wheel position
-    float wheelDifference = angle * (radiusBase / radiusWheel);
+    float wheelDifference = angle * (radiusBase);
+    
+    //getting current position
+    double left_pos=leftWheelMotor->getLinearPosition();
+    double right_pos=rightWheelMotor->getLinearPosition();
+    ROS_INFO("leftpos:%f   rightpos:%f",left_pos,right_pos);
+    ROS_INFO("wheeldif:%f ",wheelDifference);
 
     // Sending position to 3Mxl
-    leftWheelMotor->setPosition(position + wheelDifference); // setting left wheel postion
-    rightWheelMotor->setPosition(position - wheelDifference); //setting right wheel position
+    leftWheelMotor->setPosition(left_pos + position + wheelDifference); // setting left wheel postion
+    rightWheelMotor->setPosition(right_pos+ position - wheelDifference); //setting right wheel position
 }
 
 void mobile_base::Base::speed(const geometry_msgs::Twist::ConstPtr& msg){
