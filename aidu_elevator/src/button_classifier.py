@@ -36,6 +36,7 @@ label_map = {'1': Button.BUTTON_1,
              'up': Button.BUTTON_UP,
              'down': Button.BUTTON_DOWN,
              'none': Button.BUTTON_NONE}
+certainties = {k: 0 for v, k in label_map.iteritems()}
 inverse_label_map = {v: k for k, v in label_map.items()}
 
 
@@ -43,10 +44,10 @@ def threshold(image):
 
     # Pre process image
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    image = cv2.medianBlur(image, 3)
 
     # Apply adapative gaussian threshold
     image = cv2.adaptiveThreshold(image, 225, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 3)
+    image = cv2.medianBlur(image, 3)
 
     # Return output
     return 255 - image
@@ -119,10 +120,17 @@ def train():
     X = []
     y = []
     print 'Getting data'
+    n = 0
     for button in progressor(db_buttons.find({})):
-        x = np.array( button['img'], dtype=np.uint8 )
-        img = cv2.imdecode(x, 1)
+        #x = np.array( button['image'], dtype=np.uint8 )
+        #img = cv2.imdecode(x, 1)
+        img = convert(button['image'], input_type='ros', output_type='cv2')
         vector = get_feature_vector(img)
+        display_button(img, button['label'], '')
+        key = cv2.waitKey() % 256
+        if(key == ord('s')):
+            n += 1
+            cv2.imwrite('/home/rolf/Desktop/%d.jpg' % n, img)
         #print vector
         X.append(vector)
         y.append(process_label(button['label']))
@@ -137,6 +145,7 @@ def train():
     for button in progressor(db_buttons.find()):
         x = np.array( button['img'], dtype=np.uint8 )
         img = cv2.imdecode(x, 1)
+
         #print button.get('on')
         vector = get_onoff_feature_vector(img)
         #print sum(vector)
@@ -156,8 +165,8 @@ def assign_message_label(button_message, label):
     button_message.button_type = label_map.get(label)
 
 
-def display_button(button, label_str, onoff_str=''):
-    img = convert(button.image.data, input_type='ros', output_type='cv2')
+def display_button(img, label_str, onoff_str=''):
+    #img = convert(img, input_type='ros', output_type='cv2')
     cv2.putText(img, label_str, (2,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
     cv2.putText(img, onoff_str, (2,94), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
     cv2.imshow('Button', img)
@@ -176,16 +185,19 @@ def callback(button):
 
         assign_message_label(button, label)
 
+        for k, v in certainties.iteritems():
+            certainties[k] = max(0, certainties[k] - 1)
+
         if button.button_type != button.BUTTON_NONE and p > 0.7:
-            rospy.loginfo('%s - %.3f' % (label, p))
-            on = onoff_clf.predict(get_onoff_feature_vector(img))
-            button.on = True if on else False
-
-            label_str = '%s (%.0f%%)' % (label, 100.0*p)
-            onoff_str = 'on' if on else 'off'
-            #display_button(button, label_str, onoff_str)
-
-            button_publisher.publish(button)
+            certainties[button.button_type] = min(10, certainties[k] + 3 * p)
+            if certainties[button.button_type] > 6:
+                rospy.loginfo('%s - %.3f' % (label, p))
+                on = onoff_clf.predict(get_onoff_feature_vector(img))
+                button.on = True if on else False
+                label_str = '%s (%.0f%%)' % (label, 100.0*p)
+                onoff_str = 'on' if on else 'off'
+                #display_button(button, label_str, onoff_str)
+                button_publisher.publish(button)
 
     except Exception as e:
         rospy.logwarn(e)
