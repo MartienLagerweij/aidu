@@ -13,35 +13,50 @@
 
 #include <ros.h>
 #include <aidu_vision/DistanceSensors.h>
+#include <aidu_gui/solenoid.h>
 #include <math.h>
 
 ros::NodeHandle  nh;
 
-aidu_vision::DistanceSensors distance;
-ros::Publisher sensor_publisher("sensors", &distance);
-
-
-// Analog infrared defines
-int sensorpin_ir_41 = 0; // analog pin used to connect the sharp 041SK
-int sensorpin_ir_12 = 1; // analog pin used to connect the sharp GP2D12 
-int sensorpin_ir_02 = 2; // analog pin used to connect the sharp 2Y0A02
-int sensorpin_ir_022= 3; 
-
 // Ultrasonic defines
-#define echoPin_clean 7
+#define echoPin_clean 1
 #define trigPin_clean 8 
-#define echoPin_duct 12
-#define trigPin_duct 13
+#define echoPin_arm 12
+#define trigPin_arm 13
+
+//relay bord defines
+int lades [4] = {-1,7,6,5}; 
+
+
+//solenoid message callback
+void messageCb( const aidu_gui::solenoid& solenoid_msg){
+  int pin_number=lades[solenoid_msg.solenoid_number];
+  digitalWrite(pin_number, HIGH);
+  delay(3000);
+  digitalWrite(pin_number, LOW);
+}
+
+aidu_vision::DistanceSensors distance;
+aidu_gui::solenoid solenoids;
+ros::Publisher sensor_publisher("sensors", &distance);
+ros::Subscriber<aidu_gui::solenoid> sub("/solenoids", &messageCb );
+
+
 
 void setup()
 {
   nh.initNode();
   nh.advertise(sensor_publisher);
+  nh.subscribe(sub);
   
   pinMode(trigPin_clean, OUTPUT);
   pinMode(echoPin_clean, INPUT);
-  pinMode(trigPin_duct, OUTPUT);
-  pinMode(echoPin_duct, INPUT);
+  pinMode(trigPin_arm, OUTPUT);
+  pinMode(echoPin_arm, INPUT);
+  
+  pinMode(7, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(5, OUTPUT);
 }
 
 void loop()
@@ -51,21 +66,19 @@ void loop()
   // Range: 2 to 400 cm
   // Value: 20 to 4000 (mm)
   // Attached to digital 7 (echo, blue) and digital 8 (Trig, red) 
-  distance.Right = ultrasonic(trigPin_clean, echoPin_clean);
+  //distance.Right = ultrasonic(trigPin_clean, echoPin_clean);
   
   
   // HC-SR04 ultrasonic duct
   // Range: 2 to 400 cm
   // Value: 20 to 4000 (mm)
   // Attached to digital 12 (Echo, blue) and digital 13 (Trigger, red)
-  distance.Left = ultrasonic(trigPin_duct, echoPin_duct);
-  
-  
+  distance.arm = ultrasonic(trigPin_arm, echoPin_arm);
   
   // Publisher
   sensor_publisher.publish( &distance );
   nh.spinOnce();
-  delay(50);
+  delay(100);
 }
 
 /**

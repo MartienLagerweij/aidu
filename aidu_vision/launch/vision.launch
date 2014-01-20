@@ -1,8 +1,5 @@
 <launch>
-	 <node name="vision" pkg="aidu_vision" type="WPass2" output="screen" respawn="false">
-		<!-- launch-prefix="gdb -ex run - -args" -->
-	</node>
-
+        <include file="$(find aidu_vision)/launch/kinect.launch" />
 	<node name="arduino_serial" pkg="rosserial_python" type="serial_node2.py" args="/dev/ttyACM0" output="screen">
 	</node>
 </launch>

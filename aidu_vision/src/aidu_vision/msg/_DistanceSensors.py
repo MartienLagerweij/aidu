@@ -6,20 +6,18 @@ import struct
 
 
 class DistanceSensors(genpy.Message):
-  _md5sum = "41c0cb7800f2936abd05fa1abb71bbef"
+  _md5sum = "2a2f5e2d01cbd078a726b06befdf1dd3"
   _type = "aidu_vision/DistanceSensors"
   _has_header = False #flag to mark the presence of a Header object
   _full_text = """# This message contains all the distances published by the arduino
 float64 Frontleft
 float64 Frontright
-float64 Frontmiddle
-float64 Left
-float64 Right
-float64 Back
+float64 arm
+
 
 """
-  __slots__ = ['Frontleft','Frontright','Frontmiddle','Left','Right','Back']
-  _slot_types = ['float64','float64','float64','float64','float64','float64']
+  __slots__ = ['Frontleft','Frontright','arm']
+  _slot_types = ['float64','float64','float64']
 
   def __init__(self, *args, **kwds):
     """
@@ -29,7 +27,7 @@ float64 Back
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       Frontleft,Frontright,Frontmiddle,Left,Right,Back
+       Frontleft,Frontright,arm
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -42,21 +40,12 @@ float64 Back
         self.Frontleft = 0.
       if self.Frontright is None:
         self.Frontright = 0.
-      if self.Frontmiddle is None:
-        self.Frontmiddle = 0.
-      if self.Left is None:
-        self.Left = 0.
-      if self.Right is None:
-        self.Right = 0.
-      if self.Back is None:
-        self.Back = 0.
+      if self.arm is None:
+        self.arm = 0.
     else:
       self.Frontleft = 0.
       self.Frontright = 0.
-      self.Frontmiddle = 0.
-      self.Left = 0.
-      self.Right = 0.
-      self.Back = 0.
+      self.arm = 0.
 
   def _get_types(self):
     """
@@ -71,7 +60,7 @@ float64 Back
     """
     try:
       _x = self
-      buff.write(_struct_6d.pack(_x.Frontleft, _x.Frontright, _x.Frontmiddle, _x.Left, _x.Right, _x.Back))
+      buff.write(_struct_3d.pack(_x.Frontleft, _x.Frontright, _x.arm))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -84,8 +73,8 @@ float64 Back
       end = 0
       _x = self
       start = end
-      end += 48
-      (_x.Frontleft, _x.Frontright, _x.Frontmiddle, _x.Left, _x.Right, _x.Back,) = _struct_6d.unpack(str[start:end])
+      end += 24
+      (_x.Frontleft, _x.Frontright, _x.arm,) = _struct_3d.unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e) #most likely buffer underfill
@@ -99,7 +88,7 @@ float64 Back
     """
     try:
       _x = self
-      buff.write(_struct_6d.pack(_x.Frontleft, _x.Frontright, _x.Frontmiddle, _x.Left, _x.Right, _x.Back))
+      buff.write(_struct_3d.pack(_x.Frontleft, _x.Frontright, _x.arm))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -113,11 +102,11 @@ float64 Back
       end = 0
       _x = self
       start = end
-      end += 48
-      (_x.Frontleft, _x.Frontright, _x.Frontmiddle, _x.Left, _x.Right, _x.Back,) = _struct_6d.unpack(str[start:end])
+      end += 24
+      (_x.Frontleft, _x.Frontright, _x.arm,) = _struct_3d.unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e) #most likely buffer underfill
 
 _struct_I = genpy.struct_I
-_struct_6d = struct.Struct("<6d")
+_struct_3d = struct.Struct("<3d")
