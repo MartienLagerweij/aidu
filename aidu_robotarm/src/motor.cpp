@@ -2,6 +2,7 @@
 #include <aidu_robotarm/motor.h>
 #include <threemxl/C3mxlROS.h>
 #include <XMLConfiguration.h>
+#include <3mxlControlTable.h>
 #include <string>
 
 using namespace aidu;
@@ -22,7 +23,15 @@ mobile_robot_arm::Motor::Motor(std::string name, std::string motor_port_name, st
     motor = new C3mxlROS(motor_port_name.c_str());
     motor->setConfig(config);
     motor->init();
-    motor->set3MxlMode(POSITION_MODE);
+    
+    // Initialize motor physically
+    motor->set3MxlMode(EXTERNAL_INIT);
+    ros::Rate looprate(10);
+    while(motor->presentStatus() != M3XL_STATUS_INIT_DONE) {
+        motor->getStatus();
+        looprate.sleep();
+    }
+    
     currentVelocity = 0;
 
 }
