@@ -1,0 +1,10 @@
+<stack>
+  <description brief="Automated indoor delivery unit">
+    A set of packages, nodes and scripts which run the AIDU robot, developed at TU delft.
+    To run the robot, simply execute roslaunch aidu.launch.
+  </description>
+  <author>Robotics Group M3 TU Delft</author>
+  <license>MIT</license>
+  <review status="unreviewed" notes="" />
+  <depend stack="ros" />
+</stack>
