@@ -99,6 +99,10 @@ double mobile_robot_arm::Motor::getLinearPosition() {
     return motor->presentLinearPos();
 }
 
+double mobile_robot_arm::Motor::getSpeed(){
+  return motor->presentSpeed();
+}
+
 mobile_robot_arm::Motor::~Motor(){
     motor->setSpeed(0);
     serial_port->port_close();

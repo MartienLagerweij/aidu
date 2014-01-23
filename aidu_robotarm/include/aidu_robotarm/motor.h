@@ -27,6 +27,7 @@ namespace aidu {
       void initialize(double speed, double torque);
       double getPosition();
       double getLinearPosition();
+      double getSpeed();
       
     protected:
       CDxlConfig *config;               ///< The motor configuration

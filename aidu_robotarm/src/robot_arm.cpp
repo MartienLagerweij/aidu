@@ -78,7 +78,7 @@ void mobile_robot_arm::Robot_arm::jointStatePublisher() {
     current_translation= translationMotor->getLinearPosition();
     current_rotation= rotationMotor->getPosition();
     current_extention= extensionMotor->getPosition();
-    ROS_INFO("translation:[%f , %f]   rotation:[%f , %f]  extension:[%f , %f] ",current_translation,target_translation, current_rotation,target_rotation, current_extention, target_extention);
+    //ROS_INFO("translation:[%f , %f]   rotation:[%f , %f]  extension:[%f , %f] ",current_translation,target_translation, current_rotation,target_rotation, current_extention, target_extention);
     
     //update joint_state
     joint_state.header.stamp = ros::Time::now();
@@ -86,10 +86,13 @@ void mobile_robot_arm::Robot_arm::jointStatePublisher() {
     joint_state.position.resize(3);
     joint_state.name[0] ="base_spindlecaddy";
     joint_state.position[0] = current_translation;
+    joint_state.velocity[0]=extensionMotor->getSpeed();
     joint_state.name[1] ="spindlecaddy_rotationalarm";
     joint_state.position[1] = current_rotation;
+    joint_state.velocity[1]=extensionMotor->getSpeed();
     joint_state.name[2] ="rotationalarm_extension";
     joint_state.position[2] = current_extention;
+    joint_state.velocity[2]=extensionMotor->getSpeed();
     
     // Publish the joint state
     joint_pub.publish(joint_state);    
