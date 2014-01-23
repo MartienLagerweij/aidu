@@ -15,7 +15,8 @@ namespace aidu {
       Motor(std::string name, std::string motor_port_name, std::string motor_config_name);
       std::string name;
       ~Motor();
-      void setPosition(float position);///< Sets the position of the motor
+      void setPosition(float position, float speed);///< Sets the position of the motor
+      void setLinearPosition(float position, float speed);///< Sets the position of the motor
       CDxlGeneric *motor;               ///< The motor interface
       float currentVelocity;
 
@@ -23,6 +24,8 @@ namespace aidu {
       
       void reset();
       void update();
+      void initialize(double speed, double torque);
+      double getPosition();
       double getLinearPosition();
       
     protected:

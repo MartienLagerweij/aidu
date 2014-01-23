@@ -4,11 +4,13 @@
 #include <XMLConfiguration.h>
 #include <3mxlControlTable.h>
 #include <string>
+#include <boost/iterator/iterator_concepts.hpp>
 
 using namespace aidu;
 
 mobile_robot_arm::Motor::Motor(std::string name, std::string motor_port_name, std::string motor_config_name) {
     
+    ROS_INFO("creating %s",name.c_str());
     // Load motor configuration
     CXMLConfiguration motor_config_xml;
     motor_config_xml.loadFile(motor_config_name);
@@ -17,31 +19,37 @@ mobile_robot_arm::Motor::Motor(std::string name, std::string motor_port_name, st
     // Create configuration
     config = new CDxlConfig();
     config->readConfig(motor_config_xml.root().section(name.c_str()));
-    this->name = name;
+    
 
     // Create and configure 3mxl motor
     motor = new C3mxlROS(motor_port_name.c_str());
     motor->setConfig(config);
     motor->init();
     
+    this->name = name;
+    
+}
+
+void mobile_robot_arm::Motor::initialize(double speed, double torque){
     // Initialize motor physically
     motor->set3MxlMode(EXTERNAL_INIT);
     ros::Rate looprate(10);
     while(motor->presentStatus() != M3XL_STATUS_INIT_DONE) {
-        motor->getStatus();
+	motor->setAcceleration(1.0);
+	motor->setSpeed(speed);
+	motor->setTorque(torque);
         looprate.sleep();
+	motor->getStatus();
     }
-    
+    ROS_INFO("%s initial position atained",this->name.c_str());
+    motor->setSpeed(0.0);
+    motor->setTorque(0.0);
     currentVelocity = 0;
-
 }
 
 
-void mobile_robot_arm::Motor::setPosition(float position) {
+void mobile_robot_arm::Motor::setPosition(float position, float speed) {
 
-    // Send velocity to the 3mxl board
-    ROS_INFO("%s: Setting position to %f", name.c_str(), position);
-    
     // Check mode of 3mxl
     motor->get3MxlMode();
     if(motor->present3MxlMode() != POSITION_MODE){
@@ -49,12 +57,32 @@ void mobile_robot_arm::Motor::setPosition(float position) {
     }
     
     // Send position to 3mxl
-    motor->setLinearPos(position);
+    ROS_INFO("present pos: %f",motor->presentPos());
+    if (fabs(position-motor->presentPos())>0.001){
+      ROS_INFO("%s: Setting position to %f", name.c_str(), position);
+      motor->setPos(position,speed);
+    }
+}
+    
+void mobile_robot_arm::Motor::setLinearPosition(float position, float speed){
+    // Check mode of 3mxl
+    motor->get3MxlMode();
+    if(motor->present3MxlMode() != POSITION_MODE){
+        motor->set3MxlMode(POSITION_MODE);
+    }
+    
+    // Send position to 3mxl
+    ROS_INFO("present pos: %f",motor->presentPos());
+    if (fabs(position-motor->presentPos())>0.001){
+      ROS_INFO("%s: Setting position to %f", name.c_str(), position);
+      motor->setLinearPos(position,speed);
+    }
+       
 }
 
 void mobile_robot_arm::Motor::reset() {
     update();
-    initialPos = motor->presentLinearPos();
+    initialPos = motor->presentPos();
 }
 
 void mobile_robot_arm::Motor::update() {
@@ -63,8 +91,12 @@ void mobile_robot_arm::Motor::update() {
 }
 
 
+double mobile_robot_arm::Motor::getPosition() {
+    return motor->presentPos();
+}
+
 double mobile_robot_arm::Motor::getLinearPosition() {
-    return motor->presentLinearPos() - initialPos;
+    return motor->presentLinearPos();
 }
 
 mobile_robot_arm::Motor::~Motor(){

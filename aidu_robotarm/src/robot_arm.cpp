@@ -5,7 +5,7 @@
 #include <aidu_robotarm/motor.h>
 
 
-#define BOUND(x,y) std::max(std::min(x, y), 0.f)
+#define BOUND(x,y,z) std::max(std::min(x, y), z)
 
 using namespace aidu;
 
@@ -19,15 +19,19 @@ mobile_robot_arm::Robot_arm::Robot_arm() : core::Node::Node() {
     // initialising variables
     current_translation=current_rotation=current_extention=0.0;
     target_translation=target_rotation=target_extention=0.0;
-    max_translation=0.45;
-    max_rotation=3.1415;
-    max_extention=0.075;
+    max_translation=370; min_translation=0.0;
+    max_rotation=3.1415; min_rotation=-1.57;
+    max_extention=75; min_extention=0.0;
     
-    //creating translation, rotation and extension motor
+    //creating translation, rotation and extension motor 
+    extensionMotor = new mobile_robot_arm::Motor("extention", motor_port_name, motor_config_name);
     translationMotor = new mobile_robot_arm::Motor("translation", motor_port_name, motor_config_name);
     rotationMotor = new mobile_robot_arm::Motor("rotation", motor_port_name, motor_config_name);
-    extensionMotor = new mobile_robot_arm::Motor("extension", motor_port_name, motor_config_name);
     
+    //initialising positions of motors
+    extensionMotor->initialize(-0.5,-1.0);
+    translationMotor->initialize(-7.0,-1.0);
+    rotationMotor->initialize(1.0,1.0);
     // Subscribing
     position_sub = nh->subscribe("/robot_arm_positions", 1, &mobile_robot_arm::Robot_arm::positioncallback, this);
     
@@ -37,32 +41,32 @@ mobile_robot_arm::Robot_arm::Robot_arm() : core::Node::Node() {
 }
 
 void mobile_robot_arm::Robot_arm::positioncallback(const aidu_robotarm::robot_arm_positions::ConstPtr& msg){
-  target_translation=BOUND(msg->translation,max_translation);
-  target_rotation=BOUND(msg->rotation,max_rotation);
-  target_extention=BOUND(msg->extention,max_extention);
+  target_translation=BOUND(msg->translation,max_translation,min_translation);
+  target_rotation=BOUND(msg->rotation,max_rotation,min_rotation);
+  target_extention=BOUND(msg->extention,max_extention,min_extention);
 }
 
 bool mobile_robot_arm::Robot_arm::setPos(){
   
-  bool trans_pos=fabs(target_translation - current_translation) < 0.01;
-  bool rot_pos=fabs(target_rotation - current_rotation) < 0.01;
-  bool ext_pos=fabs(target_extention - current_extention) < 0.01;
-  bool total_pos=false;
+  bool trans_pos=fabs(target_translation - current_translation) < 0.005;
+  bool rot_pos=fabs(target_rotation - current_rotation) < 0.05;
+  bool ext_pos=fabs(target_extention - current_extention) < 0.05;
+
+  ROS_INFO("trans_pos :%d  rot_pos: %d ext_pos: %d",trans_pos,rot_pos,ext_pos);
   
   // set positions in correct order
   if (!trans_pos){
-    translationMotor->setPosition(target_translation);
+    translationMotor->setLinearPosition(target_translation,0.01);
   } else if (!rot_pos){
-    rotationMotor->setPosition(target_rotation);
+    rotationMotor->setPosition(target_rotation,1.5);
   } else if (!ext_pos){
-    extensionMotor->setPosition(target_extention);
+    extensionMotor->setPosition(target_extention,1.0);
   }
   // check if position attained
-  if (trans_pos && rot_pos && ext_pos){
-    total_pos=true;
-  }
+  return(trans_pos && rot_pos && ext_pos);
+
   
-  return total_pos;
+  
 }
 
 void mobile_robot_arm::Robot_arm::jointStatePublisher() {
@@ -72,8 +76,9 @@ void mobile_robot_arm::Robot_arm::jointStatePublisher() {
     
     // Get joint positions
     current_translation= translationMotor->getLinearPosition();
-    current_rotation= rotationMotor->getLinearPosition();
-    current_extention= extensionMotor->getLinearPosition();
+    current_rotation= rotationMotor->getPosition();
+    current_extention= extensionMotor->getPosition();
+    ROS_INFO("translation:[%f , %f]   rotation:[%f , %f]  extension:[%f , %f] ",current_translation,target_translation, current_rotation,target_rotation, current_extention, target_extention);
     
     //update joint_state
     joint_state.header.stamp = ros::Time::now();
@@ -93,7 +98,7 @@ void mobile_robot_arm::Robot_arm::jointStatePublisher() {
 
 void mobile_robot_arm::Robot_arm::spin(){
 
-    ros::Rate rate(30); // rate at which position published (hertz)
+    ros::Rate rate(20); // rate at which position published (hertz)
     
     while(ros::ok()) {
         

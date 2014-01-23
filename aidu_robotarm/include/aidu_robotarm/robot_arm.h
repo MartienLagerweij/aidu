@@ -26,7 +26,8 @@ namespace aidu {
 	    
 	    double current_translation,current_rotation,current_extention; // joint states
 	    double target_translation,target_rotation,target_extention; // target joint states
-	    float max_translation,max_rotation,max_extention; // target joint states
+	    float max_translation,max_rotation,max_extention; 
+	    float min_translation,min_rotation,min_extention;
 	    
 	    ros::Publisher joint_pub;
 	    ros::Subscriber position_sub;
