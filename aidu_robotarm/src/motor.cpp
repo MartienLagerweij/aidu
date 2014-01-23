@@ -34,7 +34,7 @@ void mobile_robot_arm::Motor::initialize(double speed, double torque){
     // Initialize motor physically
     motor->set3MxlMode(EXTERNAL_INIT);
     ros::Rate looprate(10);
-    while(motor->presentStatus() != M3XL_STATUS_INIT_DONE) {
+    while(ros::ok() && motor->presentStatus() != M3XL_STATUS_INIT_DONE) {
 	motor->setAcceleration(1.0);
 	motor->setSpeed(speed);
 	motor->setTorque(torque);

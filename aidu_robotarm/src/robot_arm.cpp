@@ -17,8 +17,10 @@ mobile_robot_arm::Robot_arm::Robot_arm() : core::Node::Node() {
     nh->getParam("motor_config", motor_config_name);
     
     // initialising variables
-    current_translation=current_rotation=current_extention=0.0;
-    target_translation=target_rotation=target_extention=0.0;
+    current_translation=current_extention=0.0;
+    current_rotation=1.57;
+    target_translation=target_extention=0.0;
+    target_rotation=1.57;
     max_translation=370; min_translation=0.0;
     max_rotation=3.1415; min_rotation=-1.57;
     max_extention=75; min_extention=0.0;
@@ -48,8 +50,8 @@ void mobile_robot_arm::Robot_arm::positioncallback(const aidu_robotarm::robot_ar
 
 bool mobile_robot_arm::Robot_arm::setPos(){
   
-  bool trans_pos=fabs(target_translation - current_translation) < 0.005;
-  bool rot_pos=fabs(target_rotation - current_rotation) < 0.05;
+  bool trans_pos=fabs(target_translation - current_translation) < 0.003;
+  bool rot_pos=fabs(target_rotation - current_rotation) < 0.03;
   bool ext_pos=fabs(target_extention - current_extention) < 0.05;
 
   ROS_INFO("trans_pos :%d  rot_pos: %d ext_pos: %d",trans_pos,rot_pos,ext_pos);
@@ -84,12 +86,13 @@ void mobile_robot_arm::Robot_arm::jointStatePublisher() {
     joint_state.header.stamp = ros::Time::now();
     joint_state.name.resize(3);
     joint_state.position.resize(3);
+    joint_state.velocity.resize(3);
     joint_state.name[0] ="base_spindlecaddy";
     joint_state.position[0] = current_translation;
-    joint_state.velocity[0]=extensionMotor->getSpeed();
+    joint_state.velocity[0]=translationMotor->getSpeed();
     joint_state.name[1] ="spindlecaddy_rotationalarm";
     joint_state.position[1] = current_rotation;
-    joint_state.velocity[1]=extensionMotor->getSpeed();
+    joint_state.velocity[1]=rotationMotor->getSpeed();
     joint_state.name[2] ="rotationalarm_extension";
     joint_state.position[2] = current_extention;
     joint_state.velocity[2]=extensionMotor->getSpeed();
