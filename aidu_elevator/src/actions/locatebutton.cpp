@@ -1,5 +1,4 @@
 #include <ros/ros.h>
-#include <ros/sensor_msgs/JointState.h>
 #include <sensor_msgs/JointState.h>
 #include <map>
 #include <aidu_elevator/actions/locatebutton.h>
@@ -12,7 +11,7 @@ LocateButton::LocateButton(ros::NodeHandle* nh) : Action::Action(nh) {
     
     // Set up subscribers
     buttonSubscriber = nh->subscribe<aidu_elevator::Button>("/elevator/button/classified", 1, &LocateButton::visibleButton, this);
-    robotArmSubscriber = nh->subscribe<sensor_msgs::State>("/arm_state", 1, &LocateButton::updateArmState, this);
+    robotArmSubscriber = nh->subscribe<sensor_msgs::JointState>("/arm_state", 1, &LocateButton::updateArmState, this);
     
     // Set up publishers
     robotArmPublisher = nh->advertise<aidu_robotarm::robot_arm_positions>("/robot_arm_positions",1);
@@ -58,8 +57,8 @@ void LocateButton::execute() {
         
         // Send new position to arm
         aidu_robotarm::robot_arm_positions arm_position;
-        arm_position.translation = 0.2;
-        arm_position.rotation = 0.0;
+        arm_position.translation = wantedTranslation;
+        arm_position.rotation = wantedRotation;
         arm_position.extention = 0.0;
         robotArmPublisher.publish(arm_position);
     }
@@ -76,7 +75,7 @@ void LocateButton::visibleButton(const aidu_elevator::Button::ConstPtr& message)
 }
 
 void LocateButton::updateArmState(const sensor_msgs::JointState::ConstPtr& message) {
-    for(int i=0; i<message->name.size(); i++) {
+    for(unsigned int i=0; i<message->name.size(); i++) {
         if (message->name[i] == "base_spindlecaddy") {
             translationSpeed = message->velocity[i];
             translation = message->position[i];
