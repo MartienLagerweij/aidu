@@ -178,12 +178,16 @@ def callback(button):
         img = convert(button.image.data, input_type='ros', output_type='cv2')
         vector = get_feature_vector(img)
         label = clf.predict([vector])[0]
+
         try:
             p = np.max(clf.predict_proba([vector])[0])
         except:
             p = 1.0
 
+        rospy.loginfo('%s: %f' % (label, p))
+
         assign_message_label(button, label)
+        display_button(img, label, '%f' % p)
 
         for k, v in certainties.iteritems():
             certainties[k] = max(0, certainties[k] - 1)
@@ -196,7 +200,7 @@ def callback(button):
                 button.on = True if on else False
                 label_str = '%s (%.0f%%)' % (label, 100.0*p)
                 onoff_str = 'on' if on else 'off'
-                #display_button(button, label_str, onoff_str)
+                display_button(button, label_str, onoff_str)
                 button_publisher.publish(button)
 
     except Exception as e:
@@ -209,7 +213,7 @@ def run_node():
         clf = joblib.load(os.path.join(model_directory, 'ovr_lr.pkl'))
         onoff_clf = joblib.load(os.path.join(model_directory, 'onoff_lr.pkl'))
         rospy.init_node('button_classifier', anonymous=True)
-        rospy.Subscriber("/elevator/button", Button, callback, queue_size=6)
+        rospy.Subscriber("/elevator/button", Button, callback)
         button_publisher = rospy.Publisher("/elevator/button/classified", Button)
         rospy.spin()
     except Exception as e:

@@ -148,6 +148,7 @@ def callback(image):
     if benchmarking:
         convert_start = datetime.now()
 
+    original_image = np.array(image)
     image = convert(image.data, input_type='ros', output_type='cv2')
 
     if benchmarking:
@@ -161,7 +162,7 @@ def callback(image):
         y0 = int(button.y - button.h/2)
         x1 = int(button.x + button.w/2)
         y1 = int(button.y + button.h/2)
-        button.image.data = convert(cv2.resize(image[y0:y1,x0:x1], (100, 100)), input_type='cv2', output_type='ros')
+        button.image.data = convert(cv2.resize(original_image[y0:y1,x0:x1], (100, 100)), input_type='cv2', output_type='ros')
         image_publisher.publish(button.image)
         button_publisher.publish(button)
 
