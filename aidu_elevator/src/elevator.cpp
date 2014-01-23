@@ -17,16 +17,15 @@ void Elevator::setupActions() {
     
     // Construct actions
     elevator::LocateButton* locateButton = new elevator::LocateButton(this->nh);
-    elevator::PushButton* PushButton = new elevator::PushButton(this->nh);
-    elevator::GoToDoor* GoToDoor = new elevator::GoToDoor(this->nh);
-    //...
+    elevator::PushButton* pushButton = new elevator::PushButton(this->nh);
+    elevator::GoToDoor* goToDoor = new elevator::GoToDoor(this->nh);
     
     // Chain actions together
-    //locateButton.setNextAction(PushButton);
-    //...
+    locateButton->setNextAction(pushButton);
+    pushButton->setNextAction(goToDoor);
     
     // Set the first action as current action
-    this->currentAction = GoToDoor;
+    this->currentAction = locateButton;
     
 }
 
@@ -42,8 +41,7 @@ void Elevator::spin() {
             }
         }
         ros::spinOnce();
-	loopRate.sleep();
-        
+        loopRate.sleep();
     }
 }
 
