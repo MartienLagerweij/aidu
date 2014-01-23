@@ -19,8 +19,10 @@
 ros::NodeHandle  nh;
 
 // Ultrasonic defines
-#define echoPin_clean 1
-#define trigPin_clean 8 
+#define echoPin_right 8
+#define trigPin_right 9
+#define echoPin_left 10
+#define trigPin_left 11
 #define echoPin_arm 12
 #define trigPin_arm 13
 
@@ -49,10 +51,12 @@ void setup()
   nh.advertise(sensor_publisher);
   nh.subscribe(sub);
   
-  pinMode(trigPin_clean, OUTPUT);
-  pinMode(echoPin_clean, INPUT);
+  pinMode(trigPin_left, OUTPUT);
+  pinMode(echoPin_left, INPUT);
   pinMode(trigPin_arm, OUTPUT);
   pinMode(echoPin_arm, INPUT);
+  pinMode(trigPin_right, OUTPUT);
+  pinMode(echoPin_right, INPUT);
   
   pinMode(7, OUTPUT);
   pinMode(6, OUTPUT);
@@ -62,11 +66,11 @@ void setup()
 void loop()
 {
   
-  // HC-SR04 ultrasonic clean
+  // HC-SR04 ultrasonic left
   // Range: 2 to 400 cm
   // Value: 20 to 4000 (mm)
   // Attached to digital 7 (echo, blue) and digital 8 (Trig, red) 
-  //distance.Right = ultrasonic(trigPin_clean, echoPin_clean);
+  distance.Frontleft = ultrasonic(trigPin_left, echoPin_left);
   
   
   // HC-SR04 ultrasonic duct
@@ -74,6 +78,13 @@ void loop()
   // Value: 20 to 4000 (mm)
   // Attached to digital 12 (Echo, blue) and digital 13 (Trigger, red)
   distance.arm = ultrasonic(trigPin_arm, echoPin_arm);
+  
+    
+  // HC-SR04 ultrasonic duct
+  // Range: 2 to 400 cm
+  // Value: 20 to 4000 (mm)
+  // Attached to digital 12 (Echo, blue) and digital 13 (Trigger, red)
+  distance.Frontright = ultrasonic(trigPin_right, echoPin_right);
   
   // Publisher
   sensor_publisher.publish( &distance );

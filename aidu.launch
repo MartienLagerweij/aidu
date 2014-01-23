@@ -11,18 +11,18 @@
 
   <!-- Vision -->
   <!-- <include file="$(find aidu_vision)/launch/camera_node.launch" /> -->
-  <include file="$(find aidu_vision)/launch/vision.launch" />
+  <!-- <include file="$(find aidu_vision)/launch/vision.launch" /> -->
 
   <!-- Navigation -->
   <include file="$(find aidu_mobile_base)/launch/base.launch" />
-  <!-- <include file="$(find aidu_navigation)/launch/navigation.launch" />  -->
+  <!-- <include file="$(find aidu_navigation)/launch/navigation.launch" /> -->
   
 
   <!-- Elevator control -->
-  <include file="$(find aidu_elevator)/launch/elevator.launch" />
+  <!-- <include file="$(find aidu_elevator)/launch/elevator.launch" /> -->
 
   <!-- Robot arm -->
-  <!-- <include file="$(find aidu_robotarm)/launch/robot_arm.launch" /> -->
+  <include file="$(find aidu_robotarm)/launch/robot_arm.launch" />
 
 </launch>
 
