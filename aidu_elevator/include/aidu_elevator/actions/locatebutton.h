@@ -42,6 +42,8 @@ namespace aidu {
                 
                 double rotationMaximum;
                 double rotationMinimum;
+		
+		ros::Time wait_start;
                 
                 ros::Subscriber buttonSubscriber;
                 ros::Subscriber robotArmSubscriber;

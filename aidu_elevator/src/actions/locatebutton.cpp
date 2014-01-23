@@ -19,17 +19,26 @@ LocateButton::LocateButton(ros::NodeHandle* nh) : Action::Action(nh) {
     // Initialize variables
     this->buttonFound = false;
     
-    this->translationEpsilon = 0.0001;
-    this->rotationEpsilon = 0.0005;
+    this->translationEpsilon = 0.0031;
+    this->rotationEpsilon = 0.031;
     
     this->translationStep = 0.05;
-    this->rotationStep = 0.2;
+    this->rotationStep = 0.785/2.0;
     
     this->translationMaximum = 0.37;
     this->translationMinimum = 0.0;
     
-    this->rotationMaximum = 1.57;
-    this->rotationMinimum = -1.57;
+    this->rotationMaximum = 0.786/2.0;
+    this->rotationMinimum = -0.786/2.0;
+    
+    this->translation = -0.1;
+    this->rotation = 0.0;
+    
+    this->translationSpeed = 0.0;
+    this->rotationSpeed = 0.0;
+    
+    this->wantedRotation = 0.0;
+    this->wantedTranslation = translationMinimum;
     
 }
 
@@ -39,39 +48,63 @@ LocateButton::~LocateButton() {
 
 void LocateButton::execute() {
     //ROS_INFO("Executing locate button action");
+  
+  ROS_INFO("Translation: v=%.5f d=%.5f - wanted=%.5f step=%.5f", translationSpeed, translation, wantedTranslation, translationStep);
+  ROS_INFO("Rotation:    v=%.5f d=%.5f - wanted=%.5f step=%.5f", rotationSpeed, rotation, wantedRotation, rotationStep);
     
     // Check if we achieved our current goal and are still moving
-    if (!this->buttonFound && translationSpeed < translationEpsilon && rotationSpeed < rotationEpsilon) {
+    if (!this->buttonFound && fabs(wantedTranslation - translation) < translationEpsilon && fabs(wantedRotation - rotation) < rotationEpsilon) {
         
+	wait_start = ros::Time::now();
+      
         // Set new wanted translation and rotation
-        if (wantedTranslation < translationMaximum - translationStep) {
+        if (wantedTranslation < translationMaximum) {
             wantedTranslation += translationStep;
         }
-        if (wantedTranslation > translationMaximum - translationStep) {
-            wantedTranslation = translationMinimum;
+        if (wantedTranslation > translationMaximum) {
+	    wantedTranslation = translation;
+            translationStep = -translationStep;
             wantedRotation += rotationStep;
         }
-        if (wantedRotation > rotationMaximum - rotationStep) {
+        if (wantedTranslation < 0.0) {
+	    wantedTranslation = 0.0;
+	    translationStep = -translationStep;
+	    wantedRotation += rotationStep;
+	}
+        if (wantedRotation > rotationMaximum) {
             wantedRotation = rotationMinimum;
         }
-        
-        // Send new position to arm
-        aidu_robotarm::robot_arm_positions arm_position;
-        arm_position.translation = wantedTranslation;
-        arm_position.rotation = wantedRotation;
-        arm_position.extention = 0.0;
-        robotArmPublisher.publish(arm_position);
+    }    
+    
+    if ((ros::Time::now() - wait_start).toSec() > 1.0) {
+      
+      // Send new position to arm
+      aidu_robotarm::robot_arm_positions arm_position;
+      arm_position.translation = wantedTranslation;
+      arm_position.rotation = wantedRotation;
+      arm_position.extention = 0.0;
+      robotArmPublisher.publish(arm_position);
+      
     }
 }
 
 bool LocateButton::finished() {
+    if(this->buttonFound) {
+        aidu_robotarm::robot_arm_positions arm_position;
+	arm_position.translation = translation;
+	arm_position.rotation = rotation;
+	arm_position.extention = 0.0;
+	robotArmPublisher.publish(arm_position);
+    }
     return this->buttonFound;
 }
 
 void LocateButton::visibleButton(const aidu_elevator::Button::ConstPtr& message) {
+  
     if (message->button_type == aidu_elevator::Button::BUTTON_DOWN) {
         this->buttonFound = true;
     }
+    ROS_INFO("visibleButton: %d",buttonFound);
 }
 
 void LocateButton::updateArmState(const sensor_msgs::JointState::ConstPtr& message) {
