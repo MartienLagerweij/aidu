@@ -25,8 +25,9 @@ mobile_robot_arm::Motor::Motor(std::string name, std::string motor_port_name, st
     motor = new C3mxlROS(motor_port_name.c_str());
     motor->setConfig(config);
     int init=-20;
-    while (init != 0 ){
+    while (init != 0 && ros::ok()){
       init=motor->init();
+      sleep(1);
       //ROS_INFO("init: %d",init);
     }
     
