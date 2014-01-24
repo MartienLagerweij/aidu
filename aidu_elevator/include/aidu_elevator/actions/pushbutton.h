@@ -32,7 +32,7 @@ namespace aidu {
 		tf::StampedTransform transform;
 		double arm_x,arm_y,arm_z; // position of the webcam
 		double translation, rotation, extension; //joint state of the arm
-		double front_left, front_right, left ,right; //ultrasonic sensor values
+		double front_left, front_right,dist_arm; //ultrasonic sensor values
 		double img_x, img_y; //position values of the button (pixel)
 		double horizontal_fov, vertical_fov;
 		
