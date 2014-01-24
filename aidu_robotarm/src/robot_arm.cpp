@@ -58,7 +58,7 @@ bool mobile_robot_arm::Robot_arm::setPos(){
   
   // set positions in correct order
   if (!trans_pos){
-    translationMotor->setLinearPosition(target_translation,0.01);
+    translationMotor->setLinearPosition(target_translation,0.02);
   } else if (!rot_pos){
     rotationMotor->setPosition(target_rotation,1.5);
   } else if (!ext_pos){
