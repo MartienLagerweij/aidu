@@ -183,24 +183,23 @@ def callback(button):
             p = np.max(clf.predict_proba([vector])[0])
         except:
             p = 1.0
-
-        rospy.loginfo('%s: %f' % (label, p))
+	
+        #rospy.loginfo('%s: %f' % (label, p))
 
         assign_message_label(button, label)
-        display_button(img, label, '%f' % p)
+        #display_button(img, label, '%f' % p)
 
-        #for k, v in certainties.iteritems():
-        #    certainties[k] = max(0, certainties[k] - 1)
-
+        for k, v in certainties.iteritems():
+            certainties[k] = max(0, certainties[k] - 1)
+	
         if button.button_type != button.BUTTON_NONE and p > 0.7:
-                #certainties[button.button_type] = min(10, certainties[k] + 3 * p)
-                #if certainties[button.button_type] > 6:
-                rospy.loginfo('%s - %.3f' % (label, p))
+            certainties[button.button_type] = min(10, certainties[k] + 3 * p)
+            if certainties[button.button_type] > 6:
+                #rospy.loginfo('%s - %.3f' % (label, p))
                 on = onoff_clf.predict(get_onoff_feature_vector(img))
                 button.on = True if on else False
                 label_str = '%s (%.0f%%)' % (label, 100.0*p)
                 onoff_str = 'on' if on else 'off'
-                display_button(button, label_str, onoff_str)
                 button_publisher.publish(button)
 
     except Exception as e:

@@ -21,10 +21,11 @@ GoToDoor::~GoToDoor() {
 void GoToDoor::execute() {
   bool door_open=false;
   ROS_INFO("Executing Go to door action");
+  sleep(1);
   
   geometry_msgs::Twist position;
   position.angular.z=0.0;
-  position.linear.x=-0.2;
+  position.linear.x=-0.4;
   position_pub.publish(position);
   ros::spinOnce();
   sleep(2);
@@ -40,6 +41,11 @@ void GoToDoor::execute() {
   sleep(3);
   position.angular.z=1.57075;
   position.linear.x=0.0;
+  position_pub.publish(position);
+  ros::spinOnce();
+  sleep(2);
+  position.angular.z=0.0;
+  position.linear.x=0.2;
   position_pub.publish(position);
   ros::spinOnce();
   sleep(2);

@@ -1,5 +1,5 @@
 <launch>
   <node pkg="aidu_elevator" type="button_detector.py" name="button_detector" output="log" />
   <node pkg="aidu_elevator" type="button_classifier.py" name="button_classifier" output="screen" />
-  <node name="aidu_elevator" pkg="aidu_elevator" type="elevator" respawn="false" output="log" />
+  <node name="aidu_elevator" pkg="aidu_elevator" type="elevator" respawn="false" output="screen" />
 </launch>

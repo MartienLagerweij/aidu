@@ -49,8 +49,8 @@ LocateButton::~LocateButton() {
 void LocateButton::execute() {
     //ROS_INFO("Executing locate button action");
   
-  ROS_INFO("Translation: v=%.5f d=%.5f - wanted=%.5f step=%.5f", translationSpeed, translation, wantedTranslation, translationStep);
-  ROS_INFO("Rotation:    v=%.5f d=%.5f - wanted=%.5f step=%.5f", rotationSpeed, rotation, wantedRotation, rotationStep);
+    //ROS_INFO("Translation: v=%.5f d=%.5f - wanted=%.5f step=%.5f", translationSpeed, translation, wantedTranslation, translationStep);
+    //ROS_INFO("Rotation:    v=%.5f d=%.5f - wanted=%.5f step=%.5f", rotationSpeed, rotation, wantedRotation, rotationStep);
     
     // Check if we achieved our current goal and are still moving
     if (!this->buttonFound && fabs(wantedTranslation - translation) < translationEpsilon && fabs(wantedRotation - rotation) < rotationEpsilon) {
@@ -100,11 +100,10 @@ bool LocateButton::finished() {
 }
 
 void LocateButton::visibleButton(const aidu_elevator::Button::ConstPtr& message) {
-  
+    ROS_INFO("Button: %d, Found: %d", message->button_type, buttonFound);
     if (message->button_type == aidu_elevator::Button::BUTTON_DOWN) {
         this->buttonFound = true;
     }
-    ROS_INFO("visibleButton: %d",buttonFound);
 }
 
 void LocateButton::updateArmState(const sensor_msgs::JointState::ConstPtr& message) {

@@ -21,8 +21,8 @@ void Elevator::setupActions() {
     elevator::GoToDoor* goToDoor = new elevator::GoToDoor(this->nh);
     
     // Chain actions together
-    locateButton->setNextAction(pushButton);
-    pushButton->setNextAction(goToDoor);
+    locateButton->setNextAction(goToDoor);
+    //pushButton->setNextAction(goToDoor);
     
     // Set the first action as current action
     this->currentAction = locateButton;
