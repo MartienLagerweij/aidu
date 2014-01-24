@@ -24,7 +24,11 @@ mobile_robot_arm::Motor::Motor(std::string name, std::string motor_port_name, st
     // Create and configure 3mxl motor
     motor = new C3mxlROS(motor_port_name.c_str());
     motor->setConfig(config);
-    motor->init();
+    int init=-20;
+    while (init != 0 ){
+      init=motor->init();
+      //ROS_INFO("init: %d",init);
+    }
     
     this->name = name;
     

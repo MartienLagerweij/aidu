@@ -54,7 +54,7 @@ bool mobile_robot_arm::Robot_arm::setPos(){
   bool rot_pos=fabs(target_rotation - current_rotation) < 0.03;
   bool ext_pos=fabs(target_extention - current_extention) < 0.05;
 
-  ROS_INFO("trans_pos :%d  rot_pos: %d ext_pos: %d",trans_pos,rot_pos,ext_pos);
+  //ROS_INFO("trans_pos :%d  rot_pos: %d ext_pos: %d",trans_pos,rot_pos,ext_pos);
   
   // set positions in correct order
   if (!trans_pos){
