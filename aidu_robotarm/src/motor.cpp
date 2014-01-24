@@ -31,6 +31,7 @@ mobile_robot_arm::Motor::Motor(std::string name, std::string motor_port_name, st
     }
     
     this->name = name;
+    motor->setMaxPeakMotorCurrent(9.0);
     
 }
 
