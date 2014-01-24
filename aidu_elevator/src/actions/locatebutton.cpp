@@ -7,7 +7,7 @@
 
 using namespace aidu::elevator;
 
-LocateButton::LocateButton(ros::NodeHandle* nh) : Action::Action(nh) {
+LocateButton::LocateButton(ros::NodeHandle* nh, int button) : Action::Action(nh) {
     
     // Set up subscribers
     buttonSubscriber = nh->subscribe<aidu_elevator::Button>("/elevator/button/classified", 1, &LocateButton::visibleButton, this);
@@ -17,6 +17,7 @@ LocateButton::LocateButton(ros::NodeHandle* nh) : Action::Action(nh) {
     robotArmPublisher = nh->advertise<aidu_robotarm::robot_arm_positions>("/robot_arm_positions",1);
     
     // Initialize variables
+    this->button = button;
     this->buttonFound = false;
     
     this->translationEpsilon = 0.0031;
@@ -101,7 +102,7 @@ bool LocateButton::finished() {
 
 void LocateButton::visibleButton(const aidu_elevator::Button::ConstPtr& message) {
     ROS_INFO("Button: %d, Found: %d", message->button_type, buttonFound);
-    if (message->button_type == aidu_elevator::Button::BUTTON_DOWN) {
+    if (message->button_type == button) {
         this->buttonFound = true;
     }
 }

@@ -8,7 +8,7 @@
 
 using namespace aidu::elevator;
 
-PushButton::PushButton(ros::NodeHandle* nh) : Action::Action(nh) {
+PushButton::PushButton(ros::NodeHandle* nh, int button) : Action::Action(nh) {
   
     //set up subscribers
     buttonSubscriber = nh->subscribe<aidu_elevator::Button>("/elevator/button/classified", 1, &PushButton::visibleButton, this);
@@ -19,6 +19,7 @@ PushButton::PushButton(ros::NodeHandle* nh) : Action::Action(nh) {
     robot_arm_positions_pub= nh->advertise<aidu_robotarm::robot_arm_positions>("/robot_arm_positions",1);
     
     //initialising variables
+    this->button = button;
     this->buttonPushed = false;
     arm_x=arm_y=arm_z=0.0;
     front_left=front_right=0.0;

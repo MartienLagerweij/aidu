@@ -11,7 +11,7 @@ namespace aidu {
         class LocateButton : public aidu::elevator::Action {
             public:
             
-                LocateButton(ros::NodeHandle* nh);
+                LocateButton(ros::NodeHandle* nh, int button);
                 ~LocateButton();
                 void execute();
                 bool finished();
@@ -20,6 +20,8 @@ namespace aidu {
                 void updateArmState(const sensor_msgs::JointState::ConstPtr& message);
                 
             protected:
+                int button;
+                
                 bool buttonFound;
                 
                 double translation;

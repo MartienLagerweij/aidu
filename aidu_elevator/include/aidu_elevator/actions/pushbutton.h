@@ -13,7 +13,7 @@ namespace aidu {
         class PushButton : public aidu::elevator::Action {
             public:
             
-                PushButton(ros::NodeHandle* nh);
+                PushButton(ros::NodeHandle* nh, int button);
                 ~PushButton();
                 void execute();
                 bool finished();
@@ -25,6 +25,7 @@ namespace aidu {
                 
             protected:
                 bool buttonPushed;
+                int button;
                 ros::Subscriber buttonSubscriber,sensor_sub, jointState_sub;
 		ros::Publisher robot_arm_positions_pub;
 		tf::TransformListener listener;

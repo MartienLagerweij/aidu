@@ -5,7 +5,7 @@
 #include <aidu_core/node.h>
 #include <aidu_elevator/actions/action.h>
 #include <aidu_elevator/OutsideButton.h>
-#include <aidu_elevator/ElevatorNav.h>
+#include <aidu_elevator/ElevatorNavigation.h>
 
 namespace aidu {
    class Elevator : public aidu::core::Node {
@@ -13,10 +13,16 @@ namespace aidu {
         
             Elevator();
             void spin();
+            void activate(const aidu_elevator::ElevatorNavigation::ConstPtr& message);
 	    
 	protected:
             void setupActions();
+            void removeActions();
             aidu::elevator::Action* currentAction;
+            ros::Subscriber subscriber;
+            
+            int targetFloor;
+            int currentFloor;
             
    };
 }
