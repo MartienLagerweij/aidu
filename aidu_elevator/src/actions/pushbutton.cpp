@@ -57,11 +57,14 @@ void PushButton::execute() {
     
     //adjusting vertical position
     if (fabs(but_y) > 0.01) {
-        positions.translation = but_y+translation;
+        positions.translation = but_y + translation + 0.04;
     }
     if (fabs(but_x) > 0.01) {
         positions.rotation = rotation+atan(but_x/(dist_arm+arm_length));
     }
+    
+    // send positions to arm
+    robot_arm_positions_pub.publish(positions);
       
 }
 
@@ -87,7 +90,7 @@ void PushButton::arm_statecallback(const sensor_msgs::JointState::ConstPtr& join
     rotation=joint_msg->position[1];
     extension=joint_msg->position[2];
 }
-       
+
 double PushButton::convert(double fov, double img_x,double z,double resolution){
     double theta=-fov/2.0+(fov*img_x/resolution);
     double x=tan(theta)*z;
