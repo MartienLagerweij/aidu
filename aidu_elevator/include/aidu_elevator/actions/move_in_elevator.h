@@ -17,11 +17,13 @@ namespace aidu {
                 bool finished();
                 
 		void laserscancallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg);
+		void sensorcallback(const aidu_vision::DistanceSensors::ConstPtr& dist_msg);
                 
             protected:                
 		ros::Publisher basepositionPublisher;
-		ros::Subscriber laserscanSubsciber;
+		ros::Subscriber laserscanSubsciber, sensor_sub;
 		int rotationdirection;
+		double front_left, front_right, dist_arm;
         
         };
     }
