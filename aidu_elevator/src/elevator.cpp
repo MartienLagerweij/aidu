@@ -54,18 +54,20 @@ void Elevator::setupActions() {
     }
     
     elevator::LocateButton* locateButtonOutside = new elevator::LocateButton(this->nh, outsideButton, 0.0);
-    elevator::MoveToButton* MoveToButton = new elevator::MoveToButton(this->nh, outsideButton);
-    elevator::PushButton* pushButton = new elevator::PushButton(this->nh, outsideButton);
+    elevator::MoveToButton* moveToButtonOutside = new elevator::MoveToButton(this->nh, outsideButton);
+    elevator::PushButton* pushButtonOutside = new elevator::PushButton(this->nh, outsideButton);
     elevator::GoToDoor* goToDoor = new elevator::GoToDoor(this->nh);
     elevator::MoveInElevator* moveInElevator = new elevator::MoveInElevator(this->nh);
     elevator::LocateButton* locateButtonInside = new elevator::LocateButton(this->nh, insideButton, -1.56);
+    elevator::PushButton* pushButtonInside = new elevator::PushButton(this->nh, insideButton);
     
     // Chain actions together
-    locateButtonOutside->setNextAction(MoveToButton);
-    MoveToButton->setNextAction(pushButton);
-    pushButton->setNextAction(goToDoor);
+    locateButtonOutside->setNextAction(moveToButtonOutside);
+    moveToButtonOutside->setNextAction(pushButtonOutside);
+    pushButtonOutside->setNextAction(goToDoor);
     goToDoor->setNextAction(moveInElevator);
     moveInElevator->setNextAction(locateButtonInside);
+    locateButtonInside->setNextAction(pushButtonInside);
     
     // Set the first action as current action
     this->currentAction = moveInElevator;
