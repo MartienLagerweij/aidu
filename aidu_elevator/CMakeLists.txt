@@ -26,5 +26,11 @@ rosbuild_genmsg()
 #target_link_libraries(${PROJECT_NAME} another_library)
 #rosbuild_add_boost_directories()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
-rosbuild_add_executable(elevator src/elevator.cpp src/actions/action.cpp src/actions/locatebutton.cpp src/actions/movetobutton.cpp src/actions/pushbutton.cpp src/actions/go_to_door.cpp src/actions/move_in_elevator.cpp)
+rosbuild_add_executable(elevator src/elevator.cpp src/actions/action.cpp
+                                                  src/actions/locatebutton.cpp
+                                                  src/actions/movetobutton.cpp
+                                                  src/actions/pushbutton.cpp
+                                                  src/actions/go_to_door.cpp
+                                                  src/actions/move_in_elevator.cpp
+                                                  src/actions/reposition.cpp)
 #target_link_libraries(example ${PROJECT_NAME})
