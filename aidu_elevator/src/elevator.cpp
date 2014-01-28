@@ -9,6 +9,7 @@
 #include <aidu_elevator/actions/movetobutton.h>
 #include <aidu_elevator/actions/move_in_elevator.h>
 #include <aidu_elevator/actions/reposition.h>
+#include <aidu_elevator/actions/moveoutelevator.h>
 #include <aidu_elevator/Button.h>
 
 using namespace aidu;
@@ -54,14 +55,15 @@ void Elevator::setupActions() {
       default: ROS_ERROR("Unknown target floor: %d", targetFloor); return;
     }
     
-    elevator::LocateButton* locateButtonOutside = new elevator::LocateButton(this->nh, outsideButton, 0.0);
+    elevator::LocateButton* locateButtonOutside = new elevator::LocateButton(this->nh, outsideButton, 0.0, 0.05);
     elevator::MoveToButton* moveToButtonOutside = new elevator::MoveToButton(this->nh, outsideButton);
     elevator::PushButton* pushButtonOutside = new elevator::PushButton(this->nh, outsideButton);
     elevator::GoToDoor* goToDoor = new elevator::GoToDoor(this->nh);
     elevator::MoveInElevator* moveInElevator = new elevator::MoveInElevator(this->nh);
-    elevator::LocateButton* locateButtonInside = new elevator::LocateButton(this->nh, insideButton, -1.56);
+    elevator::LocateButton* locateButtonInside = new elevator::LocateButton(this->nh, insideButton, -1.56, 0.01);
     elevator::PushButton* pushButtonInside = new elevator::PushButton(this->nh, insideButton);
     elevator::Reposition* reposition = new elevator::Reposition(this->nh);
+    elevator::MoveOutElevator* moveOutElevator = new elevator::MoveOutElevator(this->nh);
     
     // Chain actions together
     locateButtonOutside->setNextAction(moveToButtonOutside);
@@ -71,9 +73,10 @@ void Elevator::setupActions() {
     moveInElevator->setNextAction(locateButtonInside);
     locateButtonInside->setNextAction(pushButtonInside);
     pushButtonInside->setNextAction(reposition);
+    reposition->setNextAction(moveOutElevator);
     
     // Set the first action as current action
-    this->currentAction = moveInElevator;
+    this->currentAction = locateButtonOutside;
     
 }
 

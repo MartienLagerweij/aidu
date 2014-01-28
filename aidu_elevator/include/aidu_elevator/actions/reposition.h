@@ -4,6 +4,7 @@
 #include <ros/ros.h>
 #include <aidu_elevator/actions/action.h>
 #include <aidu_vision/DistanceSensors.h>
+#include <sensor_msgs/JointState.h>
 
 
 namespace aidu {
@@ -19,8 +20,15 @@ namespace aidu {
             protected:
                 bool done;
                 ros::Publisher positionPublisher;
+		ros::Publisher armPublisher;
+		ros::Subscriber distanceSubscriber;
+		ros::Subscriber armSubscriber;
+		double distance;
+		double translation;
                 void moveBase(double linear, double angular);
-        
+		void moveArm(double translation, double rotation, double extention);
+		void distanceCallback(const aidu_vision::DistanceSensors::ConstPtr& dist_msg);
+		void armCallback(const sensor_msgs::JointState::ConstPtr& joint_msg);
         };
     }
 }

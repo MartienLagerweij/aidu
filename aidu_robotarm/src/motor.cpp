@@ -69,6 +69,17 @@ void mobile_robot_arm::Motor::setPosition(float position, float speed) {
       motor->setPos(position,speed);
     }
 }
+
+void mobile_robot_arm::Motor::setTorque(double torque, double speed){
+    ROS_INFO("setting torque to:%f",torque);
+    // Check mode of 3mxl
+    motor->get3MxlMode();
+    if(motor->present3MxlMode() != TORQUE_MODE){
+        motor->set3MxlMode(TORQUE_MODE);
+    }
+    
+    motor->setTorque(torque,speed);
+}
     
 void mobile_robot_arm::Motor::setLinearPosition(float position, float speed){
     // Check mode of 3mxl

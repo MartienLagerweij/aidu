@@ -7,7 +7,7 @@
 
 using namespace aidu::elevator;
 
-LocateButton::LocateButton(ros::NodeHandle* nh, int button, double angle) : Action::Action(nh) {
+LocateButton::LocateButton(ros::NodeHandle* nh, int button, double angle, double translationStep) : Action::Action(nh) {
     
     // Set up subscribers
     buttonSubscriber = nh->subscribe<aidu_elevator::Button>("/elevator/button/classified", 1, &LocateButton::visibleButton, this);
@@ -23,7 +23,7 @@ LocateButton::LocateButton(ros::NodeHandle* nh, int button, double angle) : Acti
     this->translationEpsilon = 0.0031;
     this->rotationEpsilon = 0.031;
     
-    this->translationStep = 0.05;
+    this->translationStep = translationStep;
     this->rotationStep = 0.0;
     
     this->translationMaximum = 0.37;
@@ -40,7 +40,7 @@ LocateButton::LocateButton(ros::NodeHandle* nh, int button, double angle) : Acti
     
     this->wantedRotation = rotationMinimum;
     this->wantedTranslation = translationMinimum;
-    wait_start = ros::Time::now();
+    begin = true;
     
 }
 
@@ -50,14 +50,14 @@ LocateButton::~LocateButton() {
 
 void LocateButton::execute() {
     ROS_INFO("Executing locate button action");
-  
-    ROS_INFO("LB: Translation: v=%.5f d=%.5f - wanted=%.5f step=%.5f", translationSpeed, translation, wantedTranslation, translationStep);
-    ROS_INFO("LB: Rotation:    v=%.5f d=%.5f - wanted=%.5f step=%.5f", rotationSpeed, rotation, wantedRotation, rotationStep);
-    ROS_INFO("LB: Button found: %d", this->buttonFound);
+    //ROS_INFO("LB: Translation: v=%.5f d=%.5f - wanted=%.5f step=%.5f", translationSpeed, translation, wantedTranslation, translationStep);
+    //ROS_INFO("LB: Rotation:    v=%.5f d=%.5f - wanted=%.5f step=%.5f", rotationSpeed, rotation, wantedRotation, rotationStep);
+    //ROS_INFO("LB: Button found: %d", this->buttonFound);
     
     // Check if we achieved our current goal and are still moving
-    if (!this->buttonFound && fabs(wantedTranslation - translation) < translationEpsilon && fabs(wantedRotation - rotation) < rotationEpsilon) {
-        ROS_INFO("LB: Determining new goal for arm");
+    if (begin || (!this->buttonFound && fabs(wantedTranslation - translation) < translationEpsilon && fabs(wantedRotation - rotation) < rotationEpsilon)) {
+	begin = false;  
+      //ROS_INFO("LB: Determining new goal for arm");
 	wait_start = ros::Time::now();
       
         // Set new wanted translation and rotation
@@ -82,7 +82,7 @@ void LocateButton::execute() {
     if ((ros::Time::now() - wait_start).toSec() > 1.0) {
       
       // Send new position to arm
-      ROS_INFO("LB: Sending position to arm");
+      //ROS_INFO("LB: Sending position to arm");
       aidu_robotarm::robot_arm_positions arm_position;
       arm_position.translation = wantedTranslation;
       arm_position.rotation = wantedRotation;

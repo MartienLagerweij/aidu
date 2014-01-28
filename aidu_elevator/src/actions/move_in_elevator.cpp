@@ -58,7 +58,7 @@ void MoveInElevator::execute() {
     sleep(3);
     
     //move forward
-    SetPos(0.4,0.0);
+    SetPos(0.42,0.0);
     sleep(3);
   }
   else if (rotationdirection==-1){
@@ -88,10 +88,12 @@ void MoveInElevator::controlloop(double target_dist, double target_angle){
     ros::spinOnce();
     //ROS_INFO("control loop: speed:%f",speed.linear.x);
     loop.sleep();
+    
   }
   speed.linear.x = 0.0;
   speedPublisher.publish(speed);
   ros::spinOnce();
+  sleep(1);
   
 }
 
