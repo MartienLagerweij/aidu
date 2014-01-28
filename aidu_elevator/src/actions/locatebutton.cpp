@@ -48,7 +48,7 @@ LocateButton::~LocateButton() {
 }
 
 void LocateButton::execute() {
-    //ROS_INFO("Executing locate button action");
+    ROS_INFO("Executing locate button action");
   
     //ROS_INFO("Translation: v=%.5f d=%.5f - wanted=%.5f step=%.5f", translationSpeed, translation, wantedTranslation, translationStep);
     //ROS_INFO("Rotation:    v=%.5f d=%.5f - wanted=%.5f step=%.5f", rotationSpeed, rotation, wantedRotation, rotationStep);

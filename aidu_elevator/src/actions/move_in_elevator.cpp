@@ -30,13 +30,13 @@ MoveInElevator::~MoveInElevator() {
 }
 
 void MoveInElevator::execute() {
+  ROS_INFO("executing Moving in elevator");
+  
   // initializing variables 
   double target=0.31;
   double target2=0.55;
   double target_angle=0.0;;
 
-  
-  //ROS_INFO("Moving in elevator");
   SetPos(1.5,0.0);
   begining=false;
   sleep(9);
@@ -47,7 +47,7 @@ void MoveInElevator::execute() {
   if (rotationdirection==1){
     //move in elevator
     //ROS_INFO("closest wall is left");
-    SetPos(0.0,1.5707);
+    SetPos(0.0,-1.5707);
     sleep(3);
     
     // position control from wall
@@ -77,8 +77,8 @@ void MoveInElevator::controlloop(double target_dist, double target_angle){
   geometry_msgs::Twist speed;
   double angle_error=10;
   double Kp=1.0;
-  double angle_Kp;
-  while(ros::ok() && (fabs(distance - target_dist) > 0.005 || angle_error>0.005 )) {
+  double angle_Kp=1.0;
+  while(ros::ok() && (fabs(distance - target_dist) > 0.007 || angle_error>0.005 )) {
     double error = distance - target_dist;
     angle_error=front_left-front_right;
     //ROS_INFO("error: %f, bounded error*Kp: %f, error*Kp: %f", error, BOUND(-0.05,error*Kp,0.05), error*Kp);
