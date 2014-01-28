@@ -74,6 +74,7 @@ void mobile_base::Base::position(const geometry_msgs::Twist::ConstPtr& msg) {
 }
 
 void mobile_base::Base::speed(const geometry_msgs::Twist::ConstPtr& msg){
+  ROS_INFO("base speed received: %f", msg->linear.x);
     
     // Reading velocity from topic
     float velocity = BOUND(msg->linear.x, maximumLinearVelocity);

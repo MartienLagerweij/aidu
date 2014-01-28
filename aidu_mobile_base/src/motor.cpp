@@ -31,11 +31,12 @@ mobile_base::Motor::Motor(std::string name, std::string motor_port_name, std::st
 }
 
 void mobile_base::Motor::setVelocity(float velocity) {
-    if (fabs(velocity-currentVelocity) > 0.005) {
+   
+    if (fabs(velocity-currentVelocity) > 0.001) {
         currentVelocity = velocity;
         
         // Send velocity to the 3mxl board
-        //ROS_INFO("%s: Setting velocity to %f", name.c_str(), velocity);
+        ROS_INFO("%s: Setting velocity to %f", name.c_str(), velocity);
         
         // Check mode of 3mxl
         motor->get3MxlMode();
@@ -45,6 +46,8 @@ void mobile_base::Motor::setVelocity(float velocity) {
         
         // Send speed to 3mxl
         motor->setSpeed(velocity);
+    } else {
+      ROS_INFO("velocity treshold");
     }
 }
 
@@ -60,7 +63,7 @@ void mobile_base::Motor::setPosition(float position) {
 	
     }
     // Send position to 3mxl
-    motor->setLinearPos(position+initialPos,0.5);
+    motor->setLinearPos(position+initialPos,0.2);
 }
 
 void mobile_base::Motor::reset() {

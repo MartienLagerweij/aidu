@@ -62,7 +62,7 @@ bool mobile_robot_arm::Robot_arm::setPos(){
   } else if (!rot_pos){
     rotationMotor->setPosition(target_rotation,1.5);
   } else if (!ext_pos){
-    extensionMotor->setPosition(target_extention,1.0);
+    extensionMotor->setPosition(target_extention,2.0);
   }
   // check if position attained
   return(trans_pos && rot_pos && ext_pos);
