@@ -13,7 +13,7 @@
 
 #include <ros.h>
 #include <aidu_vision/DistanceSensors.h>
-#include <aidu_gui/solenoid.h>
+#include <aidu_gui/Solenoid.h>
 #include <math.h>
 
 ros::NodeHandle  nh;
@@ -31,7 +31,7 @@ int lades [4] = {-1,7,6,5};
 
 
 //solenoid message callback
-void messageCb( const aidu_gui::solenoid& solenoid_msg){
+void messageCb( const aidu_gui::Solenoid& solenoid_msg){
   int pin_number=lades[solenoid_msg.solenoid_number];
   digitalWrite(pin_number, HIGH);
   delay(3000);
@@ -41,7 +41,7 @@ void messageCb( const aidu_gui::solenoid& solenoid_msg){
 aidu_vision::DistanceSensors distance;
 aidu_gui::solenoid solenoids;
 ros::Publisher sensor_publisher("sensors", &distance);
-ros::Subscriber<aidu_gui::solenoid> sub("/solenoids", &messageCb );
+ros::Subscriber<aidu_gui::Solenoid> sub("/solenoids", &messageCb );
 
 
 

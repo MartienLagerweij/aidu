@@ -1,1 +1,1 @@
-from ._solenoid import *
+from ._Solenoid import *

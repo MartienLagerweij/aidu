@@ -1,6 +1,5 @@
 __author__ = 'Rolf Jagerman'
 
-import rospy
 from aidu_user_management.srv import *
 from gui_thread import invoke_in_gui_thread
 
@@ -24,6 +23,18 @@ class AuthenticationClient:
     @staticmethod
     def add_listener(authentication_listener):
         AuthenticationClient.listeners.append(authentication_listener)
+
+    @staticmethod
+    def logout():
+        authentication = Authenticate()
+        authentication.user = None
+        authentication.success = False
+        authentication.login = False
+        AuthenticationClient.process_authentication(authentication)
+
+    @staticmethod
+    def add_delivery(recipient_id, location_id, drawer):
+        pass
 
 
 class AuthenticationListener(object):

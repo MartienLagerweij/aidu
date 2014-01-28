@@ -7,7 +7,9 @@ import rospy
 from PySide.QtCore import QThread
 
 from aidu_user_management.msg import Authentication
+from aidu_gui.msg import Solenoid
 from authentication import AuthenticationClient
+import manager
 
 
 class ROSThread(QThread):
@@ -21,6 +23,8 @@ class ROSThread(QThread):
         self.done = False
         self.running = True
         self.user_management = None
+        self.listeners = []
+        self.functions = []
 
     def run(self, *args, **kwargs):
         """
@@ -34,10 +38,17 @@ class ROSThread(QThread):
 
         #rospy.wait_for_service('authenticate')
         #AuthenticationClient.login = rospy.ServiceProxy('authenticate', Authenticate)
+        self.solenoid_publisher = rospy.Publisher("solenoid", Solenoid)
         login_subscriber = rospy.Subscriber('authentication', Authentication, AuthenticationClient.login_handler)
 
         while not rospy.is_shutdown() and self.running:
             try:
+                if len(self.functions) > 0:
+                    func, args, kwargs = self.functions.pop()
+                    try:
+                        func(*args, **kwargs)
+                    except Exception as e:
+                        rospy.logerr(e.message)
                 rospy.sleep(0.1)
             except rospy.ROSInterruptException:
                 break
@@ -52,3 +63,10 @@ class ROSThread(QThread):
         """
         self.running = False
 
+
+def invoke_in_ros_thread(fn, *args, **kwargs):
+    manager.Manager.ros_thread.functions.append((fn, args, kwargs))
+
+
+def get_ros_thread():
+    return manager.Manager.ros_thread

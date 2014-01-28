@@ -6,6 +6,7 @@ from scan_card import ScanCard
 from welcome import Welcome
 from header import Header
 from error import Error
+from open_drawer import OpenDrawer
 from authentication import AuthenticationClient, AuthenticationListener
 
 
@@ -44,8 +45,9 @@ class Content(QtGui.QFrame, AuthenticationListener):
 
         # Initialize all possible content components
         self.components = {'scan_card': ScanCard(),
-                           'add_delivery': AddDelivery(),
-                           'welcome': Welcome(),
+                           'add_delivery': AddDelivery(self),
+                           'welcome': Welcome(self),
+                           'open_drawer': OpenDrawer(self),
                            'error': Error()}
 
         # Creates the layout and adds all the components

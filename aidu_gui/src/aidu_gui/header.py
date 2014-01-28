@@ -34,6 +34,6 @@ class Header(QtGui.QFrame, AuthenticationListener):
         self.logout_widget.hide()
 
     def logout(self):
-        #AuthenticationClient.logout()
-        pass
+        AuthenticationClient.logout()
+        #pass
 
