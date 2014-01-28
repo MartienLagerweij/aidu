@@ -40,6 +40,7 @@ LocateButton::LocateButton(ros::NodeHandle* nh, int button, double angle) : Acti
     
     this->wantedRotation = angle;
     this->wantedTranslation = translationMinimum;
+    wait_start = ros::Time::now();
     
 }
 
