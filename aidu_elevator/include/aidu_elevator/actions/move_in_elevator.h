@@ -21,10 +21,11 @@ namespace aidu {
 		void sensorcallback(const aidu_vision::DistanceSensors::ConstPtr& dist_msg);
                 
             protected:                
-		ros::Publisher basepositionPublisher;
+		ros::Publisher basepositionPublisher, speedPublisher;
 		ros::Subscriber laserscanSubsciber, sensor_sub;
 		int rotationdirection;
-		double front_left, front_right, dist_arm;
+		double front_left, front_right, dist_arm, distance, kinect_distance;
+		bool begining,action_finished;
         
         };
     }

@@ -59,7 +59,7 @@ void MoveToButton::execute() {
   
   // Move
   ROS_INFO("Moving base");
-  sleep(5);
+  sleep(1);
   
   // Translate arm to button y position
   ROS_INFO("buttonY: %f ",buttonY);

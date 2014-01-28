@@ -1,5 +1,4 @@
 <launch>
-        <!-- <include file="$(find aidu_vision)/launch/kinect.launch" /> -->
 	<node name="arduino_serial" pkg="rosserial_python" type="serial_node2.py" args="/dev/ttyACM0" output="screen">
 	</node>
 </launch>

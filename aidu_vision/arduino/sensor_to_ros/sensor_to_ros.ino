@@ -39,7 +39,7 @@ void messageCb( const aidu_gui::Solenoid& solenoid_msg){
 }
 
 aidu_vision::DistanceSensors distance;
-aidu_gui::solenoid solenoids;
+aidu_gui::Solenoid solenoids;
 ros::Publisher sensor_publisher("sensors", &distance);
 ros::Subscriber<aidu_gui::Solenoid> sub("/solenoids", &messageCb );
 
@@ -89,7 +89,7 @@ void loop()
   // Publisher
   sensor_publisher.publish( &distance );
   nh.spinOnce();
-  delay(100);
+  delay(1);
 }
 
 /**

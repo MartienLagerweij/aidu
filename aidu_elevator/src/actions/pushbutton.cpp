@@ -80,8 +80,9 @@ void PushButton::execute() {
 	robot_arm_positions_pub.publish(positions);
 	ros::spinOnce();
 	ROS_INFO("extension set");
-	sleep(8);
+	sleep(6);
 	positions.extention=0.0;
+	buttonPushed=true;
       }
       
       // send positions to arm

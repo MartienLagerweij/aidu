@@ -1,9 +1,9 @@
 <launch>
-  <!-- GUI
+  <!-- GUI 
   <include file="$(find aidu_user_management)/launch/user_management.launch" />
   <include file="$(find aidu_card_scanner)/launch/card_scanner.launch" />
-  <include file="$(find aidu_gui)/launch/gui.launch" />
-  -->
+  <include file="$(find aidu_gui)/launch/gui.launch" /> -->
+  
 
   <!-- Robot transforms --> 
   <include file="$(find aidu_transforms)/launch/transforms.launch" />
@@ -11,7 +11,8 @@
 
   <!-- Vision -->
   <include file="$(find aidu_vision)/launch/camera_node.launch" />
-  <!-- <include file="$(find aidu_vision)/launch/vision.launch" /> -->
+  <include file="$(find aidu_vision)/launch/vision.launch" />
+  <include file="$(find aidu_vision)/launch/kinect.launch" />
 
   <!-- Navigation -->
   <include file="$(find aidu_mobile_base)/launch/base.launch" />

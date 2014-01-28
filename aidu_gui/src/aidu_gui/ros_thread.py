@@ -38,7 +38,7 @@ class ROSThread(QThread):
 
         #rospy.wait_for_service('authenticate')
         #AuthenticationClient.login = rospy.ServiceProxy('authenticate', Authenticate)
-        self.solenoid_publisher = rospy.Publisher("solenoid", Solenoid)
+        self.solenoid_publisher = rospy.Publisher("solenoids", Solenoid)
         login_subscriber = rospy.Subscriber('authentication', Authentication, AuthenticationClient.login_handler)
 
         while not rospy.is_shutdown() and self.running:

@@ -19,6 +19,8 @@ GoToDoor::~GoToDoor() {
 }
 
 void GoToDoor::execute() {
+  double depthOfDoor=0.375; // depth of elevator door in meters
+  double buttonToDoor=0.93; // sideways distance from buttons to center of the door
   bool door_open=false;
   ROS_INFO("Executing Go to door action");
   sleep(1);
@@ -28,29 +30,30 @@ void GoToDoor::execute() {
   position.linear.x=-0.4;
   position_pub.publish(position);
   ros::spinOnce();
-  sleep(2);
+  sleep(3);
   position.angular.z=-1.57075;
   position.linear.x=0.0;
   position_pub.publish(position);
   ros::spinOnce();
-  sleep(2);
+  sleep(3);
   position.angular.z=0.0;
-  position.linear.x=0.8;
+  position.linear.x=buttonToDoor-0.15;
   position_pub.publish(position);
   ros::spinOnce();
-  sleep(3);
+  sleep(4);
   position.angular.z=1.57075;
   position.linear.x=0.0;
   position_pub.publish(position);
   ros::spinOnce();
-  sleep(2);
+  sleep(3);
   position.angular.z=0.0;
-  position.linear.x=0.2;
+  position.linear.x=depthOfDoor;
   position_pub.publish(position);
   ros::spinOnce();
-  sleep(2);
+  sleep(3);
   ros::Rate loopRate(10);
-  while (distance<1.5 && ros::ok()){
+  distance = 0.0;
+  while (distance<0.8 && ros::ok()){
         ros::spinOnce();
 	loopRate.sleep();
   }
@@ -63,6 +66,7 @@ bool GoToDoor::finished() {
 }
 
 void GoToDoor::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr& dist_msg){
-  distance=(dist_msg->Frontleft+dist_msg->Frontright)/2.0;
+  distance=(dist_msg->Frontleft+dist_msg->Frontright)/2000.0;
+  ROS_INFO("distance:%f",distance);
   //ROS_INFO("distance:%f",distance);
 }

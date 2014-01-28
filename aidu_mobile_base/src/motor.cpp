@@ -38,8 +38,8 @@ mobile_base::Motor::Motor(std::string name, std::string motor_port_name, std::st
 
 void mobile_base::Motor::setVelocity(float velocity) {
    
-    if (fabs(velocity-currentVelocity) > 0.001) {
-        currentVelocity = velocity;
+    if (fabs(velocity-currentVelocity) > 0.005 || velocity==0.0) {
+        
         
         // Send velocity to the 3mxl board
         ROS_INFO("%s: Setting velocity to %f", name.c_str(), velocity);
@@ -53,21 +53,23 @@ void mobile_base::Motor::setVelocity(float velocity) {
         // Send speed to 3mxl
         motor->setSpeed(velocity);
     } else {
-      ROS_INFO("velocity treshold");
+      ROS_INFO("velocity treshold target:%f   current:%f",velocity,currentVelocity);
     }
 }
 
 void mobile_base::Motor::setPosition(float position) {
 
     // Send velocity to the 3mxl board
-    ROS_INFO("%s: Setting position to %f", name.c_str(), position);
+    ROS_INFO("%s: Setting position+initial to %f", name.c_str(), position+initialPos);
     
     // Check mode of 3mxl
     motor->get3MxlMode();
     if(motor->present3MxlMode() != POSITION_MODE){
         motor->set3MxlMode(POSITION_MODE);
-	
     }
+    
+    ROS_INFO("%s: Present position: %f", name.c_str(), motor->presentLinearPos());
+    
     // Send position to 3mxl
     motor->setLinearPos(position+initialPos,0.2);
 }
@@ -80,6 +82,9 @@ void mobile_base::Motor::reset() {
 void mobile_base::Motor::update() {
     motor->getPosAndSpeed();
     motor->getLinearPos();
+    //motor->getStatus();
+    currentVelocity=motor->presentSpeed();
+    //ROS_INFO("%s status: 0x%X", name.c_str(), motor->presentStatus());
 }
 
 double mobile_base::Motor::getLinearVelocity() {

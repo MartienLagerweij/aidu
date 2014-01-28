@@ -5,10 +5,10 @@
     <!--mxlmode comment="SPEED_MODE">1</mxlmode-->
     <gearboxratiomotor>46.7</gearboxratiomotor>
     <acceleration>2.0</acceleration>
-    <pposition>0.1</pposition>
-    <iposition>0.0</iposition>
+    <pposition>0.2</pposition>
+    <iposition>0.1</iposition>
     <dposition>0.0</dposition>
-    <ilposition>5.0</ilposition>
+    <ilposition>10.0</ilposition>
     <pspeed>0.1</pspeed>
     <ispeed>0.1</ispeed>
     <dspeed>0.25</dspeed>
@@ -20,10 +20,10 @@
     <!--mxlmode comment="SPEED_MODE">1</mxlmode-->
     <gearboxratiomotor>46.7</gearboxratiomotor>
     <acceleration>2.0</acceleration>
-    <pposition>0.1</pposition>
-    <iposition>0.0</iposition>
+    <pposition>0.2</pposition>
+    <iposition>0.1</iposition>
     <dposition>0.0</dposition>
-    <ilposition>5.0</ilposition>
+    <ilposition>10.0</ilposition>
     <pspeed>0.1</pspeed>
     <ispeed>0.1</ispeed>
     <dspeed>0.25</dspeed>
