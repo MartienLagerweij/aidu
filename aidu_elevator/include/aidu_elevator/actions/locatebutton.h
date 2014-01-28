@@ -11,7 +11,7 @@ namespace aidu {
         class LocateButton : public aidu::elevator::Action {
             public:
             
-                LocateButton(ros::NodeHandle* nh, int button);
+                LocateButton(ros::NodeHandle* nh, int button, double angle);
                 ~LocateButton();
                 void execute();
                 bool finished();

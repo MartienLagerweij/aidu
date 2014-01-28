@@ -7,7 +7,7 @@
 
 using namespace aidu::elevator;
 
-LocateButton::LocateButton(ros::NodeHandle* nh, int button) : Action::Action(nh) {
+LocateButton::LocateButton(ros::NodeHandle* nh, int button, double angle) : Action::Action(nh) {
     
     // Set up subscribers
     buttonSubscriber = nh->subscribe<aidu_elevator::Button>("/elevator/button/classified", 1, &LocateButton::visibleButton, this);
@@ -29,8 +29,8 @@ LocateButton::LocateButton(ros::NodeHandle* nh, int button) : Action::Action(nh)
     this->translationMaximum = 0.37;
     this->translationMinimum = 0.0;
     
-    this->rotationMaximum = 0.786/2.0;
-    this->rotationMinimum = -0.786/2.0;
+    this->rotationMaximum = angle - 0.01;
+    this->rotationMinimum = angle + 0.01;
     
     this->translation = -0.1;
     this->rotation = 0.0;
@@ -38,7 +38,7 @@ LocateButton::LocateButton(ros::NodeHandle* nh, int button) : Action::Action(nh)
     this->translationSpeed = 0.0;
     this->rotationSpeed = 0.0;
     
-    this->wantedRotation = 0.0;
+    this->wantedRotation = angle;
     this->wantedTranslation = translationMinimum;
     
 }

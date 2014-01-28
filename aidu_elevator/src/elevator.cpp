@@ -53,17 +53,19 @@ void Elevator::setupActions() {
       default: ROS_ERROR("Unknown target floor: %d", targetFloor); return;
     }
     
-    elevator::LocateButton* locateButton = new elevator::LocateButton(this->nh, outsideButton);
+    elevator::LocateButton* locateButtonOutside = new elevator::LocateButton(this->nh, outsideButton, 0.0);
     elevator::MoveToButton* MoveToButton = new elevator::MoveToButton(this->nh, outsideButton);
     elevator::PushButton* pushButton = new elevator::PushButton(this->nh, outsideButton);
     elevator::GoToDoor* goToDoor = new elevator::GoToDoor(this->nh);
     elevator::MoveInElevator* moveInElevator = new elevator::MoveInElevator(this->nh);
+    elevator::LocateButton* locateButtonInside = new elevator::LocateButton(this->nh, insideButton, -1.56);
     
     // Chain actions together
-    locateButton->setNextAction(MoveToButton);
+    locateButtonOutside->setNextAction(MoveToButton);
     MoveToButton->setNextAction(pushButton);
     pushButton->setNextAction(goToDoor);
     goToDoor->setNextAction(moveInElevator);
+    moveInElevator->setNextAction(locateButtonInside);
     
     // Set the first action as current action
     this->currentAction = moveInElevator;
