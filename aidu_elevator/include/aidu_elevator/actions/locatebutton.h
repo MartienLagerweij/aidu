@@ -20,8 +20,8 @@ namespace aidu {
                 void updateArmState(const sensor_msgs::JointState::ConstPtr& message);
                 
             protected:
+	      
                 int button;
-                
                 bool buttonFound;
                 
                 double translation;

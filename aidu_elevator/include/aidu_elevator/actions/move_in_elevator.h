@@ -5,6 +5,7 @@
 #include <aidu_elevator/actions/action.h>
 #include <sensor_msgs/LaserScan.h>
 #include <geometry_msgs/Twist.h>
+#include <aidu_vision/DistanceSensors.h>
 
 namespace aidu {
     namespace elevator {

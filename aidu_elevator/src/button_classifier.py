@@ -194,7 +194,7 @@ def callback(button):
 	
         if button.button_type != button.BUTTON_NONE and p > 0.7:
             certainties[button.button_type] = min(10, certainties[k] + 3 * p)
-            if certainties[button.button_type] > 6:
+            if certainties[button.button_type] > 4:
                 #rospy.loginfo('%s - %.3f' % (label, p))
                 on = onoff_clf.predict(get_onoff_feature_vector(img))
                 button.on = True if on else False

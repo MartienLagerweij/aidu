@@ -6,18 +6,20 @@
 #include <aidu_elevator/OutsideButton.h>
 #include <aidu_elevator/ElevatorNavigation.h>
 #include <aidu_elevator/actions/go_to_door.h>
+#include <aidu_elevator/actions/movetobutton.h>
 #include <aidu_elevator/Button.h>
 
 using namespace aidu;
 
 Elevator::Elevator(): core::Node::Node() {
     subscriber = nh->subscribe<aidu_elevator::ElevatorNavigation>("/elevator/navigation", 1, &Elevator::activate, this);
+    this->currentAction = 0;
 }
 
 void Elevator::activate(const aidu_elevator::ElevatorNavigation::ConstPtr& message) {
     targetFloor = message->target_floor;
     currentFloor = message->current_floor;
-    removeActions();
+    //removeActions();
     setupActions();
 }
 
@@ -41,12 +43,14 @@ void Elevator::setupActions() {
     
     
     elevator::LocateButton* locateButton = new elevator::LocateButton(this->nh, outsideButton);
+    elevator::MoveToButton* MoveToButton = new elevator::MoveToButton(this->nh, outsideButton);
     elevator::PushButton* pushButton = new elevator::PushButton(this->nh, outsideButton);
-    elevator::GoToDoor* goToDoor = new elevator::GoToDoor(this->nh);
+    //elevator::GoToDoor* goToDoor = new elevator::GoToDoor(this->nh);
     
     // Chain actions together
-    locateButton->setNextAction(pushButton);
-    pushButton->setNextAction(goToDoor);
+    locateButton->setNextAction(MoveToButton);
+    MoveToButton->setNextAction(pushButton);
+    //pushButton->setNextAction(goToDoor);
     
     // Set the first action as current action
     this->currentAction = locateButton;

@@ -24,7 +24,7 @@ LocateButton::LocateButton(ros::NodeHandle* nh, int button) : Action::Action(nh)
     this->rotationEpsilon = 0.031;
     
     this->translationStep = 0.05;
-    this->rotationStep = 0.785/2.0;
+    this->rotationStep = 0.0;
     
     this->translationMaximum = 0.37;
     this->translationMinimum = 0.0;
@@ -85,7 +85,6 @@ void LocateButton::execute() {
       arm_position.rotation = wantedRotation;
       arm_position.extention = 0.0;
       robotArmPublisher.publish(arm_position);
-      
     }
 }
 

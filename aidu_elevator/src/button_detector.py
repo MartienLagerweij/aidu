@@ -157,6 +157,11 @@ def callback(image):
     image = threshold(image)
     buttons = detect_buttons(image)
 
+    button = Button()
+    button.image.data = convert(image, input_type='cv2', output_type='ros')
+    image_publisher.publish(button.image)
+    
+
     for button in buttons:
         x0 = int(button.x - button.w/2)
         y0 = int(button.y - button.h/2)
@@ -164,8 +169,9 @@ def callback(image):
         y1 = int(button.y + button.h/2)
         thumbnail = original_image[y0:y1,x0:x1]
         button.image.data = convert(cv2.resize(thumbnail, (100, 100)), input_type='cv2', output_type='ros')
-        image_publisher.publish(button.image)
-        button_publisher.publish(button)
+        #image_publisher.publish(button.image)
+        
+	button_publisher.publish(button)
 
     rospy.loginfo('Detected %d buttons' % len(buttons))
 

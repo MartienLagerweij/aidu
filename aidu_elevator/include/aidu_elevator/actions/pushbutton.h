@@ -25,6 +25,7 @@ namespace aidu {
                 
             protected:
                 bool buttonPushed;
+		bool new_button_msg;
                 int button;
                 ros::Subscriber buttonSubscriber,sensor_sub, jointState_sub;
 		ros::Publisher robot_arm_positions_pub;
