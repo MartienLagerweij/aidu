@@ -19,12 +19,14 @@ namespace aidu {
                 
 		void laserscancallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg);
 		void sensorcallback(const aidu_vision::DistanceSensors::ConstPtr& dist_msg);
+		void controlloop(double target_dist, double target_angle);
+		void SetPos(double x, double angle);
                 
             protected:                
 		ros::Publisher basepositionPublisher, speedPublisher;
 		ros::Subscriber laserscanSubsciber, sensor_sub;
 		int rotationdirection;
-		double front_left, front_right, dist_arm, distance, kinect_distance;
+		double front_left, front_right, dist_arm, distance;
 		bool begining,action_finished;
         
         };

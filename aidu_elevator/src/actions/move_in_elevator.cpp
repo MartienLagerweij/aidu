@@ -30,75 +30,35 @@ MoveInElevator::~MoveInElevator() {
 }
 
 void MoveInElevator::execute() {
+  // initializing variables 
   double target=0.31;
   double target2=0.55;
-  double target_angle=0.0;
-  double angle_error=10;
-  double Kp = 1.0;
-  double angle_Kp = 1.0;
+  double target_angle=0.0;;
+
+  
   //ROS_INFO("Moving in elevator");
-  geometry_msgs::Twist position;
-  geometry_msgs::Twist speed;
-  position.linear.x=1.5;
-  position.linear.z=0.;
-  basepositionPublisher.publish(position);
-  ros::spinOnce();
+  SetPos(1.5,0.0);
+  begining=false;
   sleep(9);
   // position control from wall
-  ros::Rate loop(20);
-  while(ros::ok() && (fabs(distance - target2) > 0.005 || angle_error>0.005 )) {
-    double error = distance - target2;
-    angle_error=front_left-front_right;
-    //ROS_INFO("error: %f, bounded error*Kp: %f, error*Kp: %f", error, BOUND(-0.05,error*Kp,0.05), error*Kp);
-    speed.linear.x = BOUND(-0.05, error*Kp, 0.05);
-    speed.angular.z=BOUND(-0.1,angle_error*angle_Kp, 0.1);
-    speedPublisher.publish(speed);
-    ros::spinOnce();
-    //ROS_INFO("control loop: speed:%f",speed.linear.x);
-    loop.sleep();
-  }
-  speed.linear.x = 0.0;
-  speedPublisher.publish(speed);
-  ros::spinOnce();
-  begining=false;
+  controlloop(target2,target_angle);
+  
   
   if (rotationdirection==1){
     //move in elevator
-    ROS_INFO("closest wall is left");
-    position.linear.x=0.0;
-    position.angular.z=-1.5707;
-    basepositionPublisher.publish(position);
-    ros::spinOnce();
+    //ROS_INFO("closest wall is left");
+    SetPos(0.0,1.5707);
     sleep(3);
     
     // position control from wall
-    while(ros::ok() && (fabs(distance - target) > 0.005 || angle_error>0.005 )) {
-      double error = distance - target;
-      angle_error=front_left-front_right;
-      //ROS_INFO("error: %f, bounded error*Kp: %f, error*Kp: %f", error, BOUND(-0.05,error*Kp,0.05), error*Kp);
-      speed.linear.x = BOUND(-0.05, error*Kp, 0.05);
-      speed.angular.z=BOUND(-0.1,angle_error*angle_Kp, 0.1);
-      speedPublisher.publish(speed);
-      ros::spinOnce();
-      //ROS_INFO("control loop: speed:%f",speed.linear.x);
-      loop.sleep();
-    }
-    speed.linear.x = 0.0;
-    speedPublisher.publish(speed);
-    ros::spinOnce();
+    controlloop(target,target_angle);
     
     //turn back
-    position.linear.x=0.0;
-    position.angular.z=-1.572;
-    basepositionPublisher.publish(position);
-    ros::spinOnce();
+    SetPos(0.0,-1.572);
     sleep(3);
     
     //move forward
-    position.linear.x=0.4;
-    position.angular.z=0.0;
-    basepositionPublisher.publish(position);
-    ros::spinOnce();
+    SetPos(0.4,0.0);
     sleep(3);
   }
   else if (rotationdirection==-1){
@@ -112,6 +72,36 @@ bool MoveInElevator::finished() {
  return action_finished;
 }
 
+void MoveInElevator::controlloop(double target_dist, double target_angle){
+  ros::Rate loop(20);
+  geometry_msgs::Twist speed;
+  double angle_error=10;
+  double Kp=1.0;
+  double angle_Kp;
+  while(ros::ok() && (fabs(distance - target_dist) > 0.005 || angle_error>0.005 )) {
+    double error = distance - target_dist;
+    angle_error=front_left-front_right;
+    //ROS_INFO("error: %f, bounded error*Kp: %f, error*Kp: %f", error, BOUND(-0.05,error*Kp,0.05), error*Kp);
+    speed.linear.x = BOUND(-0.05, error*Kp, 0.05);
+    speed.angular.z=BOUND(-0.1,angle_error*angle_Kp, 0.1);
+    speedPublisher.publish(speed);
+    ros::spinOnce();
+    //ROS_INFO("control loop: speed:%f",speed.linear.x);
+    loop.sleep();
+  }
+  speed.linear.x = 0.0;
+  speedPublisher.publish(speed);
+  ros::spinOnce();
+  
+}
+
+void MoveInElevator::SetPos(double x, double angle){
+    geometry_msgs::Twist position;
+    position.linear.x=x;
+    position.angular.z=angle;
+    basepositionPublisher.publish(position);
+    ros::spinOnce();
+}
 
 void MoveInElevator::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr& dist_msg){
     front_left=dist_msg->Frontleft/1000.0; 
@@ -144,16 +134,6 @@ void MoveInElevator::laserscancallback(const sensor_msgs::LaserScan::ConstPtr& s
     } else {
       rotationdirection=-1;
     }
-    kinect_distance=0.0;
-    double sum=0.0;
-    for (int i=size/2.0-5; i < size/2.0+5; i++){
-     if (!isnan(scan_msg->ranges[i])) {
-      kinect_distance+=scan_msg->ranges[i];
-      sum++;
-     }
-    }
-    kinect_distance=kinect_distance/sum;
-    ROS_INFO("kinect_dist : %f   sum: %f",kinect_distance,sum);
     
     delete x;
     delete y;
