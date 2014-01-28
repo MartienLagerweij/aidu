@@ -29,7 +29,7 @@ LocateButton::LocateButton(ros::NodeHandle* nh, int button, double angle) : Acti
     this->translationMaximum = 0.37;
     this->translationMinimum = 0.0;
     
-    this->rotationMaximum = angle - 0.01;
+    this->rotationMaximum = angle;
     this->rotationMinimum = angle + 0.01;
     
     this->translation = -0.1;
@@ -38,7 +38,7 @@ LocateButton::LocateButton(ros::NodeHandle* nh, int button, double angle) : Acti
     this->translationSpeed = 0.0;
     this->rotationSpeed = 0.0;
     
-    this->wantedRotation = angle;
+    this->wantedRotation = rotationMinimum;
     this->wantedTranslation = translationMinimum;
     wait_start = ros::Time::now();
     
@@ -51,12 +51,13 @@ LocateButton::~LocateButton() {
 void LocateButton::execute() {
     ROS_INFO("Executing locate button action");
   
-    //ROS_INFO("Translation: v=%.5f d=%.5f - wanted=%.5f step=%.5f", translationSpeed, translation, wantedTranslation, translationStep);
-    //ROS_INFO("Rotation:    v=%.5f d=%.5f - wanted=%.5f step=%.5f", rotationSpeed, rotation, wantedRotation, rotationStep);
+    ROS_INFO("LB: Translation: v=%.5f d=%.5f - wanted=%.5f step=%.5f", translationSpeed, translation, wantedTranslation, translationStep);
+    ROS_INFO("LB: Rotation:    v=%.5f d=%.5f - wanted=%.5f step=%.5f", rotationSpeed, rotation, wantedRotation, rotationStep);
+    ROS_INFO("LB: Button found: %d", this->buttonFound);
     
     // Check if we achieved our current goal and are still moving
     if (!this->buttonFound && fabs(wantedTranslation - translation) < translationEpsilon && fabs(wantedRotation - rotation) < rotationEpsilon) {
-        
+        ROS_INFO("LB: Determining new goal for arm");
 	wait_start = ros::Time::now();
       
         // Set new wanted translation and rotation
@@ -81,6 +82,7 @@ void LocateButton::execute() {
     if ((ros::Time::now() - wait_start).toSec() > 1.0) {
       
       // Send new position to arm
+      ROS_INFO("LB: Sending position to arm");
       aidu_robotarm::robot_arm_positions arm_position;
       arm_position.translation = wantedTranslation;
       arm_position.rotation = wantedRotation;
