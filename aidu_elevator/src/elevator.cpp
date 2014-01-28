@@ -8,6 +8,7 @@
 #include <aidu_elevator/actions/go_to_door.h>
 #include <aidu_elevator/actions/movetobutton.h>
 #include <aidu_elevator/actions/move_in_elevator.h>
+#include <aidu_elevator/actions/reposition.h>
 #include <aidu_elevator/Button.h>
 
 using namespace aidu;
@@ -60,6 +61,7 @@ void Elevator::setupActions() {
     elevator::MoveInElevator* moveInElevator = new elevator::MoveInElevator(this->nh);
     elevator::LocateButton* locateButtonInside = new elevator::LocateButton(this->nh, insideButton, -1.56);
     elevator::PushButton* pushButtonInside = new elevator::PushButton(this->nh, insideButton);
+    elevator::Reposition* reposition = new elevator::Reposition(this->nh);
     
     // Chain actions together
     locateButtonOutside->setNextAction(moveToButtonOutside);
@@ -68,6 +70,7 @@ void Elevator::setupActions() {
     goToDoor->setNextAction(moveInElevator);
     moveInElevator->setNextAction(locateButtonInside);
     locateButtonInside->setNextAction(pushButtonInside);
+    pushButtonInside->setNextAction(reposition);
     
     // Set the first action as current action
     this->currentAction = moveInElevator;
