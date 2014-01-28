@@ -39,11 +39,11 @@ mobile_robot_arm::Motor::Motor(std::string name, std::string motor_port_name, st
 void mobile_robot_arm::Motor::initialize(double speed, double torque){
     // Initialize motor physically
     motor->set3MxlMode(EXTERNAL_INIT);
-    ros::Rate looprate(10);
+    ros::Rate looprate(5);
+    motor->setAcceleration(1.5);
+    motor->setSpeed(speed);
+    motor->setTorque(torque);
     while(ros::ok() && motor->presentStatus() != M3XL_STATUS_INIT_DONE) {
-	motor->setAcceleration(1.0);
-	motor->setSpeed(speed);
-	motor->setTorque(torque);
         looprate.sleep();
 	motor->getStatus();
     }
@@ -78,8 +78,8 @@ void mobile_robot_arm::Motor::setLinearPosition(float position, float speed){
     }
     
     // Send position to 3mxl
-    ROS_INFO("present pos: %f",motor->presentPos());
-    if (fabs(position-motor->presentPos())>0.001){
+    ROS_INFO("present pos: %f",motor->presentLinearPos());
+    if (fabs(position-motor->presentLinearPos())>0.001){
       ROS_INFO("%s: Setting position to %f", name.c_str(), position);
       motor->setLinearPos(position,speed);
     }

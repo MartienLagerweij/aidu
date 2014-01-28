@@ -24,6 +24,7 @@ mobile_robot_arm::Robot_arm::Robot_arm() : core::Node::Node() {
     max_translation=370; min_translation=0.0;
     max_rotation=3.1415; min_rotation=-1.57;
     max_extention=75; min_extention=0.0;
+    new_trans_target = new_rot_target = new_ext_target=false;
     
     //creating translation, rotation and extension motor 
     extensionMotor = new mobile_robot_arm::Motor("extention", motor_port_name, motor_config_name);
@@ -32,7 +33,7 @@ mobile_robot_arm::Robot_arm::Robot_arm() : core::Node::Node() {
     
     //initialising positions of motors
     extensionMotor->initialize(-0.5,-1.0);
-    translationMotor->initialize(-7.0,-1.0);
+    translationMotor->initialize(-8.0,-1.0);
     rotationMotor->initialize(1.0,1.0);
     // Subscribing
     position_sub = nh->subscribe("/robot_arm_positions", 1, &mobile_robot_arm::Robot_arm::positioncallback, this);
@@ -43,9 +44,18 @@ mobile_robot_arm::Robot_arm::Robot_arm() : core::Node::Node() {
 }
 
 void mobile_robot_arm::Robot_arm::positioncallback(const aidu_robotarm::robot_arm_positions::ConstPtr& msg){
-  target_translation=BOUND(msg->translation,max_translation,min_translation);
-  target_rotation=BOUND(msg->rotation,max_rotation,min_rotation);
-  target_extention=BOUND(msg->extention,max_extention,min_extention);
+  if (fabs(target_translation-msg->translation)>0.0001){
+    new_trans_target=true;
+    target_translation=BOUND(msg->translation,max_translation,min_translation);
+  }
+  if (fabs(target_rotation-msg->rotation)>0.0001){
+    new_rot_target=true;
+    target_rotation=BOUND(msg->rotation,max_rotation,min_rotation);
+  }
+  if (fabs(target_extention-msg->extention)>0.0001){
+    new_ext_target=true;
+    target_extention=BOUND(msg->extention,max_extention,min_extention);
+  }
 }
 
 bool mobile_robot_arm::Robot_arm::setPos(){
@@ -57,13 +67,17 @@ bool mobile_robot_arm::Robot_arm::setPos(){
   //ROS_INFO("trans_pos :%d  rot_pos: %d ext_pos: %d",trans_pos,rot_pos,ext_pos);
   
   // set positions in correct order
-  if (!trans_pos){
+  if (!trans_pos && new_trans_target){
     translationMotor->setLinearPosition(target_translation,0.02);
-  } else if (!rot_pos){
+    new_trans_target=false;
+  } else if (trans_pos && !rot_pos && new_rot_target){
     rotationMotor->setPosition(target_rotation,1.5);
-  } else if (!ext_pos){
+    new_rot_target=false;
+  } else if (trans_pos && rot_pos && !ext_pos && new_ext_target){
     extensionMotor->setPosition(target_extention,2.0);
+    new_ext_target=false;
   }
+  
   // check if position attained
   return(trans_pos && rot_pos && ext_pos);
 

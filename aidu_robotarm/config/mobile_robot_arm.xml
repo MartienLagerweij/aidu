@@ -18,7 +18,7 @@
     <ID>111</ID>
     <mxlmode comment="POSITION_MODE">0</mxlmode>
     <!--mxlmode comment="SPEED_MODE">1</mxlmode 
-    <gearboxratiomotor>46.7</gearboxratiomotor> -->
+    <gearboxratiomotor>46.7</gearboxratiomotor>
     <acceleration>1.5</acceleration>
     <pposition>0.1</pposition>
     <iposition>0.25</iposition>
@@ -27,7 +27,7 @@
     <pspeed>0.1</pspeed>
     <ispeed>0.1</ispeed>
     <dspeed>0.25</dspeed>
-    <ilspeed>5.0</ilspeed>
+    <ilspeed>5.0</ilspeed>  -->
   </rotation>
   <extention>
     <ID>110</ID>
