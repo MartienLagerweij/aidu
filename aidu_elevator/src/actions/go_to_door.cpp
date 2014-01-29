@@ -20,7 +20,7 @@ GoToDoor::~GoToDoor() {
 
 void GoToDoor::execute() {
   double depthOfDoor=0.375; // depth of elevator door in meters
-  double buttonToDoor=0.93; // sideways distance from buttons to center of the door
+  double buttonToDoor=0.95; // sideways distance from buttons to center of the door
   bool door_open=false;
   ROS_INFO("Executing Go to door action");
   sleep(1);
@@ -67,6 +67,6 @@ bool GoToDoor::finished() {
 
 void GoToDoor::sensorcallback(const aidu_vision::DistanceSensors::ConstPtr& dist_msg){
   distance=(dist_msg->Frontleft+dist_msg->Frontright)/2000.0;
-  ROS_INFO("distance:%f",distance);
+  //ROS_INFO("distance:%f",distance);
   //ROS_INFO("distance:%f",distance);
 }

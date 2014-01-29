@@ -17,6 +17,7 @@ namespace aidu {
       ~Motor();
       void setPosition(float position, float speed);///< Sets the position of the motor
       void setLinearPosition(float position, float speed);///< Sets the position of the motor
+      void setTorque(double torque, double speed);
       CDxlGeneric *motor;               ///< The motor interface
       float currentVelocity;
 

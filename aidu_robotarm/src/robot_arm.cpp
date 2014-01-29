@@ -60,7 +60,7 @@ void mobile_robot_arm::Robot_arm::positioncallback(const aidu_robotarm::robot_ar
 
 bool mobile_robot_arm::Robot_arm::setPos(){
   
-  bool trans_pos=fabs(target_translation - current_translation) < 0.003;
+  bool trans_pos=fabs(target_translation - current_translation) < 0.005;
   bool rot_pos=fabs(target_rotation - current_rotation) < 0.03;
   bool ext_pos=fabs(target_extention - current_extention) < 0.05;
 

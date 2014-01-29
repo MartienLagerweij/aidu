@@ -187,6 +187,8 @@ def callback(button):
         #rospy.loginfo('%s: %f' % (label, p))
 
         assign_message_label(button, label)
+        if button.button_type != button.BUTTON_NONE:
+	    rospy.loginfo('Uncertain found button %s (%.2f%%) (C:%.2f)' % (label, p, certainties[button.button_type]))
         #display_button(img, label, '%f' % p)
 
         for k, v in certainties.iteritems():
@@ -194,8 +196,9 @@ def callback(button):
 	
         if button.button_type != button.BUTTON_NONE and p > 0.7:
             certainties[button.button_type] = min(10, certainties[k] + 3 * p)
-            if certainties[button.button_type] > 4:
+            if certainties[button.button_type] > 2.7:
                 #rospy.loginfo('%s - %.3f' % (label, p))
+                rospy.loginfo('Found button %s' % label)
                 on = onoff_clf.predict(get_onoff_feature_vector(img))
                 button.on = True if on else False
                 label_str = '%s (%.0f%%)' % (label, 100.0*p)

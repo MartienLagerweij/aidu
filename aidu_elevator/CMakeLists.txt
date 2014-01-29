@@ -32,5 +32,6 @@ rosbuild_add_executable(elevator src/elevator.cpp src/actions/action.cpp
                                                   src/actions/pushbutton.cpp
                                                   src/actions/go_to_door.cpp
                                                   src/actions/move_in_elevator.cpp
-                                                  src/actions/reposition.cpp)
+                                                  src/actions/reposition.cpp
+                                                  src/actions/moveoutelevator.cpp)
 #target_link_libraries(example ${PROJECT_NAME})
