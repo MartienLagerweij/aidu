@@ -13,5 +13,6 @@ class User():
     def get_users():
         if 'users' not in dir(User):
             User.users = [User('670056546044310CA932A80', 'Robert'),
-                          User('670047480047453BA202A80', 'Dylan')]
+                          User('670047480047453BA202A80', 'Dylan'),
+                          User('67018583304156612942A80', 'Floris')]
         return User.users

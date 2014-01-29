@@ -21,6 +21,9 @@ def authenticate(req):
     if req.id == '670047480047453BA202A80':
         success = True
         user = User(req.id, 'Dylan', 'de Carvalho Cruz', [2])
+    if req.id == '67018583304156612942A80':
+        success = True
+        user = User(req.id, 'Floris', 'Gaisser', [3])
     authentication_publisher.publish(Authentication(req.login, success, user))
     return AuthenticateResponse(req.id, success, user)
 
