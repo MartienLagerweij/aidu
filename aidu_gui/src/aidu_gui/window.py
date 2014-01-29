@@ -2,6 +2,7 @@ __author__ = 'Rolf Jagerman'
 
 from PySide import QtGui, QtCore
 from add_delivery import AddDelivery
+from retrieve_delivery import RetrieveDelivery
 from scan_card import ScanCard
 from welcome import Welcome
 from header import Header
@@ -46,6 +47,7 @@ class Content(QtGui.QFrame, AuthenticationListener):
         # Initialize all possible content components
         self.components = {'scan_card': ScanCard(),
                            'add_delivery': AddDelivery(self),
+                           'retrieve_delivery': RetrieveDelivery(self),
                            'welcome': Welcome(self),
                            'open_drawer': OpenDrawer(self),
                            'error': Error()}

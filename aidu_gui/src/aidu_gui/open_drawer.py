@@ -6,6 +6,7 @@ import os
 from loadui import loadUi
 from config import UI_DIRECTORY
 from ros_thread import invoke_in_ros_thread, get_ros_thread
+from drawers import Drawers
 from aidu_gui.msg import Solenoid
 
 
@@ -16,6 +17,7 @@ class OpenDrawer(QtGui.QFrame):
 
     def __init__(self, content):
         super(OpenDrawer, self).__init__()
+        Drawers.setup()
         self.content = content
         loadUi(os.path.join(UI_DIRECTORY, 'open_drawer.ui'), self)
         self.no_button.clicked.connect(self.back)
@@ -26,14 +28,16 @@ class OpenDrawer(QtGui.QFrame):
         self.recipient_id = ''
         self.location_id = ''
         self.sender_id = ''
+        self.success_message = 'Have you successfully placed your delivery?'
+        self.instruction_message = 'place'
 
     def show(self, *args, **kwargs):
         super(OpenDrawer, self).show()
-        self.count = 10
+        self.count = 3
         self.no_button.setVisible(False)
         self.yes_button.setVisible(False)
         self.label_title.setText('Drawer %s is open' % self.drawer_id)
-        self.label_description.setText('Please open drawer %s and place your delivery' % self.drawer_id)
+        self.label_description.setText('Please open drawer %s and %s your delivery' % (self.drawer_id, self.instruction_message))
         self.label_countdown.setText('...')
         self.timer = QtCore.QTimer()
         self.connect(self.timer, QtCore.SIGNAL("timeout()"), self.count_decrement)
@@ -52,12 +56,12 @@ class OpenDrawer(QtGui.QFrame):
         if self.count <= 0 and self.timer is not None:
             self.timer.stop()
             self.label_countdown.setText('')
-            self.label_description.setText('Have you successfully placed your delivery?')
+            self.label_description.setText(self.success_message)
             self.no_button.setVisible(True)
             self.yes_button.setVisible(True)
 
     def save(self):
-        self.content.activate(self.content.components['welcome'])
+        pass # self.content.activate(self.content.components['welcome'])
 
     def back(self):
-        self.content.activate(self.content.components['add_delivery'])
+        pass # self.content.activate(self.content.components['add_delivery'])
