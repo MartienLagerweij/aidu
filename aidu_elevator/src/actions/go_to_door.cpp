@@ -47,13 +47,13 @@ void GoToDoor::execute() {
   ros::spinOnce();
   sleep(3);
   position.angular.z=0.0;
-  position.linear.x=depthOfDoor;
+  position.linear.x=depthOfDoor+0.1;
   position_pub.publish(position);
   ros::spinOnce();
   sleep(3);
   ros::Rate loopRate(10);
   distance = 0.0;
-  while (distance<0.8 && ros::ok()){
+  while (distance<0.75 && ros::ok()){
         ros::spinOnce();
 	loopRate.sleep();
   }

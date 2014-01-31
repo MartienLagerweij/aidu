@@ -58,7 +58,7 @@ void MoveInElevator::execute() {
     sleep(3);
     
     //move forward
-    SetPos(0.42,0.0);
+    SetPos(0.44,0.0);
     sleep(3);
   }
   else if (rotationdirection==-1){

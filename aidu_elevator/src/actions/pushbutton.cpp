@@ -76,7 +76,7 @@ void PushButton::execute() {
 	robot_arm_positions_pub.publish(positions);
 	ros::spinOnce();
 	sleep(2);
-	positions.extention=(dist_arm*100)+0.3;
+	positions.extention=(dist_arm*100)+0.4;
 	robot_arm_positions_pub.publish(positions);
 	ros::spinOnce();
 	ROS_INFO("extension set");
