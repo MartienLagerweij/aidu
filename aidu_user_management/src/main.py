@@ -15,15 +15,12 @@ def authenticate(req):
     rospy.loginfo("Processing authentication request");
     success = False
     user = None
-    if req.id == '670056546044310CA932A80':
+    if req.id == 'campus-card-code':
         success = True
-        user = User(req.id, 'Robert', 'Peuchen', [1])
-    if req.id == '670047480047453BA202A80':
-        success = True
-        user = User(req.id, 'Dylan', 'de Carvalho Cruz', [2])
-    if req.id == '67018583304156612942A80':
-        success = True
-        user = User(req.id, 'Floris', 'Gaisser', [3])
+        user = User(req.id, 'Firstname', 'Lastname', [1])
+    #if req.id == 'campus-card-code':
+    #    success = True
+    #    user = User(req.id, 'Firstname', 'Lastname', [1])
     authentication_publisher.publish(Authentication(req.login, success, user))
     return AuthenticateResponse(req.id, success, user)
 
