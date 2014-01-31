@@ -13,6 +13,8 @@ for the mobile_base or other robot components
   <depend package="aidu_core"/>
   <depend package="ps3joy"/>
   <depend package="aidu_mobile_base"/>
+  <depend package="aidu_elevator"/>
+  <depend package="aidu_robotarm"/>
 
 
 </package>
