@@ -8,10 +8,12 @@ The software is developed into several packages, some of which are interdependen
 In order to compile the software use:
 
 `git clone https://github.com/rjagerman/aidu aidu`
+
 `rosmake aidu`
 
 To run it use:
 
 `roscd aidu`
+
 `roslaunch aidu.launch`
 
