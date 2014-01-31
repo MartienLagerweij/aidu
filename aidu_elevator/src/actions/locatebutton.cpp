@@ -56,7 +56,7 @@ void LocateButton::execute() {
     
     // Check if we achieved our current goal and are still moving
     if (begin || (!this->buttonFound && fabs(wantedTranslation - translation) < translationEpsilon && fabs(wantedRotation - rotation) < rotationEpsilon)) {
-	begin = false;  
+	  
       //ROS_INFO("LB: Determining new goal for arm");
 	wait_start = ros::Time::now();
       
@@ -77,6 +77,11 @@ void LocateButton::execute() {
         if (wantedRotation > rotationMaximum) {
             wantedRotation = rotationMinimum;
         }
+        
+        if(begin) {
+	  wantedTranslation = 0.0;
+	}
+        begin = false;
     }    
     
     if ((ros::Time::now() - wait_start).toSec() > 1.0) {

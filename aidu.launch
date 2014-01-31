@@ -1,29 +1,40 @@
 <launch>
-  <!-- GUI 
+  <!-- GUI -->
   <include file="$(find aidu_user_management)/launch/user_management.launch" />
   <include file="$(find aidu_card_scanner)/launch/card_scanner.launch" />
-  <include file="$(find aidu_gui)/launch/gui.launch" /> -->
-  
+  <include file="$(find aidu_gui)/launch/gui.launch" /> 
 
   <!-- Robot transforms --> 
   <include file="$(find aidu_transforms)/launch/transforms.launch" />
 
 
-  <!-- Vision -->
+  <!-- Vision 
   <include file="$(find aidu_vision)/launch/camera_node.launch" />
   <include file="$(find aidu_vision)/launch/vision.launch" />
-  <include file="$(find aidu_vision)/launch/kinect.launch" />
+  <include file="$(find aidu_vision)/launch/kinect.launch" /> -->
 
   <!-- Navigation -->
   <include file="$(find aidu_mobile_base)/launch/base.launch" />
   <!-- <include file="$(find aidu_navigation)/launch/navigation.launch" /> -->
   
 
-  <!-- Elevator control -->
+  <!-- Elevator control  -->
   <!-- <include file="$(find aidu_elevator)/launch/elevator.launch" /> -->
 
   <!-- Robot arm -->
-  <include file="$(find aidu_robotarm)/launch/robot_arm.launch" /> 
+  <!-- <include file="$(find aidu_robotarm)/launch/robot_arm.launch" /> -->
+
+  <!--PS3 node -->
+  <!-- Base_teleop node-->
+  <node pkg="aidu_ps3" type="teleop" name="base_teleop" output="screen"/>
+
+
+  <!-- PS3 joy node -->
+  <node respawn="true" pkg="joy" type="joy_node" name="ps3_joy" >
+    <param name="dev" type="string" value="/dev/input/js1" />
+    <param name="deadzone" value="0.12" />
+  </node>
+
 
 </launch>
 

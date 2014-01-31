@@ -19,9 +19,10 @@ namespace aidu {
     
       int linear_, angular_;
       double l_scale_, a_scale_;
-      ros::Publisher basepublisher;
+      ros::Publisher basepublisher,elevatorpublisher,robotarmpublisher, robotarmspeedpub;
       ros::Subscriber joy_sub_;
       float maxspeed,maxangle;
+      bool active;
       
     };
   }

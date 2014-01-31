@@ -12,7 +12,7 @@ class User():
     @staticmethod
     def get_users():
         if 'users' not in dir(User):
-            User.users = [User('670056546044310CA932A80', 'Robert'),
-                          User('670047480047453BA202A80', 'Dylan'),
-                          User('67018583304156612942A80', 'Floris')]
+            User.users = [User('campus-card-code01', 'Name1'),
+                          User('campus-card-code02', 'Name2'),
+                          User('campus-card-code03', 'Name3')]
         return User.users

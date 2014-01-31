@@ -1,7 +1,9 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Joy.h>
 #include <aidu_ps3/base_teleop.h>
+#include <aidu_elevator/ElevatorNavigation.h>
 #include <geometry_msgs/Twist.h>
+#include <aidu_robotarm/robot_arm_positions.h>
 #include <math.h>
 
 
@@ -12,20 +14,26 @@ ps3::TeleopBase::TeleopBase(): core::Node::Node() {
   
   //Subscribers and Publishers 
   basepublisher = nh->advertise<geometry_msgs::Twist>("/cmd_vel",1);
+  elevatorpublisher= nh ->advertise<aidu_elevator::ElevatorNavigation>("/elevator/navigation",1);
+  robotarmpublisher = nh->advertise<aidu_robotarm::robot_arm_positions>("/robot_arm_positions", 1);
+  robotarmspeedpub = nh->advertise<geometry_msgs::Twist>("/robot_arm_speed", 1);
   joy_sub_ = nh->subscribe<sensor_msgs::Joy>("/joy", 1, &TeleopBase::joyCallback, this);
   ROS_INFO("teleop_base constructed");
   maxspeed=2.0*0.5*0.295; // m/s
   maxangle=0.4;	// rad/s 
+  active = true;
 
 }
 
 void ps3::TeleopBase::joyCallback(const sensor_msgs::Joy::ConstPtr& joy){ 
   // publishing relevant joystick input on teleop topic
   geometry_msgs::Twist twist;
-  float leftx,lefty ,r2,l2;
+  float leftx,lefty,rightx,righty,r2,l2;
   //int circle=0,triangle=0,cross=0,square=0,l1=0,r1=0;
   leftx =joy->axes[0];
   lefty =joy->axes[1];
+  rightx = joy->axes[2];
+  righty = joy->axes[3];
   r2=joy->axes[9];
   l2=joy->axes[8];
   
@@ -34,10 +42,10 @@ void ps3::TeleopBase::joyCallback(const sensor_msgs::Joy::ConstPtr& joy){
   int down=joy->buttons[6];
   int left=joy->buttons[7];
   int right=joy->buttons[5];
-  //circle=joy->buttons[13];
-  //cross=joy->buttons[14];
-  //triangle=joy->buttons[12];
-  //square=joy->buttons[15];
+  int circle=joy->buttons[13];
+  int cross=joy->buttons[14];
+  int triangle=joy->buttons[12];
+  int square=joy->buttons[15];
   //r1=joy->buttons[11];
   //l1=joy->buttons[10];
   
@@ -55,8 +63,31 @@ void ps3::TeleopBase::joyCallback(const sensor_msgs::Joy::ConstPtr& joy){
   float sign=leftx<0 ? -1 : 1;
   twist.angular.z=sign*pow(leftx,2)*maxangle;
   
-  ROS_INFO("PS3 Linear: %f", twist.linear.x);
-  ROS_INFO("PS3 Angular: %f", twist.angular.z);
+  //ROS_INFO("PS3 Linear: %f", twist.linear.x);
+  //ROS_INFO("PS3 Angular: %f", twist.angular.z);
+  
+  aidu_elevator::ElevatorNavigation elevator;
+  if (triangle==1){
+    elevator.current_floor=0;
+    elevator.target_floor=2;
+    elevatorpublisher.publish(elevator);
+    
+    active = false;
+  }
+  if (square==1) {
+    active = true;
+  }
+  
+  if(active) {
+  geometry_msgs::Twist twistspeed;
+  twistspeed.linear.x = 2*(cross - circle);
+  twistspeed.linear.y = rightx / 2.0;
+  twistspeed.linear.z = righty * 20;
+  robotarmspeedpub.publish(twistspeed);
+  
+  basepublisher.publish(twist);
+  }
+    
   
   
   /*
@@ -65,7 +96,6 @@ void ps3::TeleopBase::joyCallback(const sensor_msgs::Joy::ConstPtr& joy){
  twist.angular.x=l1*1+l2*2-r1*1-r2*2;
  */
  
-  basepublisher.publish(twist);
   ros::spinOnce();
   
 }

@@ -26,7 +26,7 @@ void Reposition::execute() {
   ROS_INFO("Executing reposition action");
   double dist = distance;
   sleep(1);
-  moveArm(translation, 1.5, 0.0);
+  moveArm(translation, 1.2, 0.0);
   sleep(2);
   this->moveBase(0.0, 1.57/2.0);
   sleep(2);
@@ -34,8 +34,9 @@ void Reposition::execute() {
   sleep(2);
   this->moveBase(0.0, -1.57/2.0);
   sleep(2);
+  this->moveBase(0.15,0.0);
   
-  double x = cos( (1.57 / 2.0) ) * 0.2;
+  double x = cos( (1.57 / 2.0) ) * 0.2 + 0.15;
   double y = dist + sin( (1.57 / 2.0) ) * 0.2;
   double angle = -atan(y / x);
   ROS_INFO("Moving arm to angle: %.4f, x: %.4f, y: %.4f", angle, x, y);

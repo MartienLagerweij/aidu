@@ -26,6 +26,8 @@ namespace aidu {
       void reset();
       void update();
       void initialize(double speed, double torque);
+      
+      void setSpeed(float speed);
       double getPosition();
       double getLinearPosition();
       double getSpeed();
