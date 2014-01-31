@@ -3,6 +3,7 @@
 #include <aidu_robotarm/robot_arm.h>
 #include <threemxl/dxlassert.h>
 #include <aidu_robotarm/motor.h>
+#include <geometry_msgs/Twist.h>
 
 
 #define BOUND(x,y,z) std::max(std::min(x, y), z)
@@ -37,11 +38,23 @@ mobile_robot_arm::Robot_arm::Robot_arm() : core::Node::Node() {
     rotationMotor->initialize(1.0,1.0);
     // Subscribing
     position_sub = nh->subscribe("/robot_arm_positions", 1, &mobile_robot_arm::Robot_arm::positioncallback, this);
+    speed_sub = nh->subscribe("/robot_arm_speed", 1, &mobile_robot_arm::Robot_arm::speedCallback, this);
     
     // Publishing 
     joint_pub= nh->advertise<sensor_msgs::JointState>("/arm_state", 1);
   
 }
+
+void mobile_robot_arm::Robot_arm::speedCallback(const geometry_msgs::Twist::ConstPtr& msg){
+  float translation, rotation, extension = 0.0;
+  translation = msg->linear.z;
+  rotation = msg->linear.y;
+  extension = msg->linear.x;
+  extensionMotor->setSpeed(extension);
+  translationMotor->setSpeed(translation);
+  rotationMotor->setSpeed(rotation);
+}
+
 
 void mobile_robot_arm::Robot_arm::positioncallback(const aidu_robotarm::robot_arm_positions::ConstPtr& msg){
   if (fabs(target_translation-msg->translation)>0.0001){

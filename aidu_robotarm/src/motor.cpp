@@ -51,6 +51,7 @@ void mobile_robot_arm::Motor::initialize(double speed, double torque){
     motor->setSpeed(0.0);
     motor->setTorque(0.0);
     currentVelocity = 0;
+    motor->setLinearAcceleration(15.0);
 }
 
 
@@ -68,6 +69,16 @@ void mobile_robot_arm::Motor::setPosition(float position, float speed) {
       ROS_INFO("%s: Setting position to %f", name.c_str(), position);
       motor->setPos(position,speed);
     }
+}
+
+void mobile_robot_arm::Motor::setSpeed(float speed) {
+  motor->setAcceleration(30.0);
+  motor->get3MxlMode();
+  if(motor->present3MxlMode() != SPEED_MODE) {
+    motor->set3MxlMode(SPEED_MODE);
+  }
+  ROS_INFO("Setting robot arm speed %s speed: %f", name.c_str(), speed);
+  motor->setSpeed(speed);
 }
 
 void mobile_robot_arm::Motor::setTorque(double torque, double speed){

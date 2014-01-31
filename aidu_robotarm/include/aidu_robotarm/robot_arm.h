@@ -5,6 +5,7 @@
 #include <aidu_core/node.h>
 #include <aidu_robotarm/motor.h>
 #include <aidu_robotarm/robot_arm_positions.h>
+#include <geometry_msgs/Twist.h>
 
 namespace aidu {
     namespace mobile_robot_arm {
@@ -32,12 +33,14 @@ namespace aidu {
 	    
 	    ros::Publisher joint_pub;
 	    ros::Subscriber position_sub;
+	    ros::Subscriber speed_sub;
 	    
             
             void resetPos();
 	    bool setPos();
             double getLinearVelocity();
             double getAngularVelocity();
+	    void speedCallback(const geometry_msgs::Twist::ConstPtr& message);
             
             void jointStatePublisher();
         
