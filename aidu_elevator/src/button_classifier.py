@@ -126,11 +126,11 @@ def train():
         #img = cv2.imdecode(x, 1)
         img = convert(button['image'], input_type='ros', output_type='cv2')
         vector = get_feature_vector(img)
-        display_button(img, button['label'], '')
-        key = cv2.waitKey() % 256
-        if(key == ord('s')):
-            n += 1
-            cv2.imwrite('/home/rolf/Desktop/%d.jpg' % n, img)
+        #display_button(img, button['label'], '')
+        #key = cv2.waitKey() % 256
+        #if(key == ord('s')):
+        #    n += 1
+        #    cv2.imwrite('/home/rolf/Desktop/%d.jpg' % n, img)
         #print vector
         X.append(vector)
         y.append(process_label(button['label']))
@@ -143,11 +143,13 @@ def train():
     y = []
     print 'Getting data'
     for button in progressor(db_buttons.find()):
-        x = np.array( button['img'], dtype=np.uint8 )
-        img = cv2.imdecode(x, 1)
+        #x = np.array( button['img'], dtype=np.uint8 )
+        #img = cv2.imdecode(x, 1)
+        img = convert(button['image'], input_type='ros', output_type='cv2')
+        vector = get_onoff_feature_vector(img)
 
         #print button.get('on')
-        vector = get_onoff_feature_vector(img)
+        #vector = get_onoff_feature_vector(img)
         #print sum(vector)
         #print len(vector)
         X.append(vector)
